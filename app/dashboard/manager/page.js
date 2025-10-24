@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import StatsCard from "@/components/dashboard/StatsCard";
 import QuickActions from "@/components/dashboard/QuickActions";
-import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import RecentActivity  from "@/components/dashboard/RecentActivity";
 import { useRouter } from "next/navigation";
 
 export default function ManagerDashboard() {
