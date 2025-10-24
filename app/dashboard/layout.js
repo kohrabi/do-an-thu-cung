@@ -21,24 +21,51 @@ export default function DashboardLayout({ children }) {
       return;
     }
 
-    // Get role from URL
-    const role = pathname.split('/')[2]; // /dashboard/[role]/...
-    const userRole = currentUser.account.role;
+   // ... (giữ nguyên phần trên)
 
-    // Check if user is accessing correct dashboard
-    const roleMap = {
-      'manager': 'manager',
-      'vet': 'veterinarian',
-      'care-staff': 'care_staff',
-      'receptionist': 'receptionist',
-      'owner': 'pet_owner'
+  useEffect(() => {
+  // Check authentication
+  const currentUser = AccountController.getCurrentUser();
+  
+  if (!currentUser) {
+    router.push("/login");
+    return;
+  }
+
+  // Get role from URL
+  const role = pathname.split('/')[2]; // /dashboard/[role]/...
+  const userRole = currentUser.account.role;
+
+  // Check if user is accessing correct dashboard
+  const roleMap = {
+    'manager': 'manager',
+    'vet': 'veterinarian',
+    'care-staff': 'care_staff',
+    'receptionist': 'receptionist',
+    'owner': 'pet_owner'
+  };
+
+  // ✅ FIX: Kiểm tra nếu redirectTo không tồn tại
+  if (roleMap[role] !== userRole) {
+    // Tạo redirect path dựa trên role
+    const roleRoutes = {
+      'manager': '/dashboard/manager',
+      'veterinarian': '/dashboard/vet',
+      'care_staff': '/dashboard/care-staff',
+      'receptionist': '/dashboard/receptionist',
+      'pet_owner': '/dashboard/owner'
     };
+    
+    const correctPath = roleRoutes[userRole] || '/dashboard/owner';
+    router.push(correctPath);
+    return;
+  }
 
-    if (roleMap[role] !== userRole) {
-      // Redirect to correct dashboard
-      router.push(currentUser.redirectTo);
-      return;
-    }
+  setUser(currentUser);
+  setLoading(false);
+}, [router, pathname]);
+
+// ... (giữ nguyên phần còn lại)
 
     setUser(currentUser);
     setLoading(false);
