@@ -140,9 +140,13 @@ export default function OwnerDashboard() {
                   </span>
                 </div>
               </div>
-              <button className="pet-action-btn">
-                Chi tiết →
+              <button 
+                onClick={() => router.push("/dashboard/owner/pets")}
+                className="pet-action-btn"
+              >
+                  Chi tiết →
               </button>
+
             </div>
           ))}
         </div>
