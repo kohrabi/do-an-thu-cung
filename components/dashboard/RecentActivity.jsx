@@ -1,7 +1,7 @@
 // components/dashboard/RecentActivity.jsx
 "use client";
 
-export function RecentActivity({ activities }) {
+export default function RecentActivity({ activities }) {
   if (!activities || activities.length === 0) {
     return (
       <div className="recent-activity">
