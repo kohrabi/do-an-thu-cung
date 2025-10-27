@@ -1,168 +1,328 @@
-// components/modals/EditServiceModal.jsx
 "use client";
 import { useState, useEffect } from "react";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
-
-const SERVICE_CATEGORIES = [
-  { icon: "🏥", label: "🏥 Khám bệnh & điều trị" },
-  { icon: "💉", label: "💉 Tiêm phòng & xét nghiệm" },
-  { icon: "🛁", label: "🛁 Tắm & vệ sinh" },
-  { icon: "✂️", label: "✂️ Cắt tỉa & tạo kiểu" },
-  { icon: "💆", label: "💆 Spa & massage" },
-  { icon: "🏠", label: "🏠 Lưu trú & chăm sóc" }
-];
 
 export default function EditServiceModal({ isOpen, onClose, onSuccess, service }) {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
+    id: "",
     name: "",
     category: "",
     price: "",
     duration: "",
     description: ""
   });
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (service) {
-      setForm({
+    if (service && isOpen) {
+      setFormData({
+        id: service.id || "",
         name: service.name || "",
         category: service.category || "",
         price: service.price?.toString() || "",
         duration: service.duration?.toString() || "",
         description: service.description || ""
       });
+      setErrors({});
     }
   }, [service, isOpen]);
 
+  const categories = [
+    { value: "health", label: "Tắm & vệ sinh", icon: "🛁" },
+    { value: "grooming", label: "Cắt tỉa & làm đẹp", icon: "✂️" },
+    { value: "medical", label: "Y tế & khám bệnh", icon: "💊" },
+    { value: "boarding", label: "Lưu trú & chăm sóc", icon: "🏠" }
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
 
-  const validate = () => {
+  const validateForm = () => {
     const newErrors = {};
-    if (!form.name.trim()) newErrors.name = "Vui lòng nhập tên dịch vụ";
-    if (!form.category) newErrors.category = "Vui lòng chọn loại dịch vụ";
-    if (!form.price || parseFloat(form.price) <= 0) {
-      newErrors.price = "Giá phải lớn hơn 0";
-    }
-    if (!form.duration || parseInt(form.duration) <= 0) {
-      newErrors.duration = "Thời lượng phải lớn hơn 0";
-    }
-    return newErrors;
+    if (!formData.name.trim()) newErrors.name = "Vui lòng nhập tên dịch vụ";
+    if (!formData.category) newErrors.category = "Vui lòng chọn danh mục";
+    if (!formData.price || parseFloat(formData.price) <= 0) newErrors.price = "Vui lòng nhập giá hợp lệ";
+    if (!formData.duration || parseInt(formData.duration) <= 0) newErrors.duration = "Vui lòng nhập thời gian hợp lệ";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onSuccess({ ...form, id: service.id });
+      onSuccess(formData);
       onClose();
-    }, 800);
+    }, 1000);
   };
 
   if (!isOpen || !service) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container modal-large" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">✏️ Chỉnh sửa dịch vụ</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
+    <div 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0,0,0,0.5)',
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}
+      onClick={onClose}
+    >
+      <div 
+        style={{
+          background: 'white',
+          borderRadius: '16px',
+          width: '100%',
+          maxWidth: '600px',
+          maxHeight: '90vh',
+          overflow: 'auto',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div style={{
+          padding: '20px',
+          borderBottom: '1px solid #E5E7EB',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: 'linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)'
+        }}>
+          <h2 style={{ 
+            margin: 0, 
+            fontSize: '24px', 
+            fontWeight: 700, 
+            color: '#1F2937',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <span>✏️</span>
+            <span>Chỉnh sửa dịch vụ</span>
+          </h2>
+          <button 
+            type="button"
+            onClick={onClose}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              border: 'none',
+              background: '#F3F4F6',
+              fontSize: '20px',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            ✕
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="modal-body">
-          <Input
-            label="Tên dịch vụ"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            error={errors.name}
-            placeholder="Ví dụ: Tắm spa cao cấp"
-            required
-          />
-
-          <div className="input-group">
-            <label className="input-label">
-              Loại dịch vụ <span className="text-red-500">*</span>
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ padding: '20px' }}>
+          {/* Service ID */}
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
+              🆔 Mã dịch vụ
             </label>
-            <div className="category-grid">
-              {SERVICE_CATEGORIES.map((cat, index) => (
-                <label
-                  key={index}
-                  className={`category-option ${form.category === cat.label ? 'category-selected' : ''}`}
-                >
-                  <input
-                    type="radio"
-                    name="category"
-                    value={cat.label}
-                    checked={form.category === cat.label}
-                    onChange={handleChange}
-                    className="hidden"
-                  />
-                  <span className="category-icon">{cat.icon}</span>
-                  <span className="category-label">{cat.label}</span>
-                </label>
+            <input
+              type="text"
+              value={formData.id}
+              disabled
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #E5E7EB',
+                borderRadius: '8px',
+                fontSize: '15px',
+                boxSizing: 'border-box',
+                background: '#F9FAFB',
+                color: '#6B7280'
+              }}
+            />
+          </div>
+
+          {/* Name */}
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
+              🏷️ Tên dịch vụ <span style={{ color: '#EF4444' }}>*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="VD: Tắm spa cao cấp"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: `2px solid ${errors.name ? '#EF4444' : '#E5E7EB'}`,
+                borderRadius: '8px',
+                fontSize: '15px',
+                boxSizing: 'border-box',
+                outline: 'none'
+              }}
+            />
+            {errors.name && <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>{errors.name}</p>}
+          </div>
+
+          {/* Category */}
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
+              📁 Danh mục <span style={{ color: '#EF4444' }}>*</span>
+            </label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: `2px solid ${errors.category ? '#EF4444' : '#E5E7EB'}`,
+                borderRadius: '8px',
+                fontSize: '15px',
+                boxSizing: 'border-box',
+                outline: 'none'
+              }}
+            >
+              <option value="">-- Chọn danh mục --</option>
+              {categories.map(cat => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.icon} {cat.label}
+                </option>
               ))}
-            </div>
-            {errors.category && <p className="error-message">{errors.category}</p>}
+            </select>
+            {errors.category && <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>{errors.category}</p>}
           </div>
 
-          <div className="input-row">
-            <Input
-              label="Giá dịch vụ (VNĐ)"
+          {/* Price */}
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
+              💰 Giá (VNĐ) <span style={{ color: '#EF4444' }}>*</span>
+            </label>
+            <input
+              type="number"
               name="price"
-              type="number"
-              value={form.price}
+              value={formData.price}
               onChange={handleChange}
-              error={errors.price}
-              placeholder="100000"
-              required
+              placeholder="150000"
+              min="0"
+              step="1000"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: `2px solid ${errors.price ? '#EF4444' : '#E5E7EB'}`,
+                borderRadius: '8px',
+                fontSize: '15px',
+                boxSizing: 'border-box',
+                outline: 'none'
+              }}
             />
-
-            <Input
-              label="Thời lượng (phút)"
-              name="duration"
-              type="number"
-              value={form.duration}
-              onChange={handleChange}
-              error={errors.duration}
-              placeholder="60"
-              required
-            />
+            {errors.price && <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>{errors.price}</p>}
           </div>
 
-          <div className="input-group">
-            <label className="input-label">Mô tả dịch vụ</label>
+          {/* Duration */}
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
+              ⏱️ Thời gian (phút) <span style={{ color: '#EF4444' }}>*</span>
+            </label>
+            <input
+              type="number"
+              name="duration"
+              value={formData.duration}
+              onChange={handleChange}
+              placeholder="60"
+              min="1"
+              step="5"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: `2px solid ${errors.duration ? '#EF4444' : '#E5E7EB'}`,
+                borderRadius: '8px',
+                fontSize: '15px',
+                boxSizing: 'border-box',
+                outline: 'none'
+              }}
+            />
+            {errors.duration && <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>{errors.duration}</p>}
+          </div>
+
+          {/* Description */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
+              📝 Mô tả
+            </label>
             <textarea
               name="description"
-              value={form.description}
+              value={formData.description}
               onChange={handleChange}
-              className="input-field"
+              placeholder="Mô tả dịch vụ..."
               rows="4"
-              placeholder="Mô tả chi tiết về dịch vụ, quy trình thực hiện..."
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #E5E7EB',
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontFamily: 'inherit',
+                boxSizing: 'border-box',
+                outline: 'none',
+                resize: 'vertical'
+              }}
             />
           </div>
 
-          <div className="modal-footer">
-            <Button type="button" variant="secondary" onClick={onClose}>
+          {/* Buttons */}
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                padding: '12px 24px',
+                border: '2px solid #E5E7EB',
+                borderRadius: '8px',
+                background: 'white',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
               Hủy
-            </Button>
-            <Button type="submit" loading={loading}>
-              💾 Cập nhật
-            </Button>
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                padding: '12px 24px',
+                border: 'none',
+                borderRadius: '8px',
+                background: loading ? '#D1D5DB' : 'linear-gradient(135deg, #9333EA 0%, #A855F7 100%)',
+                color: 'white',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: loading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {loading ? '⏳ Đang lưu...' : '💾 Lưu'}
+            </button>
           </div>
         </form>
       </div>
