@@ -1,157 +1,243 @@
 // components/modals/AddServiceModal.jsx
 "use client";
 import { useState } from "react";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
-
-const SERVICE_CATEGORIES = [
-  { icon: "🏥", label: "Khám bệnh & điều trị" },
-  { icon: "💉", label: "Tiêm phòng & xét nghiệm" },
-  { icon: "🛁", label: "Tắm & vệ sinh" },
-  { icon: "✂️", label: "Cắt tỉa & tạo kiểu" },
-  { icon: "💆", label: "Spa & massage" },
-  { icon: "🏠", label: "Lưu trú & chăm sóc" }
-];
 
 export default function AddServiceModal({ isOpen, onClose, onSuccess }) {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     category: "",
     price: "",
     duration: "",
     description: ""
   });
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  const categories = [
+    { value: "🏥 Khám bệnh & điều trị", label: "🏥 Khám bệnh & điều trị" },
+    { value: "💉 Tiêm phòng & xét nghiệm", label: "💉 Tiêm phòng & xét nghiệm" },
+    { value: "🛁 Tắm & vệ sinh", label: "🛁 Tắm & vệ sinh" },
+    { value: "✂️ Cắt tỉa & tạo kiểu", label: "✂️ Cắt tỉa & tạo kiểu" },
+    { value: "💆 Spa & massage", label: "💆 Spa & massage" },
+    { value: "🏠 Lưu trú & chăm sóc", label: "🏠 Lưu trú & chăm sóc" }
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
 
-  const validate = () => {
+  const validateForm = () => {
     const newErrors = {};
-    if (!form.name.trim()) newErrors.name = "Vui lòng nhập tên dịch vụ";
-    if (!form.category) newErrors.category = "Vui lòng chọn loại dịch vụ";
-    if (!form.price || parseFloat(form.price) <= 0) {
-      newErrors.price = "Giá phải lớn hơn 0";
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Vui lòng nhập tên dịch vụ";
     }
-    if (!form.duration || parseInt(form.duration) <= 0) {
-      newErrors.duration = "Thời lượng phải lớn hơn 0";
+
+    if (!formData.category) {
+      newErrors.category = "Vui lòng chọn loại dịch vụ";
     }
-    return newErrors;
+
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      newErrors.price = "Vui lòng nhập giá dịch vụ hợp lệ";
+    }
+
+    if (!formData.duration || parseInt(formData.duration) <= 0) {
+      newErrors.duration = "Vui lòng nhập thời lượng hợp lệ";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
+
     setTimeout(() => {
       setLoading(false);
-      onSuccess(form);
-      setForm({ name: "", category: "", price: "", duration: "", description: "" });
+      onSuccess(formData);
       onClose();
+      
+      // Reset form
+      setFormData({
+        name: "",
+        category: "",
+        price: "",
+        duration: "",
+        description: ""
+      });
+      setErrors({});
     }, 1000);
+  };
+
+  const handleClose = () => {
+    setFormData({
+      name: "",
+      category: "",
+      price: "",
+      duration: "",
+      description: ""
+    });
+    setErrors({});
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container modal-large" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">✨ Thêm dịch vụ mới</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
+    <div className="modal-overlay-beautiful" onClick={handleClose}>
+      <div className="modal-container-beautiful" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="modal-header-beautiful">
+          <div className="modal-header-content">
+            <span className="modal-icon-beautiful">✨</span>
+            <h2 className="modal-title-beautiful">Thêm dịch vụ mới</h2>
+          </div>
+          <button onClick={handleClose} className="modal-close-beautiful">
+            ✕
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="modal-body">
-          <Input
-            label="Tên dịch vụ"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            error={errors.name}
-            placeholder="Ví dụ: Tắm spa cao cấp"
-            required
-          />
-
-          <div className="input-group">
-            <label className="input-label">
-              Loại dịch vụ <span className="text-red-500">*</span>
+        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+          {/* Tên dịch vụ */}
+          <div className="form-group-beautiful">
+            <label className="form-label-beautiful">
+              <span className="label-icon-beautiful">📝</span>
+              Tên dịch vụ
+              <span className="required-star">*</span>
             </label>
-            <div className="category-grid">
-              {SERVICE_CATEGORIES.map((cat, index) => (
-                <label
-                  key={index}
-                  className={`category-option ${form.category === cat.label ? 'category-selected' : ''}`}
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Ví dụ: Tắm spa cao cấp"
+              className={`form-input-beautiful ${errors.name ? 'input-error-beautiful' : ''}`}
+            />
+            {errors.name && <span className="error-text-beautiful">{errors.name}</span>}
+          </div>
+
+          {/* Loại dịch vụ */}
+          <div className="form-group-beautiful">
+            <label className="form-label-beautiful">
+              <span className="label-icon-beautiful">📂</span>
+              Loại dịch vụ
+              <span className="required-star">*</span>
+            </label>
+            <div className="category-chips-container">
+              {categories.map((cat) => (
+                <button
+                  key={cat.value}
+                  type="button"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, category: cat.value }));
+                    if (errors.category) {
+                      setErrors(prev => ({ ...prev, category: "" }));
+                    }
+                  }}
+                  className={`category-chip ${formData.category === cat.value ? 'category-chip-active' : ''}`}
                 >
-                  <input
-                    type="radio"
-                    name="category"
-                    value={cat.label}
-                    checked={form.category === cat.label}
-                    onChange={handleChange}
-                    className="hidden"
-                  />
-                  <span className="category-icon">{cat.icon}</span>
-                  <span className="category-label">{cat.label}</span>
-                </label>
+                  {cat.label}
+                </button>
               ))}
             </div>
-            {errors.category && <p className="error-message">{errors.category}</p>}
+            {errors.category && <span className="error-text-beautiful">{errors.category}</span>}
           </div>
 
-          <div className="input-row">
-            <Input
-              label="Giá dịch vụ (VNĐ)"
-              name="price"
-              type="number"
-              value={form.price}
-              onChange={handleChange}
-              error={errors.price}
-              placeholder="100000"
-              required
-            />
+          {/* Giá & Thời lượng */}
+          <div className="form-row-beautiful">
+            <div className="form-group-beautiful">
+              <label className="form-label-beautiful">
+                <span className="label-icon-beautiful">💰</span>
+                Giá dịch vụ (VNĐ)
+                <span className="required-star">*</span>
+              </label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="100000"
+                min="0"
+                step="1000"
+                className={`form-input-beautiful ${errors.price ? 'input-error-beautiful' : ''}`}
+              />
+              {errors.price && <span className="error-text-beautiful">{errors.price}</span>}
+            </div>
 
-            <Input
-              label="Thời lượng (phút)"
-              name="duration"
-              type="number"
-              value={form.duration}
-              onChange={handleChange}
-              error={errors.duration}
-              placeholder="60"
-              required
-            />
+            <div className="form-group-beautiful">
+              <label className="form-label-beautiful">
+                <span className="label-icon-beautiful">⏱️</span>
+                Thời lượng (phút)
+                <span className="required-star">*</span>
+              </label>
+              <input
+                type="number"
+                name="duration"
+                value={formData.duration}
+                onChange={handleChange}
+                placeholder="60"
+                min="1"
+                className={`form-input-beautiful ${errors.duration ? 'input-error-beautiful' : ''}`}
+              />
+              {errors.duration && <span className="error-text-beautiful">{errors.duration}</span>}
+            </div>
           </div>
 
-          <div className="input-group">
-            <label className="input-label">Mô tả dịch vụ</label>
+          {/* Mô tả dịch vụ */}
+          <div className="form-group-beautiful">
+            <label className="form-label-beautiful">
+              <span className="label-icon-beautiful">📄</span>
+              Mô tả dịch vụ
+            </label>
             <textarea
               name="description"
-              value={form.description}
+              value={formData.description}
               onChange={handleChange}
-              className="input-field"
-              rows="4"
               placeholder="Mô tả chi tiết về dịch vụ, quy trình thực hiện..."
+              rows="4"
+              className="form-textarea-beautiful"
             />
           </div>
 
-          <div className="modal-footer">
-            <Button type="button" variant="secondary" onClick={onClose}>
-              Hủy
-            </Button>
-            <Button type="submit" loading={loading}>
-              ✅ Thêm dịch vụ
-            </Button>
+          {/* Buttons */}
+          <div className="modal-footer-beautiful">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="btn-beautiful btn-cancel-beautiful"
+            >
+              <span className="btn-icon-beautiful">✕</span>
+              <span>Hủy</span>
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-beautiful btn-primary-beautiful"
+            >
+              {loading ? (
+                <>
+                  <span className="spinner-beautiful"></span>
+                  <span>Đang thêm...</span>
+                </>
+              ) : (
+                <>
+                  <span className="btn-icon-beautiful">✓</span>
+                  <span>Thêm dịch vụ</span>
+                </>
+              )}
+            </button>
           </div>
         </form>
       </div>
