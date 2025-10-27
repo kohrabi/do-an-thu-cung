@@ -6,13 +6,11 @@ import InvoiceDetailModal from "@/components/modals/InvoiceDetailModal";
 
 export default function ManagerInvoicesPage() {
   const [invoices, setInvoices] = useState([]);
-  const [filterStatus, setFilterStatus] = useState("all");
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
-    // Mock data
     setInvoices([
       {
         id: "INV-2025-001",
@@ -69,12 +67,11 @@ export default function ManagerInvoicesPage() {
         petAge: 1,
         date: "2025-01-17T09:00:00",
         services: [
-          { icon: "🏠", name: "Lưu trú theo ngày", quantity: 3, price: 100000 },
-          { icon: "🛁", name: "Tắm spa cao cấp", quantity: 1, price: 150000 }
+          { icon: "🏠", name: "Lưu trú theo ngày", quantity: 3, price: 100000 }
         ],
-        subtotal: 450000,
+        subtotal: 300000,
         discount: 0,
-        total: 450000,
+        total: 300000,
         isPaid: true,
         paymentMethod: "Chuyển khoản",
         paymentDate: "2025-01-17T09:30:00",
@@ -89,13 +86,11 @@ export default function ManagerInvoicesPage() {
   };
 
   const filteredInvoices = invoices.filter(invoice => {
-    const matchStatus = filterStatus === "all" ||
-      (filterStatus === "paid" && invoice.isPaid) ||
-      (filterStatus === "unpaid" && !invoice.isPaid);
     const matchSearch = invoice.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       invoice.id.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchStatus && matchSearch;
+    return matchSearch;
   });
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
@@ -117,11 +112,18 @@ export default function ManagerInvoicesPage() {
 
   const handleExportPDF = (invoice) => {
     showToast(`📄 Đang xuất hóa đơn ${invoice.id} ra PDF...`, "info");
-    // Implementation: Export to PDF
   };
 
   const totalRevenue = filteredInvoices.reduce((sum, inv) => sum + (inv.isPaid ? inv.total : 0), 0);
   const unpaidAmount = filteredInvoices.reduce((sum, inv) => sum + (inv.isPaid ? 0 : inv.total), 0);
+
+  const stats = {
+    total: filteredInvoices.length,
+    paid: filteredInvoices.filter(i => i.isPaid).length,
+    unpaid: filteredInvoices.filter(i => !i.isPaid).length,
+    revenue: totalRevenue,
+    pending: unpaidAmount
+  };
 
   return (
     <div className="dashboard-container">
@@ -130,109 +132,121 @@ export default function ManagerInvoicesPage() {
         subtitle="Theo dõi và quản lý hóa đơn thanh toán"
       />
 
-      {/* Stats Summary */}
-      <div className="stats-grid">
-        <div className="stats-card stats-card-primary">
-          <div className="stats-icon">🧾</div>
-          <div className="stats-content">
-            <p className="stats-title">Tổng hóa đơn</p>
-            <h3 className="stats-value">{filteredInvoices.length}</h3>
+      {/* 1. STATS SECTION - TÁCH RIÊNG */}
+      <div className="section-separated">
+        <div className="stats-grid-custom">
+          <div className="stat-card-modern stat-primary">
+            <div className="stat-icon-wrapper">
+              <span className="stat-icon">🧾</span>
+            </div>
+            <div className="stat-content">
+              <p className="stat-label">Tổng hóa đơn</p>
+              <h3 className="stat-number">{stats.total}</h3>
+            </div>
           </div>
-        </div>
-        
-        <div className="stats-card stats-card-success">
-          <div className="stats-icon">✅</div>
-          <div className="stats-content">
-            <p className="stats-title">Đã thanh toán</p>
-            <h3 className="stats-value">{filteredInvoices.filter(i => i.isPaid).length}</h3>
-            <p className="stats-change stats-up">{formatCurrency(totalRevenue)}</p>
-          </div>
-        </div>
 
-        <div className="stats-card stats-card-warning">
-          <div className="stats-icon">⏳</div>
-          <div className="stats-content">
-            <p className="stats-title">Chưa thanh toán</p>
-            <h3 className="stats-value">{filteredInvoices.filter(i => !i.isPaid).length}</h3>
-            <p className="stats-change stats-down">{formatCurrency(unpaidAmount)}</p>
+          <div className="stat-card-modern stat-success">
+            <div className="stat-icon-wrapper">
+              <span className="stat-icon">✅</span>
+            </div>
+            <div className="stat-content">
+              <p className="stat-label">Đã thanh toán</p>
+              <h3 className="stat-number">{stats.paid}</h3>
+              <p className="stat-detail">{formatCurrency(stats.revenue)}</p>
+            </div>
+          </div>
+
+          <div className="stat-card-modern">
+            <div className="stat-icon-wrapper">
+              <span className="stat-icon">⏳</span>
+            </div>
+            <div className="stat-content">
+              <p className="stat-label">Chưa thanh toán</p>
+              <h3 className="stat-number">{stats.unpaid}</h3>
+              <p className="stat-detail">{formatCurrency(stats.pending)}</p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Filter & Search */}
-      <div className="table-container">
-        <div className="table-header">
-          <div className="search-box">
+      {/* 2. SEARCH SECTION - BÊN PHẢI */}
+      <div className="section-separated">
+        <div className="search-section-right">
+          <div className="search-box-modern">
             <span className="search-icon">🔍</span>
             <input
               type="text"
               placeholder="Tìm kiếm theo tên khách hàng hoặc mã hóa đơn..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
+              className="search-input-modern"
             />
           </div>
+        </div>
+      </div>
 
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="paid">✅ Đã thanh toán</option>
-            <option value="unpaid">⏳ Chưa thanh toán</option>
-          </select>
+      {/* 3. TABLE SECTION - VỚI DÒNG "DANH SÁCH HÓA ĐƠN" */}
+      <div className="section-separated">
+        <div className="section-header-modern">
+          <h2 className="section-title-large">
+            <span className="title-icon">📋</span>
+            Danh sách hóa đơn
+          </h2>
+          <span className="section-count">{filteredInvoices.length} hóa đơn</span>
         </div>
 
-        {/* Invoice Table */}
-        <div className="table-wrapper">
-          <table className="data-table">
+        <div className="table-modern-wrapper">
+          <table className="table-modern">
             <thead>
               <tr>
-                <th>Mã hóa đơn</th>
-                <th>Khách hàng</th>
-                <th>Thú cưng</th>
-                <th>Ngày tạo</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th style={{ width: '12%' }}>Mã hóa đơn</th>
+                <th style={{ width: '20%' }}>Khách hàng</th>
+                <th style={{ width: '15%' }}>Thú cưng</th>
+                <th style={{ width: '13%' }}>Ngày tạo</th>
+                <th style={{ width: '15%' }}>Tổng tiền</th>
+                <th style={{ width: '13%' }}>Trạng thái</th>
+                <th style={{ width: '12%' }}>Thao tác</th>
               </tr>
             </thead>
             <tbody>
               {filteredInvoices.map((invoice) => (
                 <tr key={invoice.id}>
-                  <td className="font-mono font-semibold">{invoice.id}</td>
                   <td>
-                    <div className="customer-cell">
-                      <p className="font-semibold">{invoice.customerName}</p>
-                      <p className="text-sm text-gray-500">{invoice.customerPhone}</p>
+                    <span className="staff-id-badge">{invoice.id}</span>
+                  </td>
+                  <td>
+                    <div className="staff-name-cell">
+                      <span className="staff-name">{invoice.customerName}</span>
+                      <span className="staff-specialization">{invoice.customerPhone}</span>
                     </div>
                   </td>
                   <td>
-                    <div className="pet-cell">
+                    <div className="pet-info-cell">
                       <span className="pet-icon-cell">{invoice.petIcon}</span>
                       <span>{invoice.petName}</span>
                     </div>
                   </td>
-                  <td className="text-gray-600">{formatDate(invoice.date)}</td>
-                  <td className="font-bold text-lg">{formatCurrency(invoice.total)}</td>
+                  <td className="text-gray-700">{formatDate(invoice.date)}</td>
                   <td>
-                    <span className={`status-badge ${invoice.isPaid ? 'status-paid' : 'status-unpaid'}`}>
+                    <span className="price-badge">{formatCurrency(invoice.total)}</span>
+                  </td>
+                  <td>
+                    <span className={`status-badge-modern ${invoice.isPaid ? 'status-paid' : 'status-unpaid'}`}>
                       {invoice.isPaid ? '✓ Đã thanh toán' : '⏳ Chưa thanh toán'}
                     </span>
                   </td>
                   <td>
-                    <div className="action-buttons">
+                    <div className="action-buttons-modern">
                       <button
                         onClick={() => handleViewDetail(invoice)}
-                        className="btn-action btn-view"
+                        className="btn-icon-action btn-view-icon"
                         title="Xem chi tiết"
                       >
                         👁️
                       </button>
                       <button
                         onClick={() => handleExportPDF(invoice)}
-                        className="btn-action btn-download"
+                        className="btn-icon-action btn-download-icon"
                         title="Xuất PDF"
                       >
                         📄
@@ -245,7 +259,7 @@ export default function ManagerInvoicesPage() {
           </table>
 
           {filteredInvoices.length === 0 && (
-            <div className="empty-state">
+            <div className="empty-state-modern">
               <div className="empty-icon">🔍</div>
               <p className="empty-text">Không tìm thấy hóa đơn nào</p>
             </div>
@@ -253,14 +267,14 @@ export default function ManagerInvoicesPage() {
         </div>
       </div>
 
-      {/* Invoice Detail Modal */}
+      {/* MODAL */}
       <InvoiceDetailModal
         isOpen={!!selectedInvoice}
         onClose={() => setSelectedInvoice(null)}
         invoice={selectedInvoice}
       />
 
-      {/* Toast */}
+      {/* TOAST */}
       {toast.show && (
         <div className={`toast toast-${toast.type}`}>
           {toast.message}
