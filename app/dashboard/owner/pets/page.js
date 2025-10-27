@@ -1,68 +1,70 @@
 // app/(dashboard)/owner/pets/page.js
 "use client";
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/layout/DashboardHeader";
-import Button from "@/components/ui/Button";
 import AddPetModal from "@/components/modals/AddPetModal";
+import EditPetModal from "@/components/modals/EditPetModal";
 
 export default function OwnerPetsPage() {
-  const searchParams = useSearchParams();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
   const [pets, setPets] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingPet, setEditingPet] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
-    if (searchParams.get('action') === 'add') {
-      setIsModalOpen(true);
-    }
+    loadPets();
+  }, []);
 
-    // Mock data
+  const loadPets = () => {
     setPets([
       {
         id: "PET001",
         name: "Lucky",
-        species: "Chó",
         icon: "🐕",
+        type: "Chó",
         breed: "Golden Retriever",
-        age: 3,
-        weight: 25,
+        age: "2 tuổi",
         gender: "Đực",
+        weight: "28 kg",
         color: "Vàng",
-        healthStatus: "Khỏe mạnh",
-        nextVaccine: "2025-12-15",
-        notes: "Hoạt bát, thân thiện"
+        dateOfBirth: "2023-03-15",
+        medicalHistory: "Đã tiêm phòng đầy đủ",
+        notes: "Rất thân thiện, thích chơi đùa"
       },
       {
         id: "PET002",
         name: "Miu",
-        species: "Mèo",
         icon: "🐈",
-        breed: "Mèo Anh lông ngắn",
-        age: 2,
-        weight: 4.5,
+        type: "Mèo",
+        breed: "Mèo Ba Tư",
+        age: "1 tuổi",
         gender: "Cái",
-        color: "Xám",
-        healthStatus: "Khỏe mạnh",
-        nextVaccine: "2025-11-20",
-        notes: "Ngoan ngoãn, ăn nhiều"
+        weight: "4 kg",
+        color: "Trắng",
+        dateOfBirth: "2024-01-20",
+        medicalHistory: "Tiêm phòng cơ bản",
+        notes: "Ngoan, ít kêu"
       },
       {
         id: "PET003",
         name: "Coco",
-        species: "Chó",
         icon: "🐩",
+        type: "Chó",
         breed: "Poodle",
-        age: 1,
-        weight: 8,
+        age: "3 tuổi",
         gender: "Cái",
-        color: "Trắng",
-        healthStatus: "Khỏe mạnh",
-        nextVaccine: "2025-12-01",
-        notes: "Thích chơi đùa"
+        weight: "6 kg",
+        color: "Nâu",
+        dateOfBirth: "2022-07-10",
+        medicalHistory: "Đã triệt sản, tiêm phòng đầy đủ",
+        notes: "Thích được chải lông"
       }
     ]);
-  }, [searchParams]);
+  };
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
@@ -72,167 +74,187 @@ export default function OwnerPetsPage() {
   const handleAddPet = (newPet) => {
     const pet = {
       id: `PET${String(pets.length + 1).padStart(3, '0')}`,
-      name: newPet.name,
-      species: newPet.species,
-      icon: getSpeciesIcon(newPet.species),
-      breed: newPet.breed,
-      age: parseInt(newPet.age),
-      weight: parseFloat(newPet.weight) || 0,
-      gender: newPet.gender,
-      color: newPet.color,
-      healthStatus: "Khỏe mạnh",
-      nextVaccine: null,
-      notes: newPet.notes
+      ...newPet,
+      icon: newPet.type === 'Chó' ? '🐕' : '🐈'
     };
     setPets([...pets, pet]);
     showToast("🎉 Đã thêm thú cưng thành công!");
   };
 
-  const getSpeciesIcon = (species) => {
-    const icons = {
-      "Chó": "🐕",
-      "Mèo": "🐈",
-      "Thỏ": "🐰",
-      "Chuột Hamster": "🐹",
-      "Chim": "🦜",
-      "Rùa": "🐢"
-    };
-    return icons[species] || "🐾";
+  const handleEditPet = (updatedPet) => {
+    setPets(pets.map(pet =>
+      pet.id === updatedPet.id ? updatedPet : pet
+    ));
+    showToast("💾 Đã cập nhật thông tin thú cưng!");
   };
 
-  const handleViewDetails = (pet) => {
-    console.log("View pet details:", pet);
-    showToast("ℹ️ Chức năng xem chi tiết đang phát triển");
+  const handleOpenEdit = (pet) => {
+    setEditingPet(pet);
+    setIsEditModalOpen(true);
   };
 
-  const handleEditPet = (pet) => {
-    console.log("Edit pet:", pet);
-    showToast("✏️ Chức năng chỉnh sửa đang phát triển");
+  const handleViewDetail = (petId) => {
+    router.push(`/dashboard/owner/pets/${petId}`);
   };
+
+  const filteredPets = pets.filter(pet =>
+    pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    pet.breed.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="dashboard-container">
       <DashboardHeader
         title="Thú cưng của tôi"
-        subtitle="Quản lý thông tin và sức khỏe thú cưng"
+        subtitle="Quản lý thông tin thú cưng của bạn"
       />
 
-      <div className="action-bar">
-        <div className="stats-summary">
-          <div className="stat-item">
-            <span className="stat-label">Tổng số thú cưng:</span>
-            <span className="stat-value">{pets.length}</span>
+      {/* Stats */}
+      <div className="section-separated">
+        <div className="stats-grid-custom">
+          <div className="stat-card-modern stat-primary">
+            <div className="stat-icon-wrapper">
+              <span className="stat-icon">🐾</span>
+            </div>
+            <div className="stat-content">
+              <p className="stat-label">Tổng số thú cưng</p>
+              <h3 className="stat-number">{pets.length}</h3>
+            </div>
           </div>
         </div>
-
-        <Button onClick={() => setIsModalOpen(true)}>
-          ➕ Thêm thú cưng
-        </Button>
       </div>
 
-      {/* Pets Grid */}
-      <div className="pets-detailed-grid">
-        {pets.map((pet) => (
-          <div key={pet.id} className="pet-detail-card">
-            <div className="pet-card-header-bg">
-              <div className="pet-avatar-large">{pet.icon}</div>
-            </div>
+      {/* Add Button */}
+      <div className="section-separated">
+        <div className="action-button-section">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="btn-add-large"
+          >
+            <span className="btn-icon">➕</span>
+            <span>Thêm thú cưng mới</span>
+          </button>
+        </div>
+      </div>
 
-            <div className="pet-card-body">
-              <h3 className="pet-detail-name">{pet.name}</h3>
-              <p className="pet-detail-breed">{pet.breed}</p>
+      {/* Search Bar - BÊN PHẢI */}
+      <div className="section-separated">
+        <div className="search-section-right">
+          <div className="search-box-modern">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Tìm kiếm thú cưng..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input-modern"
+            />
+          </div>
+        </div>
+      </div>
 
-              <div className="pet-info-grid">
-                <div className="pet-info-item">
-                  <span className="info-icon">🏷️</span>
-                  <div>
-                    <p className="info-label">Mã số</p>
-                    <p className="info-value">{pet.id}</p>
-                  </div>
+      {/* Pets List - TÁCH BIỆT TỪNG CON */}
+      <div className="section-separated">
+        <div className="section-header-modern">
+          <h2 className="section-title-large">
+            <span className="title-icon">📋</span>
+            Danh sách thú cưng của tôi
+          </h2>
+          <span className="section-count">{filteredPets.length} thú cưng</span>
+        </div>
+
+        <div className="pets-list-separated">
+          {filteredPets.map((pet) => (
+            <div key={pet.id} className="pet-card-separated">
+              <div className="pet-card-header">
+                <div className="pet-icon-section">
+                  <span className="pet-icon-huge">{pet.icon}</span>
                 </div>
-
-                <div className="pet-info-item">
-                  <span className="info-icon">🐾</span>
-                  <div>
-                    <p className="info-label">Loài</p>
-                    <p className="info-value">{pet.species}</p>
-                  </div>
-                </div>
-
-                <div className="pet-info-item">
-                  <span className="info-icon">🎂</span>
-                  <div>
-                    <p className="info-label">Tuổi</p>
-                    <p className="info-value">{pet.age} tuổi</p>
-                  </div>
-                </div>
-
-                <div className="pet-info-item">
-                  <span className="info-icon">⚖️</span>
-                  <div>
-                    <p className="info-label">Cân nặng</p>
-                    <p className="info-value">{pet.weight} kg</p>
-                  </div>
-                </div>
-
-                <div className="pet-info-item">
-                  <span className="info-icon">🚻</span>
-                  <div>
-                    <p className="info-label">Giới tính</p>
-                    <p className="info-value">{pet.gender}</p>
-                  </div>
-                </div>
-
-                <div className="pet-info-item">
-                  <span className="info-icon">🎨</span>
-                  <div>
-                    <p className="info-label">Màu sắc</p>
-                    <p className="info-value">{pet.color}</p>
+                <div className="pet-basic-info">
+                  <h3 className="pet-name-large">{pet.name}</h3>
+                  <p className="pet-breed-text">{pet.breed}</p>
+                  <div className="pet-tags">
+                    <span className="pet-tag">{pet.type}</span>
+                    <span className="pet-tag">{pet.gender}</span>
+                    <span className="pet-tag">{pet.age}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pet-health-status">
-                <div className="health-badge health-good">
-                  ❤️ {pet.healthStatus}
-                </div>
-                {pet.nextVaccine && (
-                  <div className="vaccine-reminder">
-                    💉 Tiêm phòng tiếp theo: {new Date(pet.nextVaccine).toLocaleDateString('vi-VN')}
+              <div className="pet-card-body">
+                <div className="pet-info-grid">
+                  <div className="pet-info-item">
+                    <span className="info-icon">⚖️</span>
+                    <div>
+                      <p className="info-label">Cân nặng</p>
+                      <p className="info-value">{pet.weight}</p>
+                    </div>
                   </div>
-                )}
-              </div>
+                  <div className="pet-info-item">
+                    <span className="info-icon">🎨</span>
+                    <div>
+                      <p className="info-label">Màu lông</p>
+                      <p className="info-value">{pet.color}</p>
+                    </div>
+                  </div>
+                  <div className="pet-info-item">
+                    <span className="info-icon">🎂</span>
+                    <div>
+                      <p className="info-label">Ngày sinh</p>
+                      <p className="info-value">{pet.dateOfBirth}</p>
+                    </div>
+                  </div>
+                </div>
 
-              {pet.notes && (
-                <div className="pet-notes">
+                <div className="pet-notes-section">
                   <p className="notes-label">📝 Ghi chú:</p>
                   <p className="notes-text">{pet.notes}</p>
                 </div>
-              )}
+              </div>
 
-              <div className="pet-card-actions">
+              <div className="pet-card-footer">
                 <button
-                  onClick={() => handleViewDetails(pet)}
-                  className="btn-pet-action btn-view"
+                  onClick={() => handleViewDetail(pet.id)}
+                  className="btn-pet-action btn-view-pet"
                 >
-                  👁️ Chi tiết
+                  <span>📋</span>
+                  <span>Chi tiết</span>
                 </button>
                 <button
-                  onClick={() => handleEditPet(pet)}
-                  className="btn-pet-action btn-edit"
+                  onClick={() => handleOpenEdit(pet)}
+                  className="btn-pet-action btn-edit-pet"
                 >
-                  ✏️ Chỉnh sửa
+                  <span>✏️</span>
+                  <span>Chỉnh sửa</span>
                 </button>
               </div>
             </div>
+          ))}
+        </div>
+
+        {filteredPets.length === 0 && (
+          <div className="empty-state-modern">
+            <div className="empty-icon">🐾</div>
+            <p className="empty-text">Không tìm thấy thú cưng nào</p>
           </div>
-        ))}
+        )}
       </div>
 
+      {/* Modals */}
       <AddPetModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
         onSuccess={handleAddPet}
+      />
+
+      <EditPetModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingPet(null);
+        }}
+        onSuccess={handleEditPet}
+        pet={editingPet}
       />
 
       {toast.show && (
