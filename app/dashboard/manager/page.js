@@ -106,6 +106,16 @@ export default function ManagerDashboard() {
       onClick: () => router.push("/dashboard/manager/appointments")
     },
     {
+      icon: "🏠",
+      label: "Xem chuồng nuôi",
+      onClick: () => router.push("/dashboard/manager/cages")
+    },
+    {
+      icon: "💰",
+      label: "Xem hóa đơn",
+      onClick: () => router.push("/dashboard/manager/invoices")
+    },
+    {
       icon: "📊",
       label: "Xem báo cáo",
       onClick: () => router.push("/dashboard/manager/reports")
