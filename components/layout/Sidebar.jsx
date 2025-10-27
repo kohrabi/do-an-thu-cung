@@ -35,7 +35,9 @@ const menuItems = {
   pet_owner: [
     { icon: "🏠", label: "Tổng quan", path: "/dashboard/owner" },
     { icon: "🐾", label: "Thú cưng của tôi", path: "/dashboard/owner/pets" },
-    { icon: "📅", label: "Lịch đặt", path: "/dashboard/owner/appointments" }
+    { icon: "📅", label: "Lịch đặt", path: "/dashboard/owner/appointments" },
+    { icon: "💳", label: "Thanh Toán", path: "/dashboard/owner/payments" },
+    { icon: "🛍️", label: "Xem dịch vụ", path: "/dashboard/owner/services" }
   ]
 };
 
