@@ -4,56 +4,67 @@
 export default function CageDetailModal({ isOpen, onClose, cage }) {
   if (!isOpen || !cage) return null;
 
+  const getCageTypeLabel = (type) => {
+    const labels = {
+      small: "🏠 Chuồng nhỏ",
+      medium: "🏡 Chuồng trung",
+      large: "🏘️ Chuồng lớn"
+    };
+    return labels[type] || type;
+  };
+
+  const getStatusBadge = (status) => {
+    const badges = {
+      available: { label: "Trống", class: "status-available", icon: "🟢" },
+      occupied: { label: "Đang sử dụng", class: "status-occupied", icon: "🟡" },
+      maintenance: { label: "Bảo trì", class: "status-maintenance", icon: "🔴" }
+    };
+    return badges[status] || badges.available;
+  };
+
+  const statusBadge = getStatusBadge(cage.status);
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">👁️ Chi tiết chuồng {cage.code}</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
+    <div className="modal-overlay-beautiful" onClick={onClose}>
+      <div className="modal-container-beautiful modal-large-beautiful" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="modal-header-beautiful">
+          <div className="modal-header-content">
+            <span className="modal-icon-beautiful">👁️</span>
+            <h2 className="modal-title-beautiful">Chi tiết chuồng {cage.code}</h2>
+          </div>
+          <button onClick={onClose} className="modal-close-beautiful">
+            ✕
+          </button>
         </div>
 
-        <div className="modal-body">
-          {/* Cage Info */}
-          <div className="cage-detail-info">
+        <div className="modal-body-beautiful">
+          {/* Cage Info Card */}
+          <div className="cage-detail-card">
             <div className="cage-detail-header">
-              <span className="cage-detail-icon">
-                {cage.type === 'small' && '🏠'}
-                {cage.type === 'medium' && '🏡'}
-                {cage.type === 'large' && '🏘️'}
-              </span>
-              <div>
-                <h3 className="cage-detail-code">{cage.code}</h3>
-                <p className="cage-detail-type">
-                  {cage.type === 'small' && 'Chuồng nhỏ'}
-                  {cage.type === 'medium' && 'Chuồng trung'}
-                  {cage.type === 'large' && 'Chuồng lớn'}
-                </p>
+              <div className="cage-detail-code-section">
+                <span className="cage-detail-code">{cage.code}</span>
+                <span className="cage-detail-type">{getCageTypeLabel(cage.type)}</span>
               </div>
-              <span className={`cage-status-badge ${
-                cage.status === 'available' ? 'status-available' :
-                cage.status === 'occupied' ? 'status-occupied' :
-                'status-maintenance'
-              }`}>
-                {cage.status === 'available' && '🟢 Trống'}
-                {cage.status === 'occupied' && '🟡 Đang sử dụng'}
-                {cage.status === 'maintenance' && '🔴 Bảo trì'}
+              <span className={`status-badge-detail ${statusBadge.class}`}>
+                {statusBadge.icon} {statusBadge.label}
               </span>
             </div>
 
-            <div className="cage-detail-grid">
-              <div className="detail-item">
-                <span className="detail-icon">📊</span>
+            <div className="cage-detail-info-grid">
+              <div className="cage-info-item-detail">
+                <span className="info-icon-detail">📊</span>
                 <div>
-                  <p className="detail-label">Sức chứa</p>
-                  <p className="detail-value">{cage.capacity} thú cưng</p>
+                  <p className="info-label-detail">Sức chứa</p>
+                  <p className="info-value-detail">{cage.capacity} thú cưng</p>
                 </div>
               </div>
 
-              <div className="detail-item">
-                <span className="detail-icon">🐾</span>
+              <div className="cage-info-item-detail">
+                <span className="info-icon-detail">🐾</span>
                 <div>
-                  <p className="detail-label">Đang ở</p>
-                  <p className="detail-value">
+                  <p className="info-label-detail">Đang ở</p>
+                  <p className="info-value-detail">
                     {cage.pets?.length || 0} / {cage.capacity}
                   </p>
                 </div>
@@ -61,31 +72,47 @@ export default function CageDetailModal({ isOpen, onClose, cage }) {
             </div>
 
             {cage.notes && (
-              <div className="cage-notes">
-                <p className="notes-label">📝 Ghi chú:</p>
-                <p className="notes-text">{cage.notes}</p>
+              <div className="cage-notes-detail">
+                <p className="notes-label-detail">📝 Ghi chú:</p>
+                <p className="notes-text-detail">{cage.notes}</p>
               </div>
             )}
           </div>
 
           {/* Pets in Cage */}
           {cage.status === 'occupied' && cage.pets && cage.pets.length > 0 && (
-            <div className="cage-pets-section">
-              <h4 className="section-title">🐾 Thú cưng đang ở chuồng</h4>
-              <div className="cage-pets-list">
+            <div className="pets-in-cage-section">
+              <h3 className="section-title-detail">
+                <span className="title-icon-detail">🐾</span>
+                Thú cưng đang ở chuồng
+              </h3>
+
+              <div className="pets-list-detail">
                 {cage.pets.map((pet, idx) => (
-                  <div key={idx} className="cage-pet-card">
-                    <span className="pet-icon-cage">{pet.icon}</span>
-                    <div className="pet-info-cage">
-                      <p className="pet-name-cage">{pet.name}</p>
-                      <p className="pet-breed-cage">{pet.breed}</p>
-                      <p className="pet-owner-cage">👤 {pet.ownerName}</p>
+                  <div key={idx} className="pet-card-detail">
+                    <div className="pet-card-header-detail">
+                      <div className="pet-basic-info-detail">
+                        <span className="pet-icon-detail">{pet.icon}</span>
+                        <div>
+                          <p className="pet-name-detail">{pet.name}</p>
+                          <p className="pet-breed-detail">{pet.breed}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="pet-duration">
-                      <span className="duration-icon">📅</span>
-                      <span className="duration-text">
-                        {pet.checkInDate} - {pet.checkOutDate || 'Chưa xác định'}
-                      </span>
+
+                    <div className="pet-card-body-detail">
+                      <div className="pet-info-row-detail">
+                        <span className="pet-info-label-detail">👤 Chủ:</span>
+                        <span className="pet-info-value-detail">{pet.ownerName}</span>
+                      </div>
+                      <div className="pet-info-row-detail">
+                        <span className="pet-info-label-detail">📅 Check-in:</span>
+                        <span className="pet-info-value-detail">{pet.checkInDate}</span>
+                      </div>
+                      <div className="pet-info-row-detail">
+                        <span className="pet-info-label-detail">📅 Check-out:</span>
+                        <span className="pet-info-value-detail">{pet.checkOutDate || 'Chưa xác định'}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -94,10 +121,16 @@ export default function CageDetailModal({ isOpen, onClose, cage }) {
           )}
         </div>
 
-        <div className="modal-footer">
-          <Button onClick={onClose}>
-            Đóng
-          </Button>
+        {/* Footer */}
+        <div className="modal-footer-beautiful">
+          <button
+            onClick={onClose}
+            className="btn-beautiful btn-cancel-beautiful"
+            style={{ flex: 1 }}
+          >
+            <span className="btn-icon-beautiful">✕</span>
+            <span>Đóng</span>
+          </button>
         </div>
       </div>
     </div>
