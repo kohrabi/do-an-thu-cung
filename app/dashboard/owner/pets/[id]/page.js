@@ -1,100 +1,96 @@
 // app/(dashboard)/owner/pets/[id]/page.js
 "use client";
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import DashboardHeader from "@/components/layout/DashboardHeader";
-import Button from "@/components/ui/Button";
 
 export default function PetDetailPage() {
-  const params = useParams();
   const router = useRouter();
+  const params = useParams();
   const [pet, setPet] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadPetDetail();
   }, [params.id]);
 
   const loadPetDetail = () => {
-    // Mock data
+    // Mock data - thực tế sẽ fetch từ API
     const mockPets = {
       "PET001": {
         id: "PET001",
         name: "Lucky",
-        species: "Chó",
         icon: "🐕",
+        type: "Chó",
         breed: "Golden Retriever",
-        age: 3,
-        birthDate: "2022-03-15",
-        weight: 25,
+        age: "2 tuổi",
         gender: "Đực",
+        weight: "28 kg",
         color: "Vàng",
-        healthStatus: "Khỏe mạnh",
-        notes: "Hoạt bát, thân thiện với trẻ em",
+        dateOfBirth: "2023-03-15",
+        medicalHistory: "Đã tiêm phòng đầy đủ: Dại, Parvo, Distemper",
+        notes: "Rất thân thiện, thích chơi đùa. Ăn 2 lần/ngày.",
         vaccinations: [
-          { name: "Vaccine 7 bệnh", date: "2023-01-15", nextDate: "2026-01-15", vet: "BS. Nguyễn Văn A" },
-          { name: "Vaccine dại", date: "2024-06-20", nextDate: "2025-06-20", vet: "BS. Nguyễn Văn A" }
+          { name: "Vaccine dại", date: "2024-03-15", nextDue: "2025-03-15" },
+          { name: "Vaccine Parvo", date: "2024-04-20", nextDue: "2025-04-20" }
         ],
-        serviceHistory: [
-          { date: "2025-10-15", service: "Khám sức khỏe", icon: "🏥", result: "Bình thường", vet: "BS. Nguyễn Văn A" },
-          { date: "2025-09-10", service: "Tắm spa", icon: "🛁", result: "Hoàn thành tốt", staff: "NV. Trần Thị B" },
-          { date: "2025-08-05", service: "Cắt tỉa lông", icon: "✂️", result: "Đã hoàn thành", staff: "NV. Lê Văn C" }
-        ],
-        medicalNotes: [
-          { date: "2025-10-15", note: "Sức khỏe tốt, không có vấn đề gì", vet: "BS. Nguyễn Văn A" },
-          { date: "2024-12-20", note: "Đã điều trị viêm tai nhẹ, đã khỏi", vet: "BS. Nguyễn Văn A" }
+        appointments: [
+          { date: "2025-10-20", service: "Khám sức khỏe", status: "Hoàn thành" },
+          { date: "2025-11-05", service: "Tắm spa", status: "Sắp tới" }
         ]
       },
       "PET002": {
         id: "PET002",
         name: "Miu",
-        species: "Mèo",
         icon: "🐈",
-        breed: "Mèo Anh lông ngắn",
-        age: 2,
-        birthDate: "2023-05-10",
-        weight: 4.5,
+        type: "Mèo",
+        breed: "Mèo Ba Tư",
+        age: "1 tuổi",
         gender: "Cái",
-        color: "Xám",
-        healthStatus: "Khỏe mạnh",
-        notes: "Ngoan ngoãn, ăn nhiều",
+        weight: "4 kg",
+        color: "Trắng",
+        dateOfBirth: "2024-01-20",
+        medicalHistory: "Tiêm phòng cơ bản đầy đủ",
+        notes: "Ngoan, ít kêu. Ăn thức ăn hạt cho mèo.",
         vaccinations: [
-          { name: "Vaccine 3 bệnh", date: "2023-06-15", nextDate: "2026-06-15", vet: "BS. Nguyễn Văn A" }
+          { name: "Vaccine 3 trong 1", date: "2024-05-10", nextDue: "2025-05-10" }
         ],
-        serviceHistory: [
-          { date: "2025-10-20", service: "Tắm spa", icon: "🛁", result: "Hoàn thành", staff: "NV. Trần Thị B" }
+        appointments: [
+          { date: "2025-10-25", service: "Tiêm phòng", status: "Hoàn thành" }
+        ]
+      },
+      "PET003": {
+        id: "PET003",
+        name: "Coco",
+        icon: "🐩",
+        type: "Chó",
+        breed: "Poodle",
+        age: "3 tuổi",
+        gender: "Cái",
+        weight: "6 kg",
+        color: "Nâu",
+        dateOfBirth: "2022-07-10",
+        medicalHistory: "Đã triệt sản, tiêm phòng đầy đủ",
+        notes: "Thích được chải lông. Rất năng động.",
+        vaccinations: [
+          { name: "Vaccine dại", date: "2024-07-10", nextDue: "2025-07-10" }
         ],
-        medicalNotes: []
+        appointments: [
+          { date: "2025-10-15", service: "Cắt tỉa lông", status: "Hoàn thành" },
+          { date: "2025-11-10", service: "Tắm spa", status: "Sắp tới" }
+        ]
       }
     };
 
-    const petData = mockPets[params.id];
-    if (petData) {
-      setPet(petData);
-    }
-    setLoading(false);
+    setPet(mockPets[params.id] || null);
   };
-
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-spinner">
-          <div className="paw-loader">🐾</div>
-          <p>Đang tải...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (!pet) {
     return (
       <div className="dashboard-container">
-        <div className="empty-state">
-          <div className="empty-icon">😢</div>
+        <DashboardHeader title="Chi tiết thú cưng" />
+        <div className="empty-state-modern">
+          <div className="empty-icon">🐾</div>
           <p className="empty-text">Không tìm thấy thú cưng</p>
-          <Button onClick={() => router.push('/dashboard/owner/pets')}>
-            ← Quay lại danh sách
-          </Button>
         </div>
       </div>
     );
@@ -103,163 +99,138 @@ export default function PetDetailPage() {
   return (
     <div className="dashboard-container">
       <DashboardHeader
-        title={`Chi tiết thú cưng: ${pet.name}`}
-        subtitle="Xem đầy đủ thông tin và lịch sử chăm sóc"
+        title="Chi tiết thú cưng"
+        subtitle="Thông tin đầy đủ về thú cưng của bạn"
       />
 
-      {/* Action Buttons */}
-      <div className="action-bar">
-        <Button variant="secondary" onClick={() => router.push('/dashboard/owner/pets')}>
-          ← Quay lại
-        </Button>
-        <Button onClick={() => router.push(`/dashboard/owner/pets/${pet.id}/edit`)}>
-          ✏️ Chỉnh sửa
-        </Button>
+      {/* Back Button */}
+      <div className="section-separated">
+        <button
+          onClick={() => router.back()}
+          className="btn-back"
+        >
+          <span>←</span>
+          <span>Quay lại</span>
+        </button>
       </div>
 
       {/* Pet Profile Card */}
-      <div className="pet-profile-card">
-        <div className="pet-profile-header">
-          <div className="pet-profile-avatar">{pet.icon}</div>
-          <div className="pet-profile-info">
-            <h2 className="pet-profile-name">{pet.name}</h2>
-            <p className="pet-profile-breed">{pet.breed}</p>
-            <div className="pet-profile-badges">
-              <span className="profile-badge">
-                🏷️ {pet.id}
-              </span>
-              <span className={`health-badge ${pet.healthStatus === 'Khỏe mạnh' ? 'health-good' : 'health-warning'}`}>
-                ❤️ {pet.healthStatus}
-              </span>
+      <div className="section-separated">
+        <div className="pet-detail-profile">
+          <div className="pet-profile-header">
+            <div className="pet-avatar-section">
+              <span className="pet-avatar-huge">{pet.icon}</span>
             </div>
-          </div>
-        </div>
-
-        <div className="pet-profile-grid">
-          <div className="profile-item">
-            <span className="profile-icon">🐾</span>
-            <div>
-              <p className="profile-label">Loài</p>
-              <p className="profile-value">{pet.species}</p>
-            </div>
-          </div>
-
-          <div className="profile-item">
-            <span className="profile-icon">🎂</span>
-            <div>
-              <p className="profile-label">Tuổi</p>
-              <p className="profile-value">{pet.age} tuổi</p>
-            </div>
-          </div>
-
-          <div className="profile-item">
-            <span className="profile-icon">📅</span>
-            <div>
-              <p className="profile-label">Ngày sinh</p>
-              <p className="profile-value">{pet.birthDate}</p>
-            </div>
-          </div>
-
-          <div className="profile-item">
-            <span className="profile-icon">⚖️</span>
-            <div>
-              <p className="profile-label">Cân nặng</p>
-              <p className="profile-value">{pet.weight} kg</p>
-            </div>
-          </div>
-
-          <div className="profile-item">
-            <span className="profile-icon">🚻</span>
-            <div>
-              <p className="profile-label">Giới tính</p>
-              <p className="profile-value">{pet.gender}</p>
-            </div>
-          </div>
-
-          <div className="profile-item">
-            <span className="profile-icon">🎨</span>
-            <div>
-              <p className="profile-label">Màu sắc</p>
-              <p className="profile-value">{pet.color}</p>
-            </div>
-          </div>
-        </div>
-
-        {pet.notes && (
-          <div className="profile-notes">
-            <h4 className="notes-title">📝 Ghi chú</h4>
-            <p className="notes-content">{pet.notes}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Vaccination History */}
-      <div className="section-card">
-        <h3 className="section-title">💉 Lịch sử tiêm phòng</h3>
-        <div className="vaccination-list">
-          {pet.vaccinations.map((vac, idx) => (
-            <div key={idx} className="vaccination-item">
-              <div className="vaccination-icon">💉</div>
-              <div className="vaccination-info">
-                <h4 className="vaccination-name">{vac.name}</h4>
-                <p className="vaccination-detail">
-                  <span className="detail-label">Ngày tiêm:</span> {vac.date}
-                </p>
-                <p className="vaccination-detail">
-                  <span className="detail-label">Bác sĩ:</span> {vac.vet}
-                </p>
-              </div>
-              <div className="vaccination-next">
-                <p className="next-label">Mũi tiếp theo</p>
-                <p className="next-date">{vac.nextDate}</p>
+            <div className="pet-profile-info">
+              <h1 className="pet-profile-name">{pet.name}</h1>
+              <p className="pet-profile-breed">{pet.breed}</p>
+              <div className="pet-profile-tags">
+                <span className="profile-tag tag-type">{pet.type}</span>
+                <span className="profile-tag tag-gender">{pet.gender}</span>
+                <span className="profile-tag tag-age">{pet.age}</span>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* Service History */}
-      <div className="section-card">
-        <h3 className="section-title">✨ Lịch sử dịch vụ</h3>
-        <div className="service-history-list">
-          {pet.serviceHistory.map((service, idx) => (
-            <div key={idx} className="service-history-item">
-              <div className="service-date">
-                <div className="date-day">{new Date(service.date).getDate()}</div>
-                <div className="date-month">Th{new Date(service.date).getMonth() + 1}</div>
-              </div>
-              <div className="service-info">
-                <h4 className="service-name">
-                  <span className="service-icon-history">{service.icon}</span>
-                  {service.service}
-                </h4>
-                <p className="service-result">{service.result}</p>
-                <p className="service-staff">
-                  👤 {service.vet || service.staff}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Medical Notes */}
-      {pet.medicalNotes && pet.medicalNotes.length > 0 && (
-        <div className="section-card">
-          <h3 className="section-title">🩺 Ghi chú y tế</h3>
-          <div className="medical-notes-list">
-            {pet.medicalNotes.map((note, idx) => (
-              <div key={idx} className="medical-note-item">
-                <div className="note-header">
-                  <span className="note-date">{note.date}</span>
-                  <span className="note-vet">👨‍⚕️ {note.vet}</span>
+          {/* Basic Info */}
+          <div className="pet-detail-section">
+            <h3 className="detail-section-title">
+              <span className="title-icon">📊</span>
+              Thông tin cơ bản
+            </h3>
+            <div className="detail-info-grid">
+              <div className="detail-info-card">
+                <span className="detail-icon">⚖️</span>
+                <div>
+                  <p className="detail-label">Cân nặng</p>
+                  <p className="detail-value">{pet.weight}</p>
                 </div>
-                <p className="note-content">{note.note}</p>
               </div>
-            ))}
+              <div className="detail-info-card">
+                <span className="detail-icon">🎨</span>
+                <div>
+                  <p className="detail-label">Màu lông</p>
+                  <p className="detail-value">{pet.color}</p>
+                </div>
+              </div>
+              <div className="detail-info-card">
+                <span className="detail-icon">🎂</span>
+                <div>
+                  <p className="detail-label">Ngày sinh</p>
+                  <p className="detail-value">{pet.dateOfBirth}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Medical History */}
+          <div className="pet-detail-section">
+            <h3 className="detail-section-title">
+              <span className="title-icon">🏥</span>
+              Lịch sử y tế
+            </h3>
+            <div className="medical-history-box">
+              <p className="medical-text">{pet.medicalHistory}</p>
+            </div>
+          </div>
+
+          {/* Vaccinations */}
+          <div className="pet-detail-section">
+            <h3 className="detail-section-title">
+              <span className="title-icon">💉</span>
+              Lịch sử tiêm phòng
+            </h3>
+            <div className="vaccinations-list">
+              {pet.vaccinations.map((vac, index) => (
+                <div key={index} className="vaccination-item">
+                  <div className="vaccination-info">
+                    <p className="vaccination-name">{vac.name}</p>
+                    <p className="vaccination-date">Đã tiêm: {vac.date}</p>
+                  </div>
+                  <div className="vaccination-next">
+                    <p className="next-label">Tiêm tiếp:</p>
+                    <p className="next-date">{vac.nextDue}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Appointments History */}
+          <div className="pet-detail-section">
+            <h3 className="detail-section-title">
+              <span className="title-icon">📅</span>
+              Lịch sử dịch vụ
+            </h3>
+            <div className="appointments-history-list">
+              {pet.appointments.map((apt, index) => (
+                <div key={index} className="appointment-history-item">
+                  <div className="appointment-date-badge">
+                    <span>{apt.date}</span>
+                  </div>
+                  <div className="appointment-info">
+                    <p className="appointment-service">{apt.service}</p>
+                    <p className={`appointment-status status-${apt.status === 'Hoàn thành' ? 'completed' : 'upcoming'}`}>
+                      {apt.status === 'Hoàn thành' ? '✓' : '⏳'} {apt.status}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div className="pet-detail-section">
+            <h3 className="detail-section-title">
+              <span className="title-icon">📝</span>
+              Ghi chú
+            </h3>
+            <div className="notes-box">
+              <p className="notes-content">{pet.notes}</p>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
