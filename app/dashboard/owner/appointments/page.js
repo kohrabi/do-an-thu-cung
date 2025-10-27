@@ -294,7 +294,7 @@ export default function OwnerAppointmentsPage() {
                     </span>
                   </div>
                   <div className="appointment-datetime">
-                    <p className="appointment-date">📅 {apt.date}</p>
+                    <p className="appointment-date padding">📅 {apt.date}</p>
                     <p className="appointment-time">🕐 {apt.time}</p>
                   </div>
                 </div>
