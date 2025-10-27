@@ -1,22 +1,23 @@
-// app/(dashboard)/care-staff/today/page.js
 "use client";
 import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import CareNoteModal from "@/components/modals/CareNoteModal";
 
 export default function CareStaffTodayPage() {
   const [todayTasks, setTodayTasks] = useState([]);
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
 
   useEffect(() => {
     loadTodayTasks();
   }, []);
 
   const loadTodayTasks = () => {
-    // Mock data - Công việc hôm nay 2025-10-27
     setTodayTasks([
       {
         id: "TASK001",
-        time: "09:00",
+        time: "09:00 AM",
         type: "service",
         title: "Tắm & Spa cho Lucky",
         petName: "Lucky",
@@ -32,7 +33,7 @@ export default function CareStaffTodayPage() {
       },
       {
         id: "TASK002",
-        time: "10:30",
+        time: "10:30 AM",
         type: "service",
         title: "Cắt tỉa lông cho Miu",
         petName: "Miu",
@@ -48,7 +49,7 @@ export default function CareStaffTodayPage() {
       },
       {
         id: "TASK003",
-        time: "14:00",
+        time: "02:00 PM",
         type: "service",
         title: "Vệ sinh tai cho Coco",
         petName: "Coco",
@@ -64,7 +65,7 @@ export default function CareStaffTodayPage() {
       },
       {
         id: "TASK004",
-        time: "15:30",
+        time: "03:30 PM",
         type: "service",
         title: "Chải lông cho Max",
         petName: "Max",
@@ -80,7 +81,7 @@ export default function CareStaffTodayPage() {
       },
       {
         id: "TASK005",
-        time: "16:30",
+        time: "04:30 PM",
         type: "reminder",
         title: "Kiểm tra dụng cụ",
         description: "Kiểm tra và vệ sinh dụng cụ chăm sóc",
@@ -89,7 +90,7 @@ export default function CareStaffTodayPage() {
       },
       {
         id: "TASK006",
-        time: "17:00",
+        time: "05:00 PM",
         type: "reminder",
         title: "Cập nhật báo cáo",
         description: "Hoàn thiện báo cáo công việc trong ngày",
@@ -116,6 +117,17 @@ export default function CareStaffTodayPage() {
       task.id === taskId ? { ...task, status: "completed" } : task
     ));
     showToast("✅ Đã hoàn thành công việc!");
+  };
+
+  const handleOpenNoteModal = (task) => {
+    console.log('🎯 Opening modal with task:', task);
+    setSelectedTask(task);
+    setIsNoteModalOpen(true);
+  };
+
+  const handleNoteSuccess = (data) => {
+    console.log("Note saved:", data);
+    showToast("✅ Đã lưu ghi chú chăm sóc!");
   };
 
   const getStatusBadge = (status) => {
@@ -257,7 +269,25 @@ export default function CareStaffTodayPage() {
                       ▶️ Bắt đầu
                     </button>
                   )}
-                  {task.status === 'in_progress' && (
+                  
+                  {task.status === 'in_progress' && task.type === 'service' && (
+                    <>
+                      <button
+                        onClick={() => handleOpenNoteModal(task)}
+                        className="btn-task-action btn-note"
+                      >
+                        📝 Ghi chú
+                      </button>
+                      <button
+                        onClick={() => handleCompleteTask(task.id)}
+                        className="btn-task-action btn-complete"
+                      >
+                        ✓ Hoàn thành
+                      </button>
+                    </>
+                  )}
+                  
+                  {task.status === 'in_progress' && task.type === 'reminder' && (
                     <button
                       onClick={() => handleCompleteTask(task.id)}
                       className="btn-task-action btn-complete"
@@ -265,6 +295,7 @@ export default function CareStaffTodayPage() {
                       ✓ Hoàn thành
                     </button>
                   )}
+                  
                   {task.status === 'completed' && (
                     <span className="task-completed-text">✅ Đã xong</span>
                   )}
@@ -274,6 +305,19 @@ export default function CareStaffTodayPage() {
           })}
         </div>
       </div>
+
+      {/* Modal */}
+      {isNoteModalOpen && selectedTask && (
+        <CareNoteModal
+          isOpen={isNoteModalOpen}
+          onClose={() => {
+            setIsNoteModalOpen(false);
+            setSelectedTask(null);
+          }}
+          onSuccess={handleNoteSuccess}
+          task={selectedTask}
+        />
+      )}
 
       {/* Toast */}
       {toast.show && (
