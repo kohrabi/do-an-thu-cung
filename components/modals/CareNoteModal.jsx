@@ -1,497 +1,383 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function CareNoteModal({ isOpen, onClose, onSuccess, task }) {
-  const [formData, setFormData] = useState({
-    noteBefore: "",
-    noteAfter: "",
-    healthObservation: ""
-  });
-
+  const [noteBefore, setNoteBefore] = useState("");
+  const [noteAfter, setNoteAfter] = useState("");
+  const [health, setHealth] = useState("");
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (task && isOpen) {
-      console.log('🐾 MODAL OPENED WITH TASK:', task);
-      setFormData({
-        noteBefore: task.noteBefore || "",
-        noteAfter: task.noteAfter || "",
-        healthObservation: task.healthObservation || ""
-      });
-    }
-  }, [task, isOpen]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.noteBefore.trim()) {
-      newErrors.noteBefore = "Vui lòng nhập ghi chú trước dịch vụ";
-    }
-    if (!formData.noteAfter.trim()) {
-      newErrors.noteAfter = "Vui lòng nhập ghi chú sau dịch vụ";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onSuccess({ taskId: task.id, noteData: formData });
-      setFormData({ noteBefore: "", noteAfter: "", healthObservation: "" });
-      setErrors({});
-      onClose();
-    }, 1000);
-  };
 
   if (!isOpen || !task) return null;
 
-  // DEBUG
-  console.table({
-    'Pet Name': task.petName || 'MISSING',
-    'Pet Type': task.petType || 'MISSING',
-    'Owner Name': task.ownerName || 'MISSING',
-    'Service': task.service || 'MISSING'
-  });
+  // ===== DEBUG LOG - QUAN TRỌNG =====
+  console.log('========================================');
+  console.log('🔍 MODAL RECEIVED TASK:', task);
+  console.log('📛 Pet Name:', task.petName);
+  console.log('🐾 Pet Type:', task.petType);
+  console.log('👤 Owner Name:', task.ownerName);
+  console.log('🛁 Service:', task.service);
+  console.log('🕐 Time:', task.time);
+  console.log('📦 ALL KEYS:', Object.keys(task));
+  console.log('📦 FULL OBJECT:', JSON.stringify(task, null, 2));
+  console.log('========================================');
+  // ===================================
 
-  const modalStyles = {
-    overlay: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999,
-      padding: '1rem'
-    },
-    container: {
-      backgroundColor: 'white',
-      borderRadius: '16px',
-      width: '100%',
-      maxWidth: '900px',
-      maxHeight: '90vh',
-      display: 'flex',
-      flexDirection: 'column',
-      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
-    },
-    header: {
-      padding: '1.5rem',
-      borderBottom: '1px solid #E5E7EB',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    },
-    title: {
-      fontSize: '1.5rem',
-      fontWeight: 700,
-      color: '#1F2937',
-      margin: 0,
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem'
-    },
-    closeBtn: {
-      width: '40px',
-      height: '40px',
-      borderRadius: '50%',
-      border: 'none',
-      background: '#F3F4F6',
-      fontSize: '1.25rem',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      transition: 'all 0.2s'
-    },
-    body: {
-      padding: '1.5rem',
-      overflowY: 'auto',
-      flex: 1
-    },
-    petCard: {
-      padding: '1.5rem',
-      background: 'linear-gradient(135deg, #FFF5F7 0%, #FFE4E9 100%)',
-      borderRadius: '12px',
-      marginBottom: '1.5rem',
-      border: '2px solid #FFD4DC'
-    },
-    petHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1.25rem',
-      marginBottom: '1.25rem',
-      flexWrap: 'wrap'
-    },
-    petAvatar: {
-      fontSize: '4rem',
-      width: '80px',
-      height: '80px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'white',
-      borderRadius: '50%',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-      flexShrink: 0
-    },
-    petInfo: {
-      flex: 1,
-      minWidth: '200px'
-    },
-    petName: {
-      fontSize: '1.5rem',
-      fontWeight: 700,
-      color: '#1F2937',
-      margin: '0 0 0.375rem 0'
-    },
-    petBreed: {
-      fontSize: '0.9375rem',
-      color: '#6B7280',
-      margin: 0
-    },
-    infoGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-      gap: '1rem',
-      padding: '1rem',
-      background: 'white',
-      borderRadius: '10px'
-    },
-    infoItem: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem'
-    },
-    infoIcon: {
-      fontSize: '1.75rem',
-      flexShrink: 0
-    },
-    infoContent: {
-      minWidth: 0,
-      flex: 1
-    },
-    infoLabel: {
-      fontSize: '0.75rem',
-      color: '#9CA3AF',
-      textTransform: 'uppercase',
-      fontWeight: 600,
-      margin: '0 0 0.25rem 0',
-      letterSpacing: '0.05em'
-    },
-    infoValue: {
-      fontSize: '0.9375rem',
-      color: '#1F2937',
-      fontWeight: 600,
-      margin: 0,
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
-    },
-    formGroup: {
-      marginBottom: '1.5rem'
-    },
-    label: {
-      display: 'block',
-      fontSize: '0.875rem',
-      fontWeight: 600,
-      color: '#374151',
-      marginBottom: '0.5rem'
-    },
-    required: {
-      color: '#EF4444',
-      marginLeft: '0.25rem'
-    },
-    textarea: {
-      width: '100%',
-      padding: '0.75rem',
-      borderRadius: '8px',
-      fontSize: '0.9375rem',
-      fontFamily: 'inherit',
-      resize: 'vertical',
-      outline: 'none',
-      transition: 'all 0.2s',
-      boxSizing: 'border-box'
-    },
-    hint: {
-      fontSize: '0.8125rem',
-      color: '#6B7280',
-      fontStyle: 'italic',
-      marginTop: '0.5rem',
-      marginBottom: 0,
-      lineHeight: 1.5
-    },
-    error: {
-      color: '#EF4444',
-      fontSize: '0.8125rem',
-      marginTop: '0.25rem',
-      marginBottom: 0
-    },
-    footer: {
-      padding: '1.5rem',
-      borderTop: '1px solid #E5E7EB',
-      display: 'flex',
-      justifyContent: 'flex-end',
-      gap: '0.75rem',
-      flexWrap: 'wrap'
-    },
-    btnSecondary: {
-      padding: '0.75rem 1.5rem',
-      border: '2px solid #E5E7EB',
-      borderRadius: '8px',
-      background: 'white',
-      color: '#374151',
-      fontSize: '0.9375rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      transition: 'all 0.2s'
-    },
-    btnPrimary: {
-      padding: '0.75rem 1.5rem',
-      border: 'none',
-      borderRadius: '8px',
-      background: 'linear-gradient(135deg, #FF6B9D 0%, #FF8FB3 100%)',
-      color: 'white',
-      fontSize: '0.9375rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      transition: 'all 0.2s',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem'
-    },
-    btnDisabled: {
-      background: '#D1D5DB',
-      cursor: 'not-allowed'
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    const newErrors = {};
+    if (!noteBefore.trim()) {
+      newErrors.noteBefore = "Vui lòng nhập ghi chú trước dịch vụ";
     }
+    if (!noteAfter.trim()) {
+      newErrors.noteAfter = "Vui lòng nhập ghi chú sau dịch vụ";
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    if (onSuccess) {
+      onSuccess({
+        taskId: task.id,
+        noteData: { noteBefore, noteAfter, healthObservation: health }
+      });
+    }
+    
+    setNoteBefore("");
+    setNoteAfter("");
+    setHealth("");
+    setErrors({});
+    onClose();
   };
 
-  const getTextareaStyle = (fieldName) => ({
-    ...modalStyles.textarea,
-    border: `2px solid ${errors[fieldName] ? '#EF4444' : '#E5E7EB'}`
-  });
+  // Lấy giá trị với nhiều fallback
+  const petName = task.petName || task.name || task.pet?.name || 'TÊN KHÔNG CÓ';
+  const petType = task.petType || task.type || task.breed || task.pet?.type || 'LOẠI KHÔNG CÓ';
+  const ownerName = task.ownerName || task.owner || task.customer || task.customerName || 'CHỦ KHÔNG CÓ';
+
+  console.log('🎨 DISPLAY VALUES:');
+  console.log('   Pet Name:', petName);
+  console.log('   Pet Type:', petType);
+  console.log('   Owner Name:', ownerName);
 
   return (
-    <div style={modalStyles.overlay} onClick={onClose}>
-      <div style={modalStyles.container} onClick={(e) => e.stopPropagation()}>
-        
-        <div style={modalStyles.header}>
-          <h2 style={modalStyles.title}>
-            <span>📝</span>
-            Ghi chú chăm sóc
+    <div 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0,0,0,0.5)',
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}
+      onClick={onClose}
+    >
+      <div 
+        style={{
+          background: 'white',
+          borderRadius: '16px',
+          width: '100%',
+          maxWidth: '800px',
+          maxHeight: '90vh',
+          overflow: 'auto'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div style={{
+          padding: '20px',
+          borderBottom: '1px solid #eee',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700 }}>
+            📝 Ghi chú chăm sóc
           </h2>
-          <button
+          <button 
             onClick={onClose}
-            style={modalStyles.closeBtn}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = '#EF4444';
-              e.currentTarget.style.color = 'white';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = '#F3F4F6';
-              e.currentTarget.style.color = 'inherit';
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              border: 'none',
+              background: '#f3f4f6',
+              fontSize: '20px',
+              cursor: 'pointer'
             }}
           >
             ✕
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-          
-          <div style={modalStyles.body}>
-            
-            {/* Pet Info Card - VỚI FALLBACK */}
-            <div style={modalStyles.petCard}>
-              <div style={modalStyles.petHeader}>
-                <span style={modalStyles.petAvatar}>
-                  {task.petIcon || '🐾'}
-                </span>
-                <div style={modalStyles.petInfo}>
-                  <h3 style={modalStyles.petName}>
-                    {task.petName || 'Tên thú cưng không có'}
-                  </h3>
-                  <p style={modalStyles.petBreed}>
-                    {task.petType || 'Loại: Chưa có thông tin'}
-                  </p>
-                </div>
-              </div>
-
-              <div style={modalStyles.infoGrid}>
-                <div style={modalStyles.infoItem}>
-                  <span style={modalStyles.infoIcon}>{task.serviceIcon || '🛁'}</span>
-                  <div style={modalStyles.infoContent}>
-                    <p style={modalStyles.infoLabel}>DỊCH VỤ</p>
-                    <p style={modalStyles.infoValue}>
-                      {task.service || 'Không có dịch vụ'}
-                    </p>
-                  </div>
-                </div>
-
-                <div style={modalStyles.infoItem}>
-                  <span style={modalStyles.infoIcon}>🕐</span>
-                  <div style={modalStyles.infoContent}>
-                    <p style={modalStyles.infoLabel}>GIỜ</p>
-                    <p style={modalStyles.infoValue}>{task.time || '--:--'}</p>
-                  </div>
-                </div>
-
-                <div style={modalStyles.infoItem}>
-                  <span style={modalStyles.infoIcon}>👤</span>
-                  <div style={modalStyles.infoContent}>
-                    <p style={modalStyles.infoLabel}>CHỦ NUÔI</p>
-                    <p style={modalStyles.infoValue}>
-                      {task.ownerName || 'Chưa có tên chủ'}
-                    </p>
-                  </div>
-                </div>
-              </div>
+        {/* Pet Info Card */}
+        <div style={{
+          padding: '20px',
+          background: 'linear-gradient(135deg, #FFF5F7 0%, #FFE4E9 100%)',
+          margin: '20px',
+          borderRadius: '12px',
+          border: '2px solid #FFD4DC'
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '20px', 
+            marginBottom: '20px',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              background: 'white',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '50px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              flexShrink: 0
+            }}>
+              {task.petIcon || task.icon || '🐾'}
             </div>
-
-            {/* Form fields... (giữ nguyên) */}
-            <div style={modalStyles.formGroup}>
-              <label style={modalStyles.label}>
-                📋 Ghi chú trước dịch vụ
-                <span style={modalStyles.required}>*</span>
-              </label>
-              <textarea
-                name="noteBefore"
-                value={formData.noteBefore}
-                onChange={handleChange}
-                placeholder="Tình trạng ban đầu của thú cưng..."
-                rows="4"
-                style={getTextareaStyle('noteBefore')}
-                onFocus={(e) => {
-                  if (!errors.noteBefore) {
-                    e.target.style.borderColor = '#FF6B9D';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 157, 0.1)';
-                  }
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = errors.noteBefore ? '#EF4444' : '#E5E7EB';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-              {errors.noteBefore && <p style={modalStyles.error}>{errors.noteBefore}</p>}
-              <p style={modalStyles.hint}>
-                💡 Ghi nhận tình trạng sức khỏe trước khi bắt đầu dịch vụ
+            <div style={{ flex: 1, minWidth: '200px' }}>
+              <h3 style={{ 
+                margin: '0 0 8px 0', 
+                fontSize: '24px', 
+                fontWeight: 700,
+                color: '#1F2937'
+              }}>
+                {petName}
+              </h3>
+              <p style={{ 
+                margin: 0, 
+                color: '#6B7280', 
+                fontSize: '16px' 
+              }}>
+                {petType}
               </p>
             </div>
-
-            <div style={modalStyles.formGroup}>
-              <label style={modalStyles.label}>
-                ✅ Ghi chú sau dịch vụ
-                <span style={modalStyles.required}>*</span>
-              </label>
-              <textarea
-                name="noteAfter"
-                value={formData.noteAfter}
-                onChange={handleChange}
-                placeholder="Quá trình thực hiện, phản ứng..."
-                rows="4"
-                style={getTextareaStyle('noteAfter')}
-                onFocus={(e) => {
-                  if (!errors.noteAfter) {
-                    e.target.style.borderColor = '#FF6B9D';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 157, 0.1)';
-                  }
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = errors.noteAfter ? '#EF4444' : '#E5E7EB';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-              {errors.noteAfter && <p style={modalStyles.error}>{errors.noteAfter}</p>}
-              <p style={modalStyles.hint}>
-                💡 Mô tả chi tiết quá trình chăm sóc
-              </p>
-            </div>
-
-            <div style={modalStyles.formGroup}>
-              <label style={modalStyles.label}>
-                ❤️ Quan sát sức khỏe
-              </label>
-              <textarea
-                name="healthObservation"
-                value={formData.healthObservation}
-                onChange={handleChange}
-                placeholder="Nhiệt độ, nhịp thở..."
-                rows="4"
-                style={getTextareaStyle('healthObservation')}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#FF6B9D';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 157, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#E5E7EB';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-              <p style={modalStyles.hint}>
-                💡 Ghi chú về sức khỏe tổng quát
-              </p>
-            </div>
-
           </div>
 
-          <div style={modalStyles.footer}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '15px',
+            background: 'white',
+            padding: '15px',
+            borderRadius: '10px'
+          }}>
+            <div>
+              <p style={{ 
+                margin: '0 0 5px 0', 
+                fontSize: '11px', 
+                color: '#9CA3AF', 
+                textTransform: 'uppercase', 
+                fontWeight: 600,
+                letterSpacing: '0.05em'
+              }}>
+                DỊCH VỤ
+              </p>
+              <p style={{ 
+                margin: 0, 
+                fontSize: '15px', 
+                fontWeight: 600,
+                color: '#1F2937'
+              }}>
+                {task.serviceIcon || '🛁'} {task.service || task.serviceName || 'Không có'}
+              </p>
+            </div>
+            <div>
+              <p style={{ 
+                margin: '0 0 5px 0', 
+                fontSize: '11px', 
+                color: '#9CA3AF', 
+                textTransform: 'uppercase', 
+                fontWeight: 600,
+                letterSpacing: '0.05em'
+              }}>
+                GIỜ
+              </p>
+              <p style={{ 
+                margin: 0, 
+                fontSize: '15px', 
+                fontWeight: 600,
+                color: '#1F2937'
+              }}>
+                🕐 {task.time || task.startTime || 'Không có'}
+              </p>
+            </div>
+            <div>
+              <p style={{ 
+                margin: '0 0 5px 0', 
+                fontSize: '11px', 
+                color: '#9CA3AF', 
+                textTransform: 'uppercase', 
+                fontWeight: 600,
+                letterSpacing: '0.05em'
+              }}>
+                CHỦ NUÔI
+              </p>
+              <p style={{ 
+                margin: 0, 
+                fontSize: '15px', 
+                fontWeight: 600,
+                color: '#1F2937',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}>
+                👤 {ownerName}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ padding: '20px' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              fontWeight: 600,
+              fontSize: '14px',
+              color: '#374151'
+            }}>
+              📋 Ghi chú trước dịch vụ <span style={{ color: '#EF4444' }}>*</span>
+            </label>
+            <textarea
+              value={noteBefore}
+              onChange={(e) => {
+                setNoteBefore(e.target.value);
+                if (errors.noteBefore) {
+                  setErrors(prev => ({ ...prev, noteBefore: "" }));
+                }
+              }}
+              placeholder="Tình trạng ban đầu của thú cưng..."
+              rows="4"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: `2px solid ${errors.noteBefore ? '#EF4444' : '#e5e7eb'}`,
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontFamily: 'inherit',
+                boxSizing: 'border-box',
+                outline: 'none'
+              }}
+            />
+            {errors.noteBefore && (
+              <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>
+                {errors.noteBefore}
+              </p>
+            )}
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              fontWeight: 600,
+              fontSize: '14px',
+              color: '#374151'
+            }}>
+              ✅ Ghi chú sau dịch vụ <span style={{ color: '#EF4444' }}>*</span>
+            </label>
+            <textarea
+              value={noteAfter}
+              onChange={(e) => {
+                setNoteAfter(e.target.value);
+                if (errors.noteAfter) {
+                  setErrors(prev => ({ ...prev, noteAfter: "" }));
+                }
+              }}
+              placeholder="Quá trình thực hiện..."
+              rows="4"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: `2px solid ${errors.noteAfter ? '#EF4444' : '#e5e7eb'}`,
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontFamily: 'inherit',
+                boxSizing: 'border-box',
+                outline: 'none'
+              }}
+            />
+            {errors.noteAfter && (
+              <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>
+                {errors.noteAfter}
+              </p>
+            )}
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              fontWeight: 600,
+              fontSize: '14px',
+              color: '#374151'
+            }}>
+              ❤️ Quan sát sức khỏe
+            </label>
+            <textarea
+              value={health}
+              onChange={(e) => setHealth(e.target.value)}
+              placeholder="Nhiệt độ, nhịp thở..."
+              rows="4"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontFamily: 'inherit',
+                boxSizing: 'border-box',
+                outline: 'none'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
             <button
               type="button"
               onClick={onClose}
-              style={modalStyles.btnSecondary}
+              style={{
+                padding: '12px 24px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                background: 'white',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
             >
               Hủy
             </button>
             <button
               type="submit"
-              disabled={loading}
               style={{
-                ...modalStyles.btnPrimary,
-                ...(loading ? modalStyles.btnDisabled : {})
+                padding: '12px 24px',
+                border: 'none',
+                borderRadius: '8px',
+                background: 'linear-gradient(135deg, #FF6B9D 0%, #FF8FB3 100%)',
+                color: 'white',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: 'pointer'
               }}
             >
-              {loading ? (
-                <>
-                  <span style={{
-                    width: '16px',
-                    height: '16px',
-                    border: '2px solid white',
-                    borderTopColor: 'transparent',
-                    borderRadius: '50%',
-                    display: 'inline-block',
-                    animation: 'spin 0.6s linear infinite'
-                  }}></span>
-                  Đang lưu...
-                </>
-              ) : (
-                <>
-                  <span>💾</span>
-                  Lưu ghi chú
-                </>
-              )}
+              💾 Lưu ghi chú
             </button>
           </div>
         </form>
-
-        <style jsx>{`
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
       </div>
     </div>
   );
