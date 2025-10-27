@@ -18,13 +18,13 @@ const menuItems = {
   veterinarian: [
     { icon: "🏠", label: "Tổng quan", path: "/dashboard/vet" },
     { icon: "📅", label: "Lịch làm việc", path: "/dashboard/vet/schedule" },
-    { icon: "📋", label: "Công việc hôm nay", path: "/dashboard/vet/tasks" },
-    { icon: "🐾", label: "Thú cưng", path: "/dashboard/vet/pets" }
+    { icon: "📋", label: "Công việc hôm nay", path: "/dashboard/vet/today" },
+    { icon: "🐾", label: "Bệnh nhân", path: "/dashboard/vet/patients" }
   ],
   care_staff: [
-    { icon: "🏠", label: "Tổng quan", path: "/dashboard/staff" },
-    { icon: "📅", label: "Lịch làm việc", path: "/dashboard/staff/schedule" },
-    { icon: "📋", label: "Công việc hôm nay", path: "/dashboard/staff/tasks" }
+    { icon: "🏠", label: "Tổng quan", path: "/dashboard/care-staff" },
+    { icon: "📅", label: "Lịch làm việc", path: "/dashboard/care-staff/schedule" },
+    { icon: "📋", label: "Công việc hôm nay", path: "/dashboard/care-staff/tasks" }
   ],
   receptionist: [
     { icon: "🏠", label: "Tổng quan", path: "/dashboard/receptionist" },
