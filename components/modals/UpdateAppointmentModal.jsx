@@ -1,212 +1,544 @@
-// components/modals/UpdateAppointmentModal.jsx
 "use client";
 import { useState, useEffect } from "react";
-import Button from "@/components/ui/Button";
-
-const STATUS_OPTIONS = [
-  { value: "pending", label: "Đang chờ", icon: "⏳", color: "bg-yellow-100 text-yellow-800" },
-  { value: "confirmed", label: "Đã xác nhận", icon: "✅", color: "bg-green-100 text-green-800" },
-  { value: "in_progress", label: "Đang thực hiện", icon: "🔄", color: "bg-blue-100 text-blue-800" },
-  { value: "completed", label: "Hoàn thành", icon: "✓", color: "bg-emerald-100 text-emerald-800" },
-  { value: "cancelled", label: "Đã hủy", icon: "✕", color: "bg-red-100 text-red-800" }
-];
 
 export default function UpdateAppointmentModal({ isOpen, onClose, onSuccess, appointment, staffList }) {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     status: "",
     assignedStaffId: "",
     notes: ""
   });
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (appointment) {
-      setForm({
+    if (appointment && isOpen) {
+      setFormData({
         status: appointment.status || "pending",
         assignedStaffId: appointment.assignedStaffId || "",
         notes: appointment.notes || ""
       });
+      setErrors({});
     }
-  }, [appointment]);
+  }, [appointment, isOpen]);
+
+  const statuses = [
+    { value: "pending", label: "Đang chờ", icon: "⏳", color: "#F59E0B" },
+    { value: "confirmed", label: "Đã xác nhận", icon: "✅", color: "#10B981" },
+    { value: "in_progress", label: "Đang thực hiện", icon: "🔄", color: "#3B82F6" },
+    { value: "completed", label: "Hoàn thành", icon: "✓", color: "#10B981" },
+    { value: "cancelled", label: "Đã hủy", icon: "✕", color: "#EF4444" }
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
 
-  const validate = () => {
-    const newErrors = {};
-    if (!form.status) newErrors.status = "Vui lòng chọn trạng thái";
-    return newErrors;
+  const handleStatusChange = (statusValue) => {
+    setFormData(prev => ({ ...prev, status: statusValue }));
+    if (errors.status) {
+      setErrors(prev => ({ ...prev, status: "" }));
+    }
   };
 
-  const handleSubmit = async (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.status) {
+      newErrors.status = "Vui lòng chọn trạng thái";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
+    
     setTimeout(() => {
       setLoading(false);
-      onSuccess({ ...form, appointmentId: appointment.id });
+      onSuccess({
+        appointmentId: appointment.id,
+        status: formData.status,
+        assignedStaffId: formData.assignedStaffId,
+        notes: formData.notes
+      });
       onClose();
-    }, 800);
+    }, 1000);
   };
 
   if (!isOpen || !appointment) return null;
 
-  const canChangeStatus = (currentStatus, newStatus) => {
-    const statusFlow = {
-      "pending": ["confirmed", "cancelled"],
-      "confirmed": ["in_progress", "cancelled"],
-      "in_progress": ["completed"],
-      "completed": [],
-      "cancelled": []
+  const getStaffLabel = (staff) => {
+    const roleLabels = {
+      veterinarian: "Bác sĩ thú y",
+      care_staff: "Nhân viên chăm sóc",
+      receptionist: "Lễ tân"
     };
-    return statusFlow[currentStatus]?.includes(newStatus) || currentStatus === newStatus;
+    return `${staff.name} - ${roleLabels[staff.role] || staff.role}`;
   };
 
-  const filteredStaff = staffList.filter(staff => {
-    if (appointment.serviceCategory === "medical") {
-      return staff.role === "veterinarian";
-    }
-    return staff.role === "care_staff" || staff.role === "veterinarian";
-  });
-
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container modal-large" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">📝 Cập nhật lịch đặt</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
+    <div 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}
+      onClick={onClose}
+    >
+      <div 
+        style={{
+          background: 'white',
+          borderRadius: '16px',
+          width: '100%',
+          maxWidth: '700px',
+          maxHeight: '90vh',
+          overflow: 'auto',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div style={{
+          padding: '20px',
+          borderBottom: '1px solid #E5E7EB',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: 'linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)'
+        }}>
+          <h2 style={{ 
+            margin: 0, 
+            fontSize: '24px', 
+            fontWeight: 700, 
+            color: '#1F2937',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <span>📅</span>
+            <span>Cập nhật lịch đặt</span>
+          </h2>
+          <button 
+            type="button"
+            onClick={onClose}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              border: 'none',
+              background: '#F3F4F6',
+              fontSize: '20px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = '#EF4444';
+              e.currentTarget.style.color = 'white';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = '#F3F4F6';
+              e.currentTarget.style.color = 'inherit';
+            }}
+          >
+            ✕
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="modal-body">
-          {/* Appointment Info */}
-          <div className="appointment-update-info">
-            <div className="update-info-header">
-              <span className="update-icon">{appointment.petIcon}</span>
-              <div>
-                <h4 className="update-pet-name">{appointment.petName}</h4>
-                <p className="update-service">{appointment.serviceIcon} {appointment.serviceName}</p>
-                <p className="update-datetime">
-                  📅 {appointment.date} • 🕐 {appointment.time}
+        <form onSubmit={handleSubmit} style={{ padding: '20px' }}>
+          {/* Pet Info Card */}
+          <div style={{
+            padding: '20px',
+            background: 'linear-gradient(135deg, #FFF5F7 0%, #FFE4E9 100%)',
+            borderRadius: '12px',
+            marginBottom: '20px',
+            border: '2px solid #FFD4DC'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '15px',
+              marginBottom: '15px'
+            }}>
+              <span style={{ 
+                fontSize: '50px',
+                width: '70px',
+                height: '70px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'white',
+                borderRadius: '50%',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+              }}>
+                {appointment.petIcon}
+              </span>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ 
+                  margin: '0 0 5px 0', 
+                  fontSize: '22px', 
+                  fontWeight: 700,
+                  color: '#1F2937'
+                }}>
+                  {appointment.petName}
+                </h3>
+                <p style={{ 
+                  margin: 0, 
+                  color: '#6B7280', 
+                  fontSize: '14px' 
+                }}>
+                  👤 {appointment.customerName}
                 </p>
               </div>
             </div>
-            <div className="update-customer">
-              <span className="customer-icon">👤</span>
-              <span>{appointment.customerName}</span>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '12px',
+              background: 'white',
+              padding: '15px',
+              borderRadius: '10px'
+            }}>
+              <div>
+                <p style={{ 
+                  margin: '0 0 5px 0', 
+                  fontSize: '11px', 
+                  color: '#9CA3AF',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px'
+                }}>
+                  {appointment.serviceIcon} DỊCH VỤ
+                </p>
+                <p style={{ 
+                  margin: 0, 
+                  fontSize: '14px', 
+                  fontWeight: 600,
+                  color: '#1F2937'
+                }}>
+                  {appointment.serviceName}
+                </p>
+              </div>
+
+              <div>
+                <p style={{ 
+                  margin: '0 0 5px 0', 
+                  fontSize: '11px', 
+                  color: '#9CA3AF',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px'
+                }}>
+                  📅 NGÀY GIỜ
+                </p>
+                <p style={{ 
+                  margin: 0, 
+                  fontSize: '14px', 
+                  fontWeight: 600,
+                  color: '#1F2937'
+                }}>
+                  {appointment.date} • {appointment.time}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Status Selection */}
-          <div className="input-group">
-            <label className="input-label">
-              Trạng thái <span className="text-red-500">*</span>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '10px', 
+              fontSize: '14px',
+              fontWeight: 600,
+              color: '#374151'
+            }}>
+              📊 Trạng thái <span style={{ color: '#EF4444' }}>*</span>
             </label>
-            <div className="status-selection-grid">
-              {STATUS_OPTIONS.map(status => {
-                const isDisabled = !canChangeStatus(appointment.status, status.value);
-                return (
-                  <label
-                    key={status.value}
-                    className={`status-option ${form.status === status.value ? 'status-selected' : ''} ${isDisabled ? 'status-disabled' : ''}`}
-                  >
-                    <input
-                      type="radio"
-                      name="status"
-                      value={status.value}
-                      checked={form.status === status.value}
-                      onChange={handleChange}
-                      disabled={isDisabled}
-                      className="hidden"
-                    />
-                    <span className={`status-badge-large ${status.color}`}>
-                      <span className="status-icon-large">{status.icon}</span>
-                      <span className="status-label-large">{status.label}</span>
-                    </span>
-                    {isDisabled && <span className="disabled-overlay">🔒</span>}
-                  </label>
-                );
-              })}
+            
+            <div style={{ 
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+              gap: '10px'
+            }}>
+              {statuses.map(status => (
+                <label
+                  key={status.value}
+                  style={{
+                    padding: '12px',
+                    border: `2px solid ${formData.status === status.value ? status.color : '#E5E7EB'}`,
+                    borderRadius: '8px',
+                    background: formData.status === status.value ? `${status.color}15` : 'white',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseOver={(e) => {
+                    if (formData.status !== status.value) {
+                      e.currentTarget.style.borderColor = status.color;
+                      e.currentTarget.style.background = `${status.color}08`;
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (formData.status !== status.value) {
+                      e.currentTarget.style.borderColor = '#E5E7EB';
+                      e.currentTarget.style.background = 'white';
+                    }
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="status"
+                    value={status.value}
+                    checked={formData.status === status.value}
+                    onChange={() => handleStatusChange(status.value)}
+                    style={{ 
+                      margin: 0,
+                      cursor: 'pointer',
+                      width: '16px',
+                      height: '16px'
+                    }}
+                  />
+                  <span style={{ fontSize: '18px' }}>{status.icon}</span>
+                  <span style={{ 
+                    fontSize: '14px', 
+                    fontWeight: 600,
+                    color: formData.status === status.value ? status.color : '#6B7280'
+                  }}>
+                    {status.label}
+                  </span>
+                </label>
+              ))}
             </div>
-            {errors.status && <p className="error-message">{errors.status}</p>}
-            <p className="input-hint">
-              💡 Luồng trạng thái: Đang chờ → Đã xác nhận → Đang thực hiện → Hoàn thành
-            </p>
+
+            {errors.status && (
+              <p style={{ 
+                color: '#EF4444', 
+                fontSize: '13px', 
+                margin: '8px 0 0 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}>
+                <span>⚠️</span>
+                <span>{errors.status}</span>
+              </p>
+            )}
+
+            {/* Status Flow Info */}
+            <div style={{
+              marginTop: '12px',
+              padding: '12px',
+              background: '#F9FAFB',
+              borderRadius: '8px',
+              border: '1px solid #E5E7EB'
+            }}>
+              <p style={{ 
+                margin: '0 0 5px 0', 
+                fontSize: '13px', 
+                fontWeight: 600,
+                color: '#6B7280'
+              }}>
+                💡 Luồng trạng thái:
+              </p>
+              <p style={{ 
+                margin: 0, 
+                fontSize: '13px', 
+                color: '#6B7280',
+                lineHeight: 1.6
+              }}>
+                Đang chờ → Đã xác nhận → Đang thực hiện → Hoàn thành
+              </p>
+            </div>
           </div>
 
-          {/* Staff Assignment */}
-          <div className="input-group">
-            <label className="input-label">
-              Phân công nhân viên
+          {/* Assigned Staff */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              fontSize: '14px',
+              fontWeight: 600,
+              color: '#374151'
+            }}>
+              👨‍⚕️ Phân công nhân viên
             </label>
             <select
               name="assignedStaffId"
-              value={form.assignedStaffId}
+              value={formData.assignedStaffId}
               onChange={handleChange}
-              className="input-field"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #E5E7EB',
+                borderRadius: '8px',
+                fontSize: '15px',
+                boxSizing: 'border-box',
+                outline: 'none',
+                cursor: 'pointer',
+                transition: 'border-color 0.2s'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#10B981';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#E5E7EB';
+              }}
             >
               <option value="">-- Chưa phân công --</option>
-              {filteredStaff.map(staff => (
+              {staffList && staffList.map(staff => (
                 <option key={staff.id} value={staff.id}>
-                  {staff.role === 'veterinarian' ? '👨‍⚕️' : '🧑‍🔧'} {staff.name} - {staff.role === 'veterinarian' ? 'Bác sĩ' : 'Nhân viên'}
+                  {getStaffLabel(staff)}
                 </option>
               ))}
             </select>
-            <p className="input-hint">
-              {appointment.serviceCategory === "medical" 
-                ? "💉 Dịch vụ y tế chỉ được phân cho bác sĩ thú y"
-                : "✨ Có thể phân công cho bác sĩ hoặc nhân viên chăm sóc"
-              }
+            <p style={{
+              fontSize: '13px',
+              color: '#6B7280',
+              margin: '5px 0 0 0',
+              fontStyle: 'italic'
+            }}>
+              🩺 Dịch vụ y tế chỉ được phân cho bác sĩ thú y
             </p>
           </div>
 
           {/* Notes */}
-          <div className="input-group">
-            <label className="input-label">Ghi chú quản lý</label>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              fontSize: '14px',
+              fontWeight: 600,
+              color: '#374151'
+            }}>
+              📝 Ghi chú quản lý
+            </label>
             <textarea
               name="notes"
-              value={form.notes}
+              value={formData.notes}
               onChange={handleChange}
-              className="input-field"
-              rows="3"
               placeholder="Ghi chú nội bộ về lịch hẹn..."
+              rows="4"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #E5E7EB',
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontFamily: 'inherit',
+                boxSizing: 'border-box',
+                outline: 'none',
+                resize: 'vertical',
+                transition: 'border-color 0.2s'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#10B981';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#E5E7EB';
+              }}
             />
           </div>
 
-          {/* History */}
-          {appointment.updateHistory && appointment.updateHistory.length > 0 && (
-            <div className="update-history">
-              <h4 className="history-title">📜 Lịch sử cập nhật</h4>
-              <div className="history-list">
-                {appointment.updateHistory.map((history, idx) => (
-                  <div key={idx} className="history-item">
-                    <span className="history-time">{history.time}</span>
-                    <span className="history-text">{history.action}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="modal-footer">
-            <Button type="button" variant="secondary" onClick={onClose}>
+          {/* Buttons */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            justifyContent: 'flex-end',
+            paddingTop: '15px',
+            borderTop: '1px solid #E5E7EB'
+          }}>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              style={{
+                padding: '12px 24px',
+                border: '2px solid #E5E7EB',
+                borderRadius: '8px',
+                background: 'white',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                color: '#6B7280',
+                transition: 'all 0.2s',
+                opacity: loading ? 0.5 : 1
+              }}
+            >
               Hủy
-            </Button>
-            <Button type="submit" loading={loading}>
-              ✅ Cập nhật
-            </Button>
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                padding: '12px 24px',
+                border: 'none',
+                borderRadius: '8px',
+                background: loading 
+                  ? '#D1D5DB' 
+                  : 'linear-gradient(135deg, #10B981 0%, #34D399 100%)',
+                color: 'white',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              {loading ? (
+                <>
+                  <span style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid white',
+                    borderTopColor: 'transparent',
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    animation: 'spin 0.6s linear infinite'
+                  }}></span>
+                  <span>Đang cập nhật...</span>
+                </>
+              ) : (
+                <>
+                  <span>✅</span>
+                  <span>Cập nhật</span>
+                </>
+              )}
+            </button>
           </div>
         </form>
+
+        <style jsx>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     </div>
   );
