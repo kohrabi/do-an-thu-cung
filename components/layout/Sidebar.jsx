@@ -18,6 +18,7 @@ const menuItems = {
   veterinarian: [
     { icon: "🏠", label: "Tổng quan", path: "/dashboard/vet" },
     { icon: "📅", label: "Lịch làm việc", path: "/dashboard/vet/schedule" },
+    { icon: "👥", label: "Hồ sơ bệnh án", path: "/dashboard/vet/records" },
     { icon: "📋", label: "Công việc hôm nay", path: "/dashboard/vet/today" },
     { icon: "🐾", label: "Bệnh nhân", path: "/dashboard/vet/patients" }
   ],
