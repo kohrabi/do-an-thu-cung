@@ -1,6 +1,4 @@
-// FILE: app/(dashboard)/manager/appointments/page.js
-// THAY THẾ TOÀN BỘ NỘI DUNG CŨ
-
+// app/(dashboard)/manager/appointments/page.js
 "use client";
 import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
@@ -19,14 +17,12 @@ export default function ManagerAppointmentsPage() {
   }, []);
 
   const loadData = () => {
-    // Mock staff
     setStaffList([
       { id: "EMP001", name: "Nguyễn Văn A", role: "veterinarian" },
       { id: "EMP002", name: "Trần Thị B", role: "care_staff" },
       { id: "EMP003", name: "Lê Văn C", role: "care_staff" }
     ]);
 
-    // Mock appointments
     setAppointments([
       {
         id: "APT001",
@@ -137,7 +133,7 @@ export default function ManagerAppointmentsPage() {
         subtitle="Theo dõi, phân công và điều phối lịch hẹn"
       />
 
-      {/* 1. STATS SECTION - TÁCH RIÊNG */}
+      {/* 1. STATS */}
       <div className="section-separated">
         <div className="stats-grid-custom">
           <div className="stat-card-modern stat-primary">
@@ -182,7 +178,7 @@ export default function ManagerAppointmentsPage() {
         </div>
       </div>
 
-      {/* 2. SEARCH SECTION - BÊN PHẢI */}
+      {/* 2. SEARCH */}
       <div className="section-separated">
         <div className="search-section-right">
           <div className="search-box-modern">
@@ -198,7 +194,7 @@ export default function ManagerAppointmentsPage() {
         </div>
       </div>
 
-      {/* 3. TABLE SECTION - VỚI DÒNG "DANH SÁCH LỊCH ĐẶT" */}
+      {/* 3. TABLE */}
       <div className="section-separated">
         <div className="section-header-modern">
           <h2 className="section-title-large">
@@ -208,18 +204,18 @@ export default function ManagerAppointmentsPage() {
           <span className="section-count">{filteredAppointments.length} lịch hẹn</span>
         </div>
 
-        <div className="table-modern-wrapper">
-          <table className="table-modern">
+        <div className="table-wide-wrapper">
+          <table className="table-wide-spacing">
             <thead>
               <tr>
-                <th style={{ width: '10%' }}>Mã lịch</th>
-                <th style={{ width: '18%' }}>Khách hàng</th>
-                <th style={{ width: '15%' }}>Thú cưng</th>
-                <th style={{ width: '15%' }}>Dịch vụ</th>
-                <th style={{ width: '12%' }}>Ngày & Giờ</th>
-                <th style={{ width: '15%' }}>Nhân viên</th>
-                <th style={{ width: '10%' }}>Trạng thái</th>
-                <th style={{ width: '5%' }}>Thao tác</th>
+                <th className="col-code">Mã lịch</th>
+                <th className="col-customer">Khách hàng</th>
+                <th className="col-pet">Thú cưng</th>
+                <th className="col-service">Dịch vụ</th>
+                <th className="col-datetime">Ngày & Giờ</th>
+                <th className="col-staff">Nhân viên</th>
+                <th className="col-status">Trạng thái</th>
+                <th className="col-action">Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -227,61 +223,66 @@ export default function ManagerAppointmentsPage() {
                 const statusBadge = getStatusBadge(apt.status);
                 return (
                   <tr key={apt.id}>
-                    <td>
-                      <span className="staff-id-badge">{apt.code}</span>
+                    <td className="col-code">
+                      <span className="code-badge">{apt.code}</span>
                     </td>
-                    <td>
-                      <div className="staff-name-cell">
-                        <span className="staff-name">{apt.customerName}</span>
-                        <span className="staff-specialization">{apt.customerPhone}</span>
+                    
+                    <td className="col-customer">
+                      <div className="customer-info">
+                        <p className="customer-name">{apt.customerName}</p>
+                        <p className="customer-phone">{apt.customerPhone}</p>
                       </div>
                     </td>
-                    <td>
-                      <div className="pet-info-cell">
-                        <span className="pet-icon-cell">{apt.petIcon}</span>
-                        <span>{apt.petName}</span>
+                    
+                    <td className="col-pet">
+                      <div className="pet-info">
+                        <span className="pet-emoji">{apt.petIcon}</span>
+                        <span className="pet-name">{apt.petName}</span>
                       </div>
                     </td>
-                    <td>
-                      <div className="service-info-cell">
-                        <span className="service-icon-cell">{apt.serviceIcon}</span>
-                        <span>{apt.serviceName}</span>
+                    
+                    <td className="col-service">
+                      <div className="service-info">
+                        <span className="service-emoji">{apt.serviceIcon}</span>
+                        <span className="service-name">{apt.serviceName}</span>
                       </div>
                     </td>
-                    <td>
-                      <div className="staff-name-cell">
-                        <span className="staff-name">{apt.date}</span>
-                        <span className="staff-specialization">🕐 {apt.time}</span>
+                    
+                    <td className="col-datetime">
+                      <div className="datetime-info">
+                        <p className="datetime-date">{apt.date}</p>
+                        <p className="datetime-time">🕐 {apt.time}</p>
                       </div>
                     </td>
-                    <td>
+                    
+                    <td className="col-staff">
                       {apt.assignedStaffName ? (
-                        <div className="staff-assigned-cell">
-                          <span className="staff-icon-small">
+                        <div className="staff-info">
+                          <span className="staff-emoji">
                             {apt.serviceCategory === 'medical' ? '👨‍⚕️' : '🧑‍🔧'}
                           </span>
-                          <span>{apt.assignedStaffName}</span>
+                          <span className="staff-name">{apt.assignedStaffName}</span>
                         </div>
                       ) : (
-                        <span className="text-gray-400 italic">Chưa phân công</span>
+                        <span className="not-assigned">Chưa phân công</span>
                       )}
                     </td>
-                    <td>
-                      <span className={`status-badge-modern ${statusBadge.class}`}>
-                        <span className="badge-icon">{statusBadge.icon}</span>
-                        <span>{statusBadge.label}</span>
+                    
+                    <td className="col-status">
+                      <span className={`status-badge-wide ${statusBadge.class}`}>
+                        <span className="status-icon">{statusBadge.icon}</span>
+                        <span className="status-text">{statusBadge.label}</span>
                       </span>
                     </td>
-                    <td>
-                      <div className="action-buttons-modern">
-                        <button
-                          onClick={() => handleOpenUpdate(apt)}
-                          className="btn-icon-action btn-edit-icon"
-                          title="Cập nhật"
-                        >
-                          ✏️
-                        </button>
-                      </div>
+                    
+                    <td className="col-action">
+                      <button
+                        onClick={() => handleOpenUpdate(apt)}
+                        className="btn-update-wide"
+                      >
+                        <span className="btn-icon">✏️</span>
+                        <span className="btn-text">Cập nhật</span>
+                      </button>
                     </td>
                   </tr>
                 );
@@ -298,7 +299,6 @@ export default function ManagerAppointmentsPage() {
         </div>
       </div>
 
-      {/* MODAL */}
       <UpdateAppointmentModal
         isOpen={isUpdateModalOpen}
         onClose={() => {
@@ -310,7 +310,6 @@ export default function ManagerAppointmentsPage() {
         staffList={staffList}
       />
 
-      {/* TOAST */}
       {toast.show && (
         <div className={`toast toast-${toast.type}`}>
           {toast.message}
