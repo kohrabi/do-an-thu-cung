@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import UpdateAppointmentModal from "@/components/modals/UpdateAppointmentModal";
-
 export default function ManagerAppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
   const [staffList, setStaffList] = useState([]);
