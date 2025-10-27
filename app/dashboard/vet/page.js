@@ -103,9 +103,14 @@ export default function VeterinarianDashboard() {
       onClick: () => router.push("/dashboard/vet/schedule")
     },
     {
-      icon: "📋",
+      icon: "👥",
       label: "Hồ sơ bệnh án",
       onClick: () => router.push("/dashboard/vet/records")
+    },
+    {
+      icon: "📋",
+      label: "Công việc hôm nay",
+      onClick: () => router.push("/dashboard/vet/today")
     },
     {
       icon: "🐾",
