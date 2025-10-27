@@ -24,7 +24,7 @@ const menuItems = {
   care_staff: [
     { icon: "🏠", label: "Tổng quan", path: "/dashboard/care-staff" },
     { icon: "📅", label: "Lịch làm việc", path: "/dashboard/care-staff/schedule" },
-    { icon: "📋", label: "Công việc hôm nay", path: "/dashboard/care-staff/tasks" }
+    { icon: "📋", label: "Công việc hôm nay", path: "/dashboard/care-staff/today" }
   ],
   receptionist: [
     { icon: "🏠", label: "Tổng quan", path: "/dashboard/receptionist" },
