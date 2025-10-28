@@ -30,7 +30,10 @@ const menuItems = {
   receptionist: [
     { icon: "🏠", label: "Tổng quan", path: "/dashboard/receptionist" },
     { icon: "📅", label: "Đặt lịch", path: "/dashboard/receptionist/appointments" },
-    { icon: "💳", label: "Thanh toán", path: "/dashboard/receptionist/payments" }
+    { icon: "📄", label: "Phiếu hẹn", path: "/dashboard/receptionist/slips" },
+    { icon: "🔔", label: "Nhắc lịch", path: "/dashboard/receptionist/reminders" },
+    { icon: "💳", label: "Thanh toán", path: "/dashboard/receptionist/payments" },
+    { icon: "👥", label: "Khách hàng", path: "/dashboard/receptionist/customers" }
   ],
   pet_owner: [
     { icon: "🏠", label: "Tổng quan", path: "/dashboard/owner" },
