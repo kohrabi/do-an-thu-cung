@@ -26,7 +26,7 @@ export default function DashboardHeader({ title, subtitle }) {
       </div>
       <div className="header-actions">
         <div className="time-display">
-          <div className="time-icon">🕐</div>
+          <div className="time-icon"></div>
           <div>
             <div className="time-value">
               {currentTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
