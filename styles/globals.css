@@ -74,6 +74,15 @@ body {
   border-bottom: 1px solid #e5e7eb;
 }
 
+.auth-header a {
+  text-decoration: none;
+}
+
+.auth-header a:hover,
+.auth-header a:focus-visible {
+  text-decoration: none;
+}
+
 .auth-main {
   flex: 1;
   position: relative;
