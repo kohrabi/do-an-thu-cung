@@ -1,5 +1,24 @@
+// components/modals/EditStaffModal.jsx
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Edit, 
+  Hash, 
+  User, 
+  Mail, 
+  Phone, 
+  Briefcase, 
+  X, 
+  Save,
+  Loader2,
+  GraduationCap
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import Input from "@/components/ui/Input";
+import { Select } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function EditStaffModal({ isOpen, onClose, onSuccess, staff }) {
   const [formData, setFormData] = useState({
@@ -28,9 +47,9 @@ export default function EditStaffModal({ isOpen, onClose, onSuccess, staff }) {
   }, [staff, isOpen]);
 
   const roles = [
-    { value: "vet", label: "Bác sĩ thú y 🩺", icon: "🩺" },
-    { value: "care_staff", label: "Nhân viên chăm sóc 🐾", icon: "🐾" },
-    { value: "receptionist", label: "Lễ tân 📋", icon: "📋" }
+    { value: "vet", label: "Bác sĩ thú y" },
+    { value: "care_staff", label: "Nhân viên chăm sóc" },
+    { value: "receptionist", label: "Lễ tân" }
   ];
 
   const handleChange = (e) => {
@@ -64,219 +83,82 @@ export default function EditStaffModal({ isOpen, onClose, onSuccess, staff }) {
     }, 1000);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !staff) return null;
 
   return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.5)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px'
-      }}
-      onClick={onClose}
-    >
-      <div 
-        style={{
-          background: 'white',
-          borderRadius: '16px',
-          width: '100%',
-          maxWidth: '600px',
-          maxHeight: '90vh',
-          overflow: 'auto'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div style={{
-          padding: '20px',
-          borderBottom: '1px solid #eee',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#1F2937' }}>
-            ✏️ Chỉnh sửa nhân viên
-          </h2>
-          <button 
-            onClick={onClose}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: 'none',
-              background: '#f3f4f6',
-              fontSize: '20px',
-              cursor: 'pointer'
-            }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} style={{ padding: '20px' }}>
-          {/* Staff ID */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontSize: '14px',
-              fontWeight: 600,
-              color: '#374151'
-            }}>
-              Mã nhân viên
-            </label>
-            <input
-              type="text"
-              value={formData.id}
-              disabled
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '2px solid #e5e7eb',
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                background: '#f9fafb',
-                color: '#6b7280'
-              }}
-            />
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <Edit className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Chỉnh sửa nhân viên</DialogTitle>
           </div>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Staff ID */}
+          <Input
+            label="Mã nhân viên"
+            name="id"
+            type="text"
+            value={formData.id}
+            disabled
+            icon={Hash}
+          />
 
           {/* Name */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontSize: '14px',
-              fontWeight: 600,
-              color: '#374151'
-            }}>
-              Họ và tên <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Nhập họ và tên"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.name ? '#EF4444' : '#e5e7eb'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-            />
-            {errors.name && (
-              <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>
-                {errors.name}
-              </p>
-            )}
-          </div>
+          <Input
+            label="Họ và tên"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Nhập họ và tên"
+            error={errors.name}
+            icon={User}
+            required
+          />
 
           {/* Email */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontSize: '14px',
-              fontWeight: 600,
-              color: '#374151'
-            }}>
-              Email <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="email@example.com"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.email ? '#EF4444' : '#e5e7eb'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-            />
-            {errors.email && (
-              <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>
-                {errors.email}
-              </p>
-            )}
-          </div>
+          <Input
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="email@example.com"
+            error={errors.email}
+            icon={Mail}
+            required
+          />
 
           {/* Phone */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontSize: '14px',
-              fontWeight: 600,
-              color: '#374151'
-            }}>
-              Số điện thoại <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="0901234567"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.phone ? '#EF4444' : '#e5e7eb'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-            />
-            {errors.phone && (
-              <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>
-                {errors.phone}
-              </p>
-            )}
-          </div>
+          <Input
+            label="Số điện thoại"
+            name="phone"
+            type="tel"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="0901234567"
+            error={errors.phone}
+            icon={Phone}
+            required
+          />
 
           {/* Role */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontSize: '14px',
-              fontWeight: 600,
-              color: '#374151'
-            }}>
-              Vai trò <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <select
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-muted-foreground" />
+              Vai trò
+              <span className="text-destructive">*</span>
+            </Label>
+            <Select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.role ? '#EF4444' : '#e5e7eb'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
+              className={cn(errors.role && "border-destructive")}
             >
               <option value="">-- Chọn vai trò --</option>
               {roles.map(role => (
@@ -284,79 +166,52 @@ export default function EditStaffModal({ isOpen, onClose, onSuccess, staff }) {
                   {role.label}
                 </option>
               ))}
-            </select>
+            </Select>
             {errors.role && (
-              <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>
-                {errors.role}
-              </p>
+              <p className="text-sm text-destructive">{errors.role}</p>
             )}
           </div>
 
           {/* Specialty */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontSize: '14px',
-              fontWeight: 600,
-              color: '#374151'
-            }}>
-              Chuyên môn
-            </label>
-            <input
-              type="text"
-              name="specialty"
-              value={formData.specialty}
-              onChange={handleChange}
-              placeholder="VD: Bác sĩ thú y tổng quát"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '2px solid #e5e7eb',
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-            />
-          </div>
+          <Input
+            label="Chuyên môn"
+            name="specialty"
+            type="text"
+            value={formData.specialty}
+            onChange={handleChange}
+            placeholder="VD: Bác sĩ thú y tổng quát"
+            icon={GraduationCap}
+          />
 
           {/* Buttons */}
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-            <button
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              style={{
-                padding: '12px 24px',
-                border: '2px solid #e5e7eb',
-                borderRadius: '8px',
-                background: 'white',
-                fontSize: '15px',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
             >
+              <X className="h-4 w-4" />
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              style={{
-                padding: '12px 24px',
-                border: 'none',
-                borderRadius: '8px',
-                background: loading ? '#9333ea80' : 'linear-gradient(135deg, #9333EA 0%, #A855F7 100%)',
-                color: 'white',
-                fontSize: '15px',
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
             >
-              {loading ? '⏳ Đang lưu...' : '💾 Lưu thay đổi'}
-            </button>
-          </div>
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang lưu...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" />
+                  Lưu thay đổi
+                </>
+              )}
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
