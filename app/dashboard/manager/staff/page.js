@@ -1,13 +1,20 @@
-// FILE: app/(dashboard)/manager/staff/page.js
-// THAY THẾ TOÀN BỘ NỘI DUNG CŨ BẰNG CODE NÀY
-
 "use client";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { 
+  Users, Plus, Search, Edit, CheckCircle2, XCircle, 
+  Pause, Stethoscope, Wrench, Briefcase, ClipboardList 
+} from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import { Card, CardContent } from "@/components/ui/card";
+import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/badge";
+import StatsCard from "@/components/dashboard/StatsCard";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import AddStaffModal from "@/components/modals/AddStaffModal";
 import EditStaffModal from "@/components/modals/EditStaffModal";
+import { cn } from "@/lib/utils";
 
 export default function ManagerStaffPage() {
   const searchParams = useSearchParams();
@@ -23,7 +30,6 @@ export default function ManagerStaffPage() {
       setIsAddModalOpen(true);
     }
 
-    // Mock data
     setStaffList([
       {
         id: "EMP001",
@@ -85,7 +91,7 @@ export default function ManagerStaffPage() {
       joinDate: new Date().toISOString().split('T')[0]
     };
     setStaffList([...staffList, staff]);
-    showToast("✅ Đã thêm nhân viên thành công!");
+    showToast("Đã thêm nhân viên thành công!", "success");
   };
 
   const handleEditStaff = (updatedData) => {
@@ -100,7 +106,7 @@ export default function ManagerStaffPage() {
           }
         : staff
     ));
-    showToast("💾 Cập nhật nhân viên thành công!");
+    showToast("Cập nhật nhân viên thành công!", "success");
   };
 
   const handleToggleStatus = (staffId) => {
@@ -109,7 +115,7 @@ export default function ManagerStaffPage() {
       setStaffList(staffList.map(s =>
         s.id === staffId ? { ...s, isActive: !s.isActive } : s
       ));
-      showToast("✅ Đã cập nhật trạng thái nhân viên");
+      showToast("Đã cập nhật trạng thái nhân viên", "success");
     }
   };
 
@@ -126,9 +132,21 @@ export default function ManagerStaffPage() {
 
   const getRoleBadge = (role) => {
     const badges = {
-      veterinarian: { label: "Bác sĩ", class: "badge-vet", icon: "👨‍⚕️" },
-      care_staff: { label: "Nhân viên", class: "badge-staff", icon: "🧑‍🔧" },
-      receptionist: { label: "Lễ tân", class: "badge-reception", icon: "💼" }
+      veterinarian: { 
+        label: "Bác sĩ", 
+        variant: "info", 
+        icon: Stethoscope 
+      },
+      care_staff: { 
+        label: "Nhân viên", 
+        variant: "secondary", 
+        icon: Wrench 
+      },
+      receptionist: { 
+        label: "Lễ tân", 
+        variant: "default", 
+        icon: Briefcase 
+      }
     };
     return badges[role] || badges.care_staff;
   };
@@ -140,159 +158,157 @@ export default function ManagerStaffPage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="p-6 space-y-6">
       <DashboardHeader
         title="Quản lý nhân viên"
         subtitle="Thêm, chỉnh sửa và quản lý thông tin nhân viên"
       />
 
-      {/* 1. STATS SECTION - TÁCH RIÊNG */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">👥</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tổng nhân viên</p>
-              <h3 className="stat-number">{stats.total}</h3>
-            </div>
-          </div>
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <StatsCard
+          icon={Users}
+          title="Tổng nhân viên"
+          value={stats.total}
+          color="primary"
+        />
+        <StatsCard
+          icon={CheckCircle2}
+          title="Đang hoạt động"
+          value={stats.active}
+          color="success"
+        />
+        <StatsCard
+          icon={Pause}
+          title="Ngưng hoạt động"
+          value={stats.inactive}
+          color="warning"
+        />
+      </div>
 
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✅</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang hoạt động</p>
-              <h3 className="stat-number">{stats.active}</h3>
-            </div>
-          </div>
+      {/* Add Button & Search */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <Button
+          onClick={() => setIsAddModalOpen(true)}
+          className="w-full sm:w-auto"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Thêm nhân viên mới
+        </Button>
 
-          <div className="stat-card-modern stat-danger">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">⏸️</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Ngưng hoạt động</p>
-              <h3 className="stat-number">{stats.inactive}</h3>
-            </div>
-          </div>
+        <div className="w-full sm:w-64">
+          <Input
+            type="text"
+            placeholder="Tìm kiếm theo tên, email hoặc mã nhân viên..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            icon={Search}
+          />
         </div>
       </div>
 
-      {/* 2. ADD BUTTON SECTION - TÁCH RIÊNG */}
-      <div className="section-separated">
-        <div className="action-button-section">
-          <Button 
-            onClick={() => setIsAddModalOpen(true)}
-            className="btn-add-large"
-          >
-            <span className="btn-icon">➕</span>
-            <span>Thêm nhân viên mới</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* 3. SEARCH SECTION - BÊN PHẢI */}
-      <div className="section-separated">
-        <div className="search-section-right">
-          <div className="search-box-modern">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo tên, email hoặc mã nhân viên..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-modern"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 4. TABLE SECTION - VỚI DÒNG "DANH SÁCH NHÂN VIÊN" */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      {/* Table */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-primary" />
             Danh sách nhân viên
           </h2>
-          <span className="section-count">{filteredStaff.length} nhân viên</span>
+          <Badge variant="outline" className="text-sm">
+            {filteredStaff.length} nhân viên
+          </Badge>
         </div>
 
-        <div className="table-modern-wrapper">
-          <table className="table-modern">
-            <thead>
-              <tr>
-                <th style={{ width: '12%' }}>Mã NV</th>
-                <th style={{ width: '20%' }}>Họ và tên</th>
-                <th style={{ width: '18%' }}>Email</th>
-                <th style={{ width: '13%' }}>Số điện thoại</th>
-                <th style={{ width: '15%' }}>Vai trò</th>
-                <th style={{ width: '12%' }}>Trạng thái</th>
-                <th style={{ width: '10%' }}>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredStaff.map((staff) => {
-                const badge = getRoleBadge(staff.role);
-                return (
-                  <tr key={staff.id}>
-                    <td>
-                      <span className="staff-id-badge">{staff.id}</span>
-                    </td>
-                    <td>
-                      <div className="staff-name-cell">
-                        <span className="staff-name">{staff.name}</span>
-                        {staff.specialization && (
-                          <span className="staff-specialization">{staff.specialization}</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="text-gray-700">{staff.email}</td>
-                    <td className="text-gray-700">{staff.phone}</td>
-                    <td>
-                      <span className={`role-badge-modern ${badge.class}`}>
-                        <span className="badge-icon">{badge.icon}</span>
-                        <span>{badge.label}</span>
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => handleToggleStatus(staff.id)}
-                        className={`status-toggle-btn ${staff.isActive ? 'status-active-btn' : 'status-inactive-btn'}`}
-                      >
-                        <span className="status-dot"></span>
-                        <span>{staff.isActive ? 'Hoạt động' : 'Ngưng'}</span>
-                      </button>
-                    </td>
-                    <td>
-                      <div className="action-buttons-modern">
-                        <button
+        {filteredStaff.length > 0 ? (
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[12%]">Mã NV</TableHead>
+                  <TableHead className="w-[20%]">Họ và tên</TableHead>
+                  <TableHead className="w-[18%]">Email</TableHead>
+                  <TableHead className="w-[13%]">Số điện thoại</TableHead>
+                  <TableHead className="w-[15%]">Vai trò</TableHead>
+                  <TableHead className="w-[12%]">Trạng thái</TableHead>
+                  <TableHead className="w-[10%] text-right">Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredStaff.map((staff) => {
+                  const badge = getRoleBadge(staff.role);
+                  const BadgeIcon = badge.icon;
+                  return (
+                    <TableRow key={staff.id}>
+                      <TableCell>
+                        <Badge variant="outline" className="font-mono text-xs">
+                          {staff.id}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-semibold text-foreground">{staff.name}</p>
+                          {staff.specialization && (
+                            <p className="text-xs text-muted-foreground">{staff.specialization}</p>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{staff.email}</TableCell>
+                      <TableCell className="text-muted-foreground">{staff.phone}</TableCell>
+                      <TableCell>
+                        <Badge variant={badge.variant} className="flex items-center gap-1 w-fit">
+                          <BadgeIcon className="h-3 w-3" />
+                          {badge.label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => handleToggleStatus(staff.id)}
+                          variant={staff.isActive ? "default" : "secondary"}
+                          size="sm"
+                          className="flex items-center gap-2"
+                        >
+                          {staff.isActive ? (
+                            <>
+                              <CheckCircle2 className="h-3 w-3" />
+                              Hoạt động
+                            </>
+                          ) : (
+                            <>
+                              <Pause className="h-3 w-3" />
+                              Ngưng
+                            </>
+                          )}
+                        </Button>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
                           onClick={() => handleOpenEdit(staff)}
-                          className="btn-icon-action btn-edit-icon"
+                          variant="ghost"
+                          size="icon"
                           title="Chỉnh sửa"
                         >
-                          ✏️
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-
-          {filteredStaff.length === 0 && (
-            <div className="empty-state-modern">
-              <div className="empty-icon">🔍</div>
-              <p className="empty-text">Không tìm thấy nhân viên nào</p>
-            </div>
-          )}
-        </div>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <Search className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground font-medium">
+                Không tìm thấy nhân viên nào
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
-      {/* MODALS */}
+      {/* Modals */}
       <AddStaffModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -309,10 +325,22 @@ export default function ManagerStaffPage() {
         staff={editingStaff}
       />
 
-      {/* TOAST */}
+      {/* Toast Notification */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
-          {toast.message}
+        <div className={cn(
+          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+          toast.type === "success"
+            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+            : "bg-red-100 text-red-800 border border-red-200"
+        )}>
+          <div className="flex items-center gap-2">
+            {toast.type === "success" ? (
+              <CheckCircle2 className="h-5 w-5" />
+            ) : (
+              <XCircle className="h-5 w-5" />
+            )}
+            <p className="font-medium">{toast.message}</p>
+          </div>
         </div>
       )}
     </div>
