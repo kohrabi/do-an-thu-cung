@@ -1,5 +1,23 @@
 "use client";
 import { useState } from "react";
+import { 
+  AlertTriangle, 
+  X, 
+  ArrowLeft, 
+  Check, 
+  Loader2, 
+  PawPrint, 
+  Hospital, 
+  Calendar, 
+  Clock,
+  FileText,
+  Lightbulb
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function CancelAppointmentOwnerModal({ isOpen, onClose, onSuccess, appointment }) {
   const [cancelReason, setCancelReason] = useState("");
@@ -8,12 +26,12 @@ export default function CancelAppointmentOwnerModal({ isOpen, onClose, onSuccess
   const [error, setError] = useState("");
 
   const predefinedReasons = [
-    { value: "schedule_conflict", label: "Trùng lịch, không thể sắp xếp", icon: "📅" },
-    { value: "pet_sick", label: "Thú cưng bị ốm, không thể đi", icon: "🤒" },
-    { value: "emergency", label: "Có việc đột xuất khẩn cấp", icon: "🚨" },
-    { value: "change_service", label: "Muốn thay đổi dịch vụ khác", icon: "🔄" },
-    { value: "change_mind", label: "Không muốn sử dụng dịch vụ nữa", icon: "💭" },
-    { value: "other", label: "Lý do khác", icon: "✍️" }
+    { value: "schedule_conflict", label: "Trùng lịch, không thể sắp xếp", icon: Calendar },
+    { value: "pet_sick", label: "Thú cưng bị ốm, không thể đi", icon: AlertTriangle },
+    { value: "emergency", label: "Có việc đột xuất khẩn cấp", icon: AlertTriangle },
+    { value: "change_service", label: "Muốn thay đổi dịch vụ khác", icon: Hospital },
+    { value: "change_mind", label: "Không muốn sử dụng dịch vụ nữa", icon: FileText },
+    { value: "other", label: "Lý do khác", icon: FileText }
   ];
 
   const handleReasonSelect = (value) => {
@@ -75,366 +93,143 @@ export default function CancelAppointmentOwnerModal({ isOpen, onClose, onSuccess
   if (!isOpen || !appointment) return null;
 
   return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0, 0, 0, 0.6)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px',
-        animation: 'fadeIn 0.2s ease-in'
-      }}
-      onClick={handleClose}
-    >
-      <div 
-        style={{
-          background: 'white',
-          borderRadius: '16px',
-          width: '100%',
-          maxWidth: '600px',
-          maxHeight: '90vh',
-          overflow: 'auto',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
-          animation: 'slideUp 0.3s ease-out'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div style={{
-          padding: '24px',
-          borderBottom: '2px solid #FEE2E2',
-          background: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)'
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            marginBottom: '12px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '24px',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
-              }}>
-                ⚠️
-              </div>
-              <div>
-                <h2 style={{ 
-                  margin: '0 0 4px 0', 
-                  fontSize: '24px', 
-                  fontWeight: 700, 
-                  color: '#991B1B'
-                }}>
-                  Hủy lịch đặt
-                </h2>
-                <p style={{
-                  margin: 0,
-                  fontSize: '13px',
-                  color: '#DC2626',
-                  fontWeight: 500
-                }}>
-                  Bạn có chắc chắn muốn hủy lịch này?
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
+            </div>
+            <div>
+              <DialogTitle>Hủy lịch đặt</DialogTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Bạn có chắc chắn muốn hủy lịch này?
+              </p>
+            </div>
+          </div>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Appointment Info */}
+          <div className="p-5 bg-orange-50 rounded-lg border-2 border-orange-200">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Thông tin lịch đặt
+            </h3>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="text-3xl">{appointment.petIcon || "🐾"}</div>
+              <div className="flex-1">
+                <p className="text-lg font-bold text-foreground mb-1">
+                  {appointment.petName}
+                </p>
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <span>{appointment.serviceIcon || "🏥"}</span>
+                  <span>{appointment.serviceName}</span>
                 </p>
               </div>
             </div>
-            <button 
-              type="button"
-              onClick={handleClose}
-              disabled={loading}
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                border: 'none',
-                background: 'white',
-                fontSize: '18px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: loading ? 0.5 : 1,
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.background = '#EF4444';
-                  e.currentTarget.style.color = 'white';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.background = 'white';
-                  e.currentTarget.style.color = 'inherit';
-                }
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          {/* Appointment Info */}
-          <div style={{ padding: '24px', borderBottom: '1px solid #F3F4F6' }}>
-            <h3 style={{
-              margin: '0 0 16px 0',
-              fontSize: '16px',
-              fontWeight: 600,
-              color: '#6B7280'
-            }}>
-              📋 Thông tin lịch đặt
-            </h3>
-            <div style={{
-              padding: '16px',
-              background: '#FFF7ED',
-              borderRadius: '12px',
-              border: '2px solid #FDBA74'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '32px' }}>{appointment.petIcon}</span>
-                <div>
-                  <p style={{ 
-                    margin: '0 0 4px 0', 
-                    fontSize: '18px', 
-                    fontWeight: 700,
-                    color: '#1F2937'
-                  }}>
-                    {appointment.petName}
-                  </p>
-                  <p style={{ 
-                    margin: 0, 
-                    fontSize: '14px', 
-                    color: '#78716C',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}>
-                    <span>{appointment.serviceIcon}</span>
-                    <span>{appointment.serviceName}</span>
-                  </p>
-                </div>
+            <div className="flex gap-4 pt-4 border-t border-orange-200">
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-muted-foreground mb-1 flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  Ngày
+                </p>
+                <p className="text-sm font-semibold text-foreground">
+                  {appointment.date}
+                </p>
               </div>
-              <div style={{
-                display: 'flex',
-                gap: '16px',
-                marginTop: '12px',
-                paddingTop: '12px',
-                borderTop: '1px solid #FED7AA'
-              }}>
-                <div style={{ flex: 1 }}>
-                  <p style={{ 
-                    margin: '0 0 4px 0', 
-                    fontSize: '12px', 
-                    color: '#78716C',
-                    fontWeight: 600
-                  }}>
-                    📅 Ngày
-                  </p>
-                  <p style={{ 
-                    margin: 0, 
-                    fontSize: '15px', 
-                    fontWeight: 600,
-                    color: '#1F2937'
-                  }}>
-                    {appointment.date}
-                  </p>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ 
-                    margin: '0 0 4px 0', 
-                    fontSize: '12px', 
-                    color: '#78716C',
-                    fontWeight: 600
-                  }}>
-                    🕐 Giờ
-                  </p>
-                  <p style={{ 
-                    margin: 0, 
-                    fontSize: '15px', 
-                    fontWeight: 600,
-                    color: '#1F2937'
-                  }}>
-                    {appointment.time}
-                  </p>
-                </div>
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-muted-foreground mb-1 flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  Giờ
+                </p>
+                <p className="text-sm font-semibold text-foreground">
+                  {appointment.time}
+                </p>
               </div>
             </div>
           </div>
 
           {/* Reason Selection */}
-          <div style={{ padding: '24px' }}>
-            <h3 style={{
-              margin: '0 0 16px 0',
-              fontSize: '16px',
-              fontWeight: 600,
-              color: '#6B7280',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <span>📝</span>
-              <span>Lý do hủy lịch</span>
-              <span style={{ color: '#EF4444' }}>*</span>
-            </h3>
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              Lý do hủy lịch
+              <span className="text-destructive">*</span>
+            </Label>
 
             {/* Predefined Reasons */}
-            <div style={{ 
-              display: 'grid',
-              gap: '12px',
-              marginBottom: '16px'
-            }}>
-              {predefinedReasons.map(reason => (
-                <label
-                  key={reason.value}
-                  style={{
-                    padding: '14px',
-                    border: `2px solid ${selectedReason === reason.value ? '#EF4444' : '#E5E7EB'}`,
-                    borderRadius: '12px',
-                    background: selectedReason === reason.value ? '#FEE2E2' : 'white',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px'
-                  }}
-                  onMouseOver={(e) => {
-                    if (selectedReason !== reason.value) {
-                      e.currentTarget.style.borderColor = '#FCA5A5';
-                      e.currentTarget.style.background = '#FEF2F2';
-                    }
-                  }}
-                  onMouseOut={(e) => {
-                    if (selectedReason !== reason.value) {
-                      e.currentTarget.style.borderColor = '#E5E7EB';
-                      e.currentTarget.style.background = 'white';
-                    }
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    value={reason.value}
-                    checked={selectedReason === reason.value}
-                    onChange={() => handleReasonSelect(reason.value)}
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      cursor: 'pointer',
-                      accentColor: '#EF4444'
-                    }}
-                  />
-                  <span style={{ fontSize: '20px' }}>{reason.icon}</span>
-                  <span style={{ 
-                    fontSize: '15px', 
-                    fontWeight: selectedReason === reason.value ? 600 : 500,
-                    color: selectedReason === reason.value ? '#991B1B' : '#374151',
-                    flex: 1
-                  }}>
-                    {reason.label}
-                  </span>
-                </label>
-              ))}
+            <div className="grid grid-cols-1 gap-3">
+              {predefinedReasons.map(reason => {
+                const ReasonIcon = reason.icon;
+                const isSelected = selectedReason === reason.value;
+                return (
+                  <label
+                    key={reason.value}
+                    className={cn(
+                      "p-4 rounded-lg border-2 cursor-pointer transition-all",
+                      "flex items-center gap-3",
+                      isSelected
+                        ? "bg-red-50 border-red-200"
+                        : "bg-background border-input hover:border-red-200 hover:bg-red-50/50"
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="cancelReason"
+                      value={reason.value}
+                      checked={isSelected}
+                      onChange={() => handleReasonSelect(reason.value)}
+                      className="sr-only"
+                    />
+                    <ReasonIcon className={cn(
+                      "h-5 w-5",
+                      isSelected ? "text-red-600" : "text-muted-foreground"
+                    )} />
+                    <span className={cn(
+                      "text-sm font-medium flex-1",
+                      isSelected ? "text-red-900 font-semibold" : "text-foreground"
+                    )}>
+                      {reason.label}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
 
             {/* Custom Reason Input */}
             {selectedReason === "other" && (
-              <div style={{ marginTop: '16px' }}>
-                <textarea
+              <div className="mt-4">
+                <Textarea
                   value={cancelReason}
                   onChange={(e) => {
                     setCancelReason(e.target.value);
                     setError("");
                   }}
                   placeholder="Nhập lý do hủy lịch của bạn..."
-                  rows="4"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: `2px solid ${error ? '#EF4444' : '#E5E7EB'}`,
-                    borderRadius: '12px',
-                    fontSize: '15px',
-                    fontFamily: 'inherit',
-                    boxSizing: 'border-box',
-                    outline: 'none',
-                    resize: 'vertical',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={(e) => {
-                    if (!error) {
-                      e.target.style.borderColor = '#EF4444';
-                    }
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = error ? '#EF4444' : '#E5E7EB';
-                  }}
+                  rows={4}
+                  className={cn(error && "border-destructive")}
                 />
               </div>
             )}
 
             {/* Error Message */}
             {error && (
-              <div style={{
-                marginTop: '12px',
-                padding: '12px',
-                background: '#FEE2E2',
-                borderRadius: '8px',
-                border: '1px solid #FCA5A5',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <span style={{ fontSize: '18px' }}>⚠️</span>
-                <p style={{ 
-                  margin: 0, 
-                  fontSize: '14px', 
-                  color: '#DC2626',
-                  fontWeight: 500
-                }}>
+              <div className="p-3 bg-red-50 rounded-lg border border-red-200 flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+                <p className="text-sm text-red-900 font-medium">
                   {error}
                 </p>
               </div>
             )}
 
             {/* Warning Box */}
-            <div style={{
-              marginTop: '20px',
-              padding: '16px',
-              background: '#FFFBEB',
-              borderRadius: '12px',
-              border: '2px solid #FCD34D'
-            }}>
-              <p style={{
-                margin: '0 0 8px 0',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: '#92400E',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <span style={{ fontSize: '18px' }}>💡</span>
-                <span>Lưu ý khi hủy lịch</span>
+            <div className="p-4 bg-yellow-50 rounded-lg border-2 border-yellow-200">
+              <p className="text-sm font-semibold text-yellow-900 mb-2 flex items-center gap-2">
+                <Lightbulb className="h-4 w-4" />
+                Lưu ý khi hủy lịch
               </p>
-              <ul style={{
-                margin: 0,
-                paddingLeft: '28px',
-                fontSize: '13px',
-                color: '#78716C',
-                lineHeight: 1.8
-              }}>
+              <ul className="text-xs text-yellow-900 space-y-1 list-disc list-inside leading-relaxed">
                 <li>Lịch hẹn sẽ bị hủy ngay lập tức</li>
                 <li>Bạn có thể đặt lịch mới bất cứ lúc nào</li>
                 <li>Nếu đã thanh toán, vui lòng liên hệ quản lý để hoàn tiền</li>
@@ -443,124 +238,37 @@ export default function CancelAppointmentOwnerModal({ isOpen, onClose, onSuccess
             </div>
           </div>
 
-          {/* Footer Buttons */}
-          <div style={{
-            padding: '20px 24px',
-            borderTop: '2px solid #F3F4F6',
-            background: '#F9FAFB',
-            display: 'flex',
-            gap: '12px',
-            borderRadius: '0 0 16px 16px'
-          }}>
-            <button
+          {/* Footer */}
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleClose}
               disabled={loading}
-              style={{
-                flex: 1,
-                padding: '14px',
-                border: '2px solid #E5E7EB',
-                borderRadius: '12px',
-                background: 'white',
-                color: '#374151',
-                fontSize: '16px',
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.5 : 1,
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.borderColor = '#D1D5DB';
-                  e.currentTarget.style.background = '#F9FAFB';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.borderColor = '#E5E7EB';
-                  e.currentTarget.style.background = 'white';
-                }
-              }}
             >
+              <ArrowLeft className="h-4 w-4" />
               Quay lại
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="destructive"
               disabled={loading}
-              style={{
-                flex: 1,
-                padding: '14px',
-                border: 'none',
-                borderRadius: '12px',
-                background: loading 
-                  ? '#D1D5DB' 
-                  : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
-                color: 'white',
-                fontSize: '16px',
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-              onMouseOver={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(239, 68, 68, 0.4)';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }
-              }}
             >
               {loading ? (
                 <>
-                  <span style={{
-                    width: '16px',
-                    height: '16px',
-                    border: '2px solid white',
-                    borderTopColor: 'transparent',
-                    borderRadius: '50%',
-                    display: 'inline-block',
-                    animation: 'spin 0.6s linear infinite'
-                  }}></span>
-                  <span>Đang xử lý...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang xử lý...
                 </>
               ) : (
                 <>
-                  <span>✓</span>
-                  <span>Xác nhận hủy lịch</span>
+                  <Check className="h-4 w-4" />
+                  Xác nhận hủy lịch
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-
-        <style jsx>{`
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-          @keyframes slideUp {
-            from { 
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to { 
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
