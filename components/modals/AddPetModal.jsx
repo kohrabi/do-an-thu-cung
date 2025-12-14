@@ -1,6 +1,26 @@
 // components/modals/AddPetModal.jsx
 "use client";
 import { useState } from "react";
+import { 
+  PawPrint, 
+  FileText, 
+  Tag, 
+  Users, 
+  Cake, 
+  Scale, 
+  Palette, 
+  Hospital, 
+  X, 
+  Check,
+  Loader2
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import Input from "@/components/ui/Input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function AddPetModal({ isOpen, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -118,214 +138,215 @@ export default function AddPetModal({ isOpen, onClose, onSuccess }) {
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="modal-overlay-beautiful" onClick={handleClose}>
-      <div className="modal-container-beautiful modal-large-beautiful" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="modal-header-beautiful">
-          <div className="modal-header-content">
-            <span className="modal-icon-beautiful">🐾</span>
-            <h2 className="modal-title-beautiful">Thêm thú cưng mới</h2>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <PawPrint className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Thêm thú cưng mới</DialogTitle>
           </div>
-          <button onClick={handleClose} className="modal-close-beautiful">
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Tên thú cưng */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
               Tên thú cưng
-              <span className="required-star">*</span>
-            </label>
-            <input
+              <span className="text-destructive">*</span>
+            </Label>
+            <Input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               placeholder="VD: Lucky, Miu, Coco..."
-              className={`form-input-beautiful ${errors.name ? 'input-error-beautiful' : ''}`}
+              className={cn(errors.name && "border-destructive")}
             />
-            {errors.name && <span className="error-text-beautiful">{errors.name}</span>}
+            {errors.name && (
+              <p className="text-sm text-destructive">{errors.name}</p>
+            )}
           </div>
 
           {/* Loại & Giống (2 cột) */}
-          <div className="form-row-beautiful">
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🐾</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <PawPrint className="h-4 w-4 text-muted-foreground" />
                 Loại thú cưng
-                <span className="required-star">*</span>
-              </label>
-              <select
+                <span className="text-destructive">*</span>
+              </Label>
+              <Select
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className={`form-select-beautiful ${errors.type ? 'input-error-beautiful' : ''}`}
+                className={cn(errors.type && "border-destructive")}
               >
                 <option value="">-- Chọn loại --</option>
-                <option value="Chó">🐕 Chó</option>
-                <option value="Mèo">🐈 Mèo</option>
-              </select>
-              {errors.type && <span className="error-text-beautiful">{errors.type}</span>}
+                <option value="Chó">Chó</option>
+                <option value="Mèo">Mèo</option>
+              </Select>
+              {errors.type && (
+                <p className="text-sm text-destructive">{errors.type}</p>
+              )}
             </div>
 
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🏷️</span>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Tag className="h-4 w-4 text-muted-foreground" />
                 Giống
-                <span className="required-star">*</span>
-              </label>
-              <input
+                <span className="text-destructive">*</span>
+              </Label>
+              <Input
                 type="text"
                 name="breed"
                 value={formData.breed}
                 onChange={handleChange}
                 placeholder="VD: Golden Retriever, Mèo Ba Tư..."
-                className={`form-input-beautiful ${errors.breed ? 'input-error-beautiful' : ''}`}
+                className={cn(errors.breed && "border-destructive")}
               />
-              {errors.breed && <span className="error-text-beautiful">{errors.breed}</span>}
+              {errors.breed && (
+                <p className="text-sm text-destructive">{errors.breed}</p>
+              )}
             </div>
           </div>
 
           {/* Giới tính & Ngày sinh (2 cột) */}
-          <div className="form-row-beautiful">
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">⚥</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-muted-foreground" />
                 Giới tính
-                <span className="required-star">*</span>
-              </label>
-              <select
+                <span className="text-destructive">*</span>
+              </Label>
+              <Select
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className={`form-select-beautiful ${errors.gender ? 'input-error-beautiful' : ''}`}
+                className={cn(errors.gender && "border-destructive")}
               >
                 <option value="">-- Chọn giới tính --</option>
-                <option value="Đực">♂️ Đực</option>
-                <option value="Cái">♀️ Cái</option>
-              </select>
-              {errors.gender && <span className="error-text-beautiful">{errors.gender}</span>}
+                <option value="Đực">Đực</option>
+                <option value="Cái">Cái</option>
+              </Select>
+              {errors.gender && (
+                <p className="text-sm text-destructive">{errors.gender}</p>
+              )}
             </div>
 
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🎂</span>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Cake className="h-4 w-4 text-muted-foreground" />
                 Ngày sinh
-                <span className="required-star">*</span>
-              </label>
-              <input
+                <span className="text-destructive">*</span>
+              </Label>
+              <Input
                 type="date"
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
                 max={new Date().toISOString().split('T')[0]}
-                className={`form-input-beautiful ${errors.dateOfBirth ? 'input-error-beautiful' : ''}`}
+                className={cn(errors.dateOfBirth && "border-destructive")}
               />
-              {errors.dateOfBirth && <span className="error-text-beautiful">{errors.dateOfBirth}</span>}
+              {errors.dateOfBirth && (
+                <p className="text-sm text-destructive">{errors.dateOfBirth}</p>
+              )}
             </div>
           </div>
 
           {/* Cân nặng & Màu lông (2 cột) */}
-          <div className="form-row-beautiful">
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">⚖️</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Scale className="h-4 w-4 text-muted-foreground" />
                 Cân nặng
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 name="weight"
                 value={formData.weight}
                 onChange={handleChange}
                 placeholder="VD: 5 kg"
-                className="form-input-beautiful"
               />
             </div>
 
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🎨</span>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Palette className="h-4 w-4 text-muted-foreground" />
                 Màu lông
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 name="color"
                 value={formData.color}
                 onChange={handleChange}
                 placeholder="VD: Vàng, Trắng, Nâu..."
-                className="form-input-beautiful"
               />
             </div>
           </div>
 
           {/* Lịch sử y tế */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🏥</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Hospital className="h-4 w-4 text-muted-foreground" />
               Lịch sử y tế
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="medicalHistory"
               value={formData.medicalHistory}
               onChange={handleChange}
               placeholder="Ghi chú về tiêm phòng, bệnh lý, phẫu thuật..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Ghi chú */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
               Ghi chú thêm
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="notes"
               value={formData.notes}
               onChange={handleChange}
               placeholder="Thói quen, sở thích, điều cần lưu ý..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Buttons */}
-          <div className="modal-footer-beautiful">
-            <button
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleClose}
-              className="btn-beautiful btn-cancel-beautiful"
             >
-              <span className="btn-icon-beautiful">✕</span>
-              <span>Hủy</span>
-            </button>
-            <button
+              <X className="h-4 w-4" />
+              Hủy
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="btn-beautiful btn-primary-beautiful"
             >
               {loading ? (
                 <>
-                  <span className="spinner-beautiful"></span>
-                  <span>Đang thêm...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang thêm...
                 </>
               ) : (
                 <>
-                  <span className="btn-icon-beautiful">✓</span>
-                  <span>Thêm thú cưng</span>
+                  <Check className="h-4 w-4" />
+                  Thêm thú cưng
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
