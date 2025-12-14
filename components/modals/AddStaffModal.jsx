@@ -1,6 +1,26 @@
 // components/modals/AddStaffModal.jsx
 "use client";
 import { useState } from "react";
+import { 
+  Users, 
+  User, 
+  Mail, 
+  Phone, 
+  Briefcase, 
+  Lock, 
+  X, 
+  Check,
+  Loader2,
+  Eye,
+  EyeOff,
+  Lightbulb
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import Input from "@/components/ui/Input";
+import { Select } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function AddStaffModal({ isOpen, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -97,159 +117,151 @@ export default function AddStaffModal({ isOpen, onClose, onSuccess }) {
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="modal-overlay-beautiful" onClick={handleClose}>
-      <div className="modal-container-beautiful" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="modal-header-beautiful">
-          <div className="modal-header-content">
-            <span className="modal-icon-beautiful">👥</span>
-            <h2 className="modal-title-beautiful">Thêm nhân viên mới</h2>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <Users className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Thêm nhân viên mới</DialogTitle>
           </div>
-          <button onClick={handleClose} className="modal-close-beautiful">
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Họ và tên */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">👤</span>
-              Họ và tên
-              <span className="required-star">*</span>
-            </label>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              placeholder="Nguyễn Văn A"
-              className={`form-input-beautiful ${errors.fullName ? 'input-error-beautiful' : ''}`}
-            />
-            {errors.fullName && <span className="error-text-beautiful">{errors.fullName}</span>}
-          </div>
+          <Input
+            label="Họ và tên"
+            name="fullName"
+            type="text"
+            value={formData.fullName}
+            onChange={handleChange}
+            placeholder="Nguyễn Văn A"
+            error={errors.fullName}
+            icon={User}
+            required
+          />
 
           {/* Email */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📧</span>
-              Email
-              <span className="required-star">*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="nhanvien@pawlovers.com"
-              className={`form-input-beautiful ${errors.email ? 'input-error-beautiful' : ''}`}
-            />
-            {errors.email && <span className="error-text-beautiful">{errors.email}</span>}
-          </div>
+          <Input
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="nhanvien@pawlovers.com"
+            error={errors.email}
+            icon={Mail}
+            required
+          />
 
           {/* Số điện thoại */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📱</span>
-              Số điện thoại
-              <span className="required-star">*</span>
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="0901234567"
-              maxLength="10"
-              className={`form-input-beautiful ${errors.phone ? 'input-error-beautiful' : ''}`}
-            />
-            {errors.phone && <span className="error-text-beautiful">{errors.phone}</span>}
-          </div>
+          <Input
+            label="Số điện thoại"
+            name="phone"
+            type="tel"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="0901234567"
+            maxLength="10"
+            error={errors.phone}
+            icon={Phone}
+            required
+          />
 
           {/* Vai trò */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">💼</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-muted-foreground" />
               Vai trò
-              <span className="required-star">*</span>
-            </label>
-            <select
+              <span className="text-destructive">*</span>
+            </Label>
+            <Select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className={`form-select-beautiful ${errors.role ? 'input-error-beautiful' : ''}`}
+              className={cn(errors.role && "border-destructive")}
             >
               <option value="">Chọn vai trò</option>
-              <option value="veterinarian">👨‍⚕️ Bác sĩ thú y</option>
-              <option value="care_staff">🧑‍🔧 Nhân viên chăm sóc</option>
-              <option value="receptionist">👩‍💼 Lễ tân</option>
-            </select>
-            {errors.role && <span className="error-text-beautiful">{errors.role}</span>}
+              <option value="veterinarian">Bác sĩ thú y</option>
+              <option value="care_staff">Nhân viên chăm sóc</option>
+              <option value="receptionist">Lễ tân</option>
+            </Select>
+            {errors.role && (
+              <p className="text-sm text-destructive">{errors.role}</p>
+            )}
           </div>
 
           {/* Mật khẩu tạm */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🔑</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-muted-foreground" />
               Mật khẩu tạm
-              <span className="required-star">*</span>
-            </label>
-            <div className="password-input-wrapper">
+              <span className="text-destructive">*</span>
+            </Label>
+            <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Nhập hoặc tự động tạo"
-                className={`form-input-beautiful ${errors.password ? 'input-error-beautiful' : ''}`}
+                className={cn(
+                  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10",
+                  errors.password && "border-destructive focus-visible:ring-destructive"
+                )}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="password-toggle-btn"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
-            {errors.password && <span className="error-text-beautiful">{errors.password}</span>}
-            <span className="hint-text-beautiful">
-              💡 Nhân viên nên đổi mật khẩu sau lần đăng nhập đầu tiên
-            </span>
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password}</p>
+            )}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Lightbulb className="h-3 w-3" />
+              <span>Nhân viên nên đổi mật khẩu sau lần đăng nhập đầu tiên</span>
+            </div>
           </div>
 
           {/* Buttons */}
-          <div className="modal-footer-beautiful">
-            <button
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleClose}
-              className="btn-beautiful btn-cancel-beautiful"
             >
-              <span className="btn-icon-beautiful">✕</span>
-              <span>Hủy</span>
-            </button>
-            <button
+              <X className="h-4 w-4" />
+              Hủy
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="btn-beautiful btn-primary-beautiful"
             >
               {loading ? (
                 <>
-                  <span className="spinner-beautiful"></span>
-                  <span>Đang thêm...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang thêm...
                 </>
               ) : (
                 <>
-                  <span className="btn-icon-beautiful">✓</span>
-                  <span>Thêm nhân viên</span>
+                  <Check className="h-4 w-4" />
+                  Thêm nhân viên
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
