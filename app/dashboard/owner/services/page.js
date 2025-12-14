@@ -1,8 +1,13 @@
-// app/(dashboard)/owner/services/page.js
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Search, Calendar, DollarSign, Clock, ClipboardList, Sparkles } from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function OwnerServicesPage() {
   const router = useRouter();
@@ -76,81 +81,94 @@ export default function OwnerServicesPage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="p-6 space-y-6">
       <DashboardHeader
         title="Xem dịch vụ"
         subtitle="Khám phá các dịch vụ chăm sóc thú cưng của chúng tôi"
       />
 
-      {/* Search Bar - BÊN PHẢI */}
-      <div className="section-separated">
-        <div className="search-section-right">
-          <div className="search-box-modern">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Tìm kiếm dịch vụ..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-modern"
-            />
-          </div>
+      {/* Search Bar */}
+      <div className="flex justify-end">
+        <div className="w-full sm:w-64">
+          <Input
+            type="text"
+            placeholder="Tìm kiếm dịch vụ..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            icon={Search}
+          />
         </div>
       </div>
 
       {/* Services List */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-primary" />
             Danh sách dịch vụ
           </h2>
-          <span className="section-count">{filteredServices.length} dịch vụ</span>
+          <Badge variant="outline" className="text-sm">
+            {filteredServices.length} dịch vụ
+          </Badge>
         </div>
 
-        {/* Services Grid - Đẹp, tách biệt từng nhóm */}
-        <div className="services-owner-grid">
-          {filteredServices.map((service) => (
-            <div key={service.id} className="service-owner-card">
-              <div className="service-owner-header">
-                <div className="service-owner-icon">{service.icon}</div>
-                <span className="service-owner-category">{service.category}</span>
-              </div>
-
-              <div className="service-owner-body">
-                <h3 className="service-owner-name">{service.name}</h3>
-                <p className="service-owner-description">{service.description}</p>
-
-                <div className="service-owner-info">
-                  <div className="service-info-item">
-                    <span className="info-icon">💰</span>
-                    <span className="info-value">{formatCurrency(service.price)}</span>
+        {filteredServices.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredServices.map((service) => (
+              <Card key={service.id} className="hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="flex items-start gap-3">
+                    <div className="text-4xl">{service.icon}</div>
+                    <div className="flex-1">
+                      <Badge variant="outline" className="mb-2 text-xs">
+                        {service.category}
+                      </Badge>
+                      <CardTitle className="text-lg mb-2">{service.name}</CardTitle>
+                    </div>
                   </div>
-                  <div className="service-info-item">
-                    <span className="info-icon">⏱️</span>
-                    <span className="info-value">{service.duration} phút</span>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    {service.description}
+                  </p>
+
+                  <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                    <div className="flex items-center gap-2 text-sm">
+                      <DollarSign className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Giá:</span>
+                      <span className="font-semibold text-foreground">
+                        {formatCurrency(service.price)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Thời gian:</span>
+                      <span className="font-semibold text-foreground">
+                        {service.duration} phút
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              <div className="service-owner-footer">
-                <button
-                  onClick={() => handleBookService(service.id)}
-                  className="btn-book-service"
-                >
-                  <span className="btn-icon">📅</span>
-                  <span>Đặt lịch ngay</span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredServices.length === 0 && (
-          <div className="empty-state-modern">
-            <div className="empty-icon">🔍</div>
-            <p className="empty-text">Không tìm thấy dịch vụ nào</p>
+                  <Button
+                    onClick={() => handleBookService(service.id)}
+                    className="w-full"
+                  >
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Đặt lịch ngay
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+        ) : (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <Search className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground font-medium">
+                Không tìm thấy dịch vụ nào
+              </p>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
