@@ -87,7 +87,7 @@ export default function ResetPasswordForm() {
           </a>
           <p className="text-xs text-gray-500">
             Nếu bạn không nhận được email, vui lòng kiểm tra thư mục spam hoặc liên hệ{' '}
-            <a href="mailto:support@pawlovers.com" className="text-blue-600 hover:underline">
+            <a href="mailto:support@pawlovers.com" className="text-blue-800 hover:underline">
               support@pawlovers.com
             </a>
           </p>
