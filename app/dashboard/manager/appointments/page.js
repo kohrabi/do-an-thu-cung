@@ -1,8 +1,19 @@
-// app/(dashboard)/manager/appointments/page.js
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Calendar, Search, Edit, Hourglass, CheckCircle2, 
+  RefreshCw, XCircle, Clock, ClipboardList, User, Stethoscope, Wrench 
+} from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import { Card, CardContent } from "@/components/ui/card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/badge";
+import StatsCard from "@/components/dashboard/StatsCard";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import UpdateAppointmentModal from "@/components/modals/UpdateAppointmentModal";
+import { cn } from "@/lib/utils";
+
 export default function ManagerAppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
   const [staffList, setStaffList] = useState([]);
@@ -93,7 +104,7 @@ export default function ManagerAppointmentsPage() {
       }
       return apt;
     }));
-    showToast("✅ Cập nhật lịch hẹn thành công!");
+    showToast("Cập nhật lịch hẹn thành công!", "success");
   };
 
   const handleOpenUpdate = (appointment) => {
@@ -109,11 +120,31 @@ export default function ManagerAppointmentsPage() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      pending: { label: "Chờ xác nhận", class: "status-pending", icon: "⏳" },
-      confirmed: { label: "Đã xác nhận", class: "status-confirmed", icon: "✅" },
-      in_progress: { label: "Đang thực hiện", class: "status-in-progress", icon: "🔄" },
-      completed: { label: "Hoàn thành", class: "status-completed", icon: "✓" },
-      cancelled: { label: "Đã hủy", class: "status-cancelled", icon: "✕" }
+      pending: { 
+        label: "Chờ xác nhận", 
+        variant: "warning", 
+        icon: Hourglass 
+      },
+      confirmed: { 
+        label: "Đã xác nhận", 
+        variant: "success", 
+        icon: CheckCircle2 
+      },
+      in_progress: { 
+        label: "Đang thực hiện", 
+        variant: "info", 
+        icon: RefreshCw 
+      },
+      completed: { 
+        label: "Hoàn thành", 
+        variant: "success", 
+        icon: CheckCircle2 
+      },
+      cancelled: { 
+        label: "Đã hủy", 
+        variant: "destructive", 
+        icon: XCircle 
+      }
     };
     return badges[status] || badges.pending;
   };
@@ -126,176 +157,164 @@ export default function ManagerAppointmentsPage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="p-6 space-y-6">
       <DashboardHeader
         title="Quản lý lịch đặt"
         subtitle="Theo dõi, phân công và điều phối lịch hẹn"
       />
 
-      {/* 1. STATS */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">⏳</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Chờ xác nhận</p>
-              <h3 className="stat-number">{stats.pending}</h3>
-            </div>
-          </div>
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatsCard
+          icon={Hourglass}
+          title="Chờ xác nhận"
+          value={stats.pending}
+          color="warning"
+        />
+        <StatsCard
+          icon={CheckCircle2}
+          title="Đã xác nhận"
+          value={stats.confirmed}
+          color="success"
+        />
+        <StatsCard
+          icon={RefreshCw}
+          title="Đang thực hiện"
+          value={stats.inProgress}
+          color="info"
+        />
+        <StatsCard
+          icon={CheckCircle2}
+          title="Hoàn thành"
+          value={stats.completed}
+          color="success"
+        />
+      </div>
 
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✅</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đã xác nhận</p>
-              <h3 className="stat-number">{stats.confirmed}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🔄</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang thực hiện</p>
-              <h3 className="stat-number">{stats.inProgress}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✓</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Hoàn thành</p>
-              <h3 className="stat-number">{stats.completed}</h3>
-            </div>
-          </div>
+      {/* Search */}
+      <div className="flex justify-end">
+        <div className="w-full sm:w-64">
+          <Input
+            type="text"
+            placeholder="Tìm kiếm theo khách hàng, thú cưng, mã lịch..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            icon={Search}
+          />
         </div>
       </div>
 
-      {/* 2. SEARCH */}
-      <div className="section-separated">
-        <div className="search-section-right">
-          <div className="search-box-modern">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo khách hàng, thú cưng, mã lịch..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-modern"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 3. TABLE */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      {/* Table */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-primary" />
             Danh sách lịch đặt
           </h2>
-          <span className="section-count">{filteredAppointments.length} lịch hẹn</span>
+          <Badge variant="outline" className="text-sm">
+            {filteredAppointments.length} lịch hẹn
+          </Badge>
         </div>
 
-        <div className="table-wide-wrapper">
-          <table className="table-wide-spacing">
-            <thead>
-              <tr>
-                <th className="col-code">Mã lịch</th>
-                <th className="col-customer">Khách hàng</th>
-                <th className="col-pet">Thú cưng</th>
-                <th className="col-service">Dịch vụ</th>
-                <th className="col-datetime">Ngày & Giờ</th>
-                <th className="col-staff">Nhân viên</th>
-                <th className="col-status">Trạng thái</th>
-                <th className="col-action">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAppointments.map((apt) => {
-                const statusBadge = getStatusBadge(apt.status);
-                return (
-                  <tr key={apt.id}>
-                    <td className="col-code">
-                      <span className="code-badge">{apt.code}</span>
-                    </td>
-                    
-                    <td className="col-customer">
-                      <div className="customer-info">
-                        <p className="customer-name">{apt.customerName}</p>
-                        <p className="customer-phone">{apt.customerPhone}</p>
-                      </div>
-                    </td>
-                    
-                    <td className="col-pet">
-                      <div className="pet-info">
-                        <span className="pet-emoji">{apt.petIcon}</span>
-                        <span className="pet-name">{apt.petName}</span>
-                      </div>
-                    </td>
-                    
-                    <td className="col-service">
-                      <div className="service-info">
-                        <span className="service-emoji">{apt.serviceIcon}</span>
-                        <span className="service-name">{apt.serviceName}</span>
-                      </div>
-                    </td>
-                    
-                    <td className="col-datetime">
-                      <div className="datetime-info">
-                        <p className="datetime-date">{apt.date}</p>
-                        <p className="datetime-time">🕐 {apt.time}</p>
-                      </div>
-                    </td>
-                    
-                    <td className="col-staff">
-                      {apt.assignedStaffName ? (
-                        <div className="staff-info">
-                          <span className="staff-emoji">
-                            {apt.serviceCategory === 'medical' ? '👨‍⚕️' : '🧑‍🔧'}
-                          </span>
-                          <span className="staff-name">{apt.assignedStaffName}</span>
+        {filteredAppointments.length > 0 ? (
+          <div className="rounded-md border overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[100px]">Mã lịch</TableHead>
+                  <TableHead className="min-w-[150px]">Khách hàng</TableHead>
+                  <TableHead className="min-w-[120px]">Thú cưng</TableHead>
+                  <TableHead className="min-w-[150px]">Dịch vụ</TableHead>
+                  <TableHead className="min-w-[120px]">Ngày & Giờ</TableHead>
+                  <TableHead className="min-w-[130px]">Nhân viên</TableHead>
+                  <TableHead className="min-w-[120px]">Trạng thái</TableHead>
+                  <TableHead className="min-w-[100px] text-right">Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredAppointments.map((apt) => {
+                  const statusBadge = getStatusBadge(apt.status);
+                  const StatusIcon = statusBadge.icon;
+                  return (
+                    <TableRow key={apt.id}>
+                      <TableCell>
+                        <Badge variant="outline" className="font-mono text-xs">
+                          {apt.code}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-semibold text-foreground">{apt.customerName}</p>
+                          <p className="text-xs text-muted-foreground">{apt.customerPhone}</p>
                         </div>
-                      ) : (
-                        <span className="not-assigned">Chưa phân công</span>
-                      )}
-                    </td>
-                    
-                    <td className="col-status">
-                      <span className={`status-badge-wide ${statusBadge.class}`}>
-                        <span className="status-icon">{statusBadge.icon}</span>
-                        <span className="status-text">{statusBadge.label}</span>
-                      </span>
-                    </td>
-                    
-                    <td className="col-action">
-                      <button
-                        onClick={() => handleOpenUpdate(apt)}
-                        className="btn-update-wide"
-                      >
-                        <span className="btn-icon">✏️</span>
-                        <span className="btn-text">Cập nhật</span>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-
-          {filteredAppointments.length === 0 && (
-            <div className="empty-state-modern">
-              <div className="empty-icon">🔍</div>
-              <p className="empty-text">Không tìm thấy lịch đặt nào</p>
-            </div>
-          )}
-        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{apt.petIcon}</span>
+                          <span className="font-medium text-foreground">{apt.petName}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{apt.serviceIcon}</span>
+                          <span className="text-sm text-foreground">{apt.serviceName}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{apt.date}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {apt.time}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {apt.assignedStaffName ? (
+                          <div className="flex items-center gap-2">
+                            {apt.serviceCategory === 'medical' ? (
+                              <Stethoscope className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                              <Wrench className="h-4 w-4 text-muted-foreground" />
+                            )}
+                            <span className="text-sm text-foreground">{apt.assignedStaffName}</span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground italic">Chưa phân công</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={statusBadge.variant} className="flex items-center gap-1 w-fit">
+                          <StatusIcon className="h-3 w-3" />
+                          {statusBadge.label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          onClick={() => handleOpenUpdate(apt)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Cập nhật
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <Search className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground font-medium">
+                Không tìm thấy lịch đặt nào
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <UpdateAppointmentModal
@@ -309,9 +328,22 @@ export default function ManagerAppointmentsPage() {
         staffList={staffList}
       />
 
+      {/* Toast Notification */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
-          {toast.message}
+        <div className={cn(
+          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+          toast.type === "success"
+            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+            : "bg-red-100 text-red-800 border border-red-200"
+        )}>
+          <div className="flex items-center gap-2">
+            {toast.type === "success" ? (
+              <CheckCircle2 className="h-5 w-5" />
+            ) : (
+              <XCircle className="h-5 w-5" />
+            )}
+            <p className="font-medium">{toast.message}</p>
+          </div>
         </div>
       )}
     </div>
