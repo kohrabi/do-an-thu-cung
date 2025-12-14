@@ -1,6 +1,27 @@
 // components/modals/EditPetModal.jsx
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  PawPrint, 
+  FileText, 
+  Tag, 
+  Users, 
+  Cake, 
+  Scale, 
+  Palette, 
+  Hospital, 
+  X, 
+  Save,
+  Loader2,
+  Edit
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import Input from "@/components/ui/Input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function EditPetModal({ isOpen, onClose, onSuccess, pet }) {
   const [formData, setFormData] = useState({
@@ -23,15 +44,15 @@ export default function EditPetModal({ isOpen, onClose, onSuccess, pet }) {
     if (pet && isOpen) {
       setFormData({
         id: pet.id,
-        name: pet.name,
-        type: pet.type,
-        breed: pet.breed,
-        gender: pet.gender,
-        weight: pet.weight,
-        color: pet.color,
-        dateOfBirth: pet.dateOfBirth,
-        medicalHistory: pet.medicalHistory,
-        notes: pet.notes
+        name: pet.name || "",
+        type: pet.type || "",
+        breed: pet.breed || "",
+        gender: pet.gender || "",
+        weight: pet.weight || "",
+        color: pet.color || "",
+        dateOfBirth: pet.dateOfBirth || "",
+        medicalHistory: pet.medicalHistory || "",
+        notes: pet.notes || ""
       });
     }
   }, [pet, isOpen]);
@@ -86,7 +107,6 @@ export default function EditPetModal({ isOpen, onClose, onSuccess, pet }) {
       const updatedPet = {
         ...formData,
         age: calculateAge(formData.dateOfBirth),
-        icon: formData.type === 'Chó' ? '🐕' : '🐈'
       };
       
       setLoading(false);
@@ -103,201 +123,169 @@ export default function EditPetModal({ isOpen, onClose, onSuccess, pet }) {
   if (!isOpen || !pet) return null;
 
   return (
-    <div className="modal-overlay-beautiful" onClick={handleClose}>
-      <div className="modal-container-beautiful modal-large-beautiful" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="modal-header-beautiful">
-          <div className="modal-header-content">
-            <span className="modal-icon-beautiful">✏️</span>
-            <h2 className="modal-title-beautiful">Chỉnh sửa thông tin thú cưng</h2>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <Edit className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Chỉnh sửa thông tin thú cưng</DialogTitle>
           </div>
-          <button onClick={handleClose} className="modal-close-beautiful">
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Tên thú cưng */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
-              Tên thú cưng
-              <span className="required-star">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`form-input-beautiful ${errors.name ? 'input-error-beautiful' : ''}`}
-            />
-            {errors.name && <span className="error-text-beautiful">{errors.name}</span>}
-          </div>
+          <Input
+            label="Tên thú cưng"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            error={errors.name}
+            icon={FileText}
+            required
+          />
 
-          {/* Loại & Giống */}
-          <div className="form-row-beautiful">
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🐾</span>
+          {/* Loại & Giống (2 cột) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <PawPrint className="h-4 w-4 text-muted-foreground" />
                 Loại thú cưng
-              </label>
-              <select
+              </Label>
+              <Select
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className="form-select-beautiful"
               >
-                <option value="Chó">🐕 Chó</option>
-                <option value="Mèo">🐈 Mèo</option>
-              </select>
+                <option value="Chó">Chó</option>
+                <option value="Mèo">Mèo</option>
+              </Select>
             </div>
 
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🏷️</span>
-                Giống
-                <span className="required-star">*</span>
-              </label>
-              <input
-                type="text"
-                name="breed"
-                value={formData.breed}
-                onChange={handleChange}
-                className={`form-input-beautiful ${errors.breed ? 'input-error-beautiful' : ''}`}
-              />
-              {errors.breed && <span className="error-text-beautiful">{errors.breed}</span>}
-            </div>
+            <Input
+              label="Giống"
+              name="breed"
+              type="text"
+              value={formData.breed}
+              onChange={handleChange}
+              error={errors.breed}
+              icon={Tag}
+              required
+            />
           </div>
 
-          {/* Giới tính & Ngày sinh */}
-          <div className="form-row-beautiful">
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">⚥</span>
+          {/* Giới tính & Ngày sinh (2 cột) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-muted-foreground" />
                 Giới tính
-              </label>
-              <select
+              </Label>
+              <Select
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="form-select-beautiful"
               >
-                <option value="Đực">♂️ Đực</option>
-                <option value="Cái">♀️ Cái</option>
-              </select>
+                <option value="Đực">Đực</option>
+                <option value="Cái">Cái</option>
+              </Select>
             </div>
 
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🎂</span>
-                Ngày sinh
-              </label>
-              <input
-                type="date"
-                name="dateOfBirth"
-                value={formData.dateOfBirth}
-                onChange={handleChange}
-                max={new Date().toISOString().split('T')[0]}
-                className="form-input-beautiful"
-              />
-            </div>
+            <Input
+              label="Ngày sinh"
+              name="dateOfBirth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              max={new Date().toISOString().split('T')[0]}
+              icon={Cake}
+            />
           </div>
 
-          {/* Cân nặng & Màu lông */}
-          <div className="form-row-beautiful">
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">⚖️</span>
-                Cân nặng
-              </label>
-              <input
-                type="text"
-                name="weight"
-                value={formData.weight}
-                onChange={handleChange}
-                placeholder="VD: 5 kg"
-                className="form-input-beautiful"
-              />
-            </div>
+          {/* Cân nặng & Màu lông (2 cột) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Cân nặng"
+              name="weight"
+              type="text"
+              value={formData.weight}
+              onChange={handleChange}
+              placeholder="VD: 5 kg"
+              icon={Scale}
+            />
 
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🎨</span>
-                Màu lông
-              </label>
-              <input
-                type="text"
-                name="color"
-                value={formData.color}
-                onChange={handleChange}
-                placeholder="VD: Vàng, Trắng, Nâu..."
-                className="form-input-beautiful"
-              />
-            </div>
+            <Input
+              label="Màu lông"
+              name="color"
+              type="text"
+              value={formData.color}
+              onChange={handleChange}
+              placeholder="VD: Vàng, Trắng, Nâu..."
+              icon={Palette}
+            />
           </div>
 
           {/* Lịch sử y tế */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🏥</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Hospital className="h-4 w-4 text-muted-foreground" />
               Lịch sử y tế
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="medicalHistory"
               value={formData.medicalHistory}
               onChange={handleChange}
               placeholder="Ghi chú về tiêm phòng, bệnh lý, phẫu thuật..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Ghi chú */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
               Ghi chú thêm
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="notes"
               value={formData.notes}
               onChange={handleChange}
               placeholder="Thói quen, sở thích, điều cần lưu ý..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Buttons */}
-          <div className="modal-footer-beautiful">
-            <button
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleClose}
-              className="btn-beautiful btn-cancel-beautiful"
             >
-              <span className="btn-icon-beautiful">✕</span>
-              <span>Hủy</span>
-            </button>
-            <button
+              <X className="h-4 w-4" />
+              Hủy
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="btn-beautiful btn-primary-beautiful"
             >
               {loading ? (
                 <>
-                  <span className="spinner-beautiful"></span>
-                  <span>Đang lưu...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang lưu...
                 </>
               ) : (
                 <>
-                  <span className="btn-icon-beautiful">💾</span>
-                  <span>Lưu thay đổi</span>
+                  <Save className="h-4 w-4" />
+                  Lưu thay đổi
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
