@@ -529,16 +529,18 @@ Khi refactor mỗi component, sử dụng checklist này:
 
 ### Tổng số components cần refactor: ~80 components
 
-**Đã hoàn thành:** 4/80 (5%)
+**Đã hoàn thành:** 8/80 (10%)
 
 **Đang thực hiện:** 0/80 (0%)
 
-**Chưa bắt đầu:** 76/80 (95%)
+**Chưa bắt đầu:** 72/80 (90%)
 
 ### Breakdown theo Phase:
 
 - **Phase 1 (Setup & Base):** 2/2 tasks ✅ COMPLETED
 - **Phase 2 (Layout):** 2/2 tasks ✅ COMPLETED
+- **Phase 3 (Forms):** 3/3 tasks ✅ COMPLETED
+- **Phase 4 (Modals):** 1/25 tasks (AddPetModal completed)
 - **Phase 3 (Forms):** 0/3 tasks
 - **Phase 4 (Modals):** 0/25 tasks
 - **Phase 5 (Tables):** 0/2 tasks
