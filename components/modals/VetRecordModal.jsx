@@ -1,6 +1,28 @@
 // components/modals/VetRecordModal.jsx
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  ClipboardList, 
+  X, 
+  Save, 
+  Loader2, 
+  PawPrint, 
+  Hospital, 
+  Clock, 
+  User,
+  Stethoscope, 
+  Microscope, 
+  Pill, 
+  Syringe, 
+  FileText, 
+  RefreshCw
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function VetRecordModal({ isOpen, onClose, onSuccess, appointment }) {
   const [formData, setFormData] = useState({
@@ -95,170 +117,173 @@ export default function VetRecordModal({ isOpen, onClose, onSuccess, appointment
   if (!isOpen || !appointment) return null;
 
   return (
-    <div className="modal-overlay-beautiful" onClick={handleClose}>
-      <div className="modal-container-beautiful modal-large-beautiful" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="modal-header-beautiful">
-          <div className="modal-header-content">
-            <span className="modal-icon-beautiful">📋</span>
-            <h2 className="modal-title-beautiful">Hồ sơ khám bệnh</h2>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <ClipboardList className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Hồ sơ khám bệnh</DialogTitle>
           </div>
-          <button onClick={handleClose} className="modal-close-beautiful">
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Patient Info Card */}
-          <div className="vet-record-patient-card">
-            <div className="patient-info-header">
-              <div className="patient-info-left">
-                <span className="patient-icon-large">{appointment.petIcon}</span>
-                <div>
-                  <h3 className="patient-name-text">{appointment.petName}</h3>
-                  <p className="patient-breed-text">{appointment.petType}</p>
-                  <p className="patient-owner-text">Chủ: {appointment.ownerName} - {appointment.ownerPhone}</p>
-                </div>
+          <div className="p-5 bg-pink-50 rounded-lg border-2 border-pink-200">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">{appointment.petIcon || "🐾"}</div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-foreground mb-1">
+                  {appointment.petName}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-2">{appointment.petType}</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Chủ: {appointment.ownerName} - {appointment.ownerPhone}
+                </p>
               </div>
-              <div className="patient-info-right">
-                <span className="appointment-type-badge">
-                  {appointment.serviceIcon} {appointment.serviceName}
-                </span>
-                <span className="appointment-time-badge">🕐 {appointment.time}</span>
-              </div>
+            </div>
+            <div className="pt-4 border-t border-pink-200 flex items-center justify-between">
+              <Badge variant="outline" className="text-sm">
+                {appointment.serviceIcon || "🏥"} {appointment.serviceName}
+              </Badge>
+              <Badge variant="outline" className="text-sm flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {appointment.time}
+              </Badge>
             </div>
           </div>
 
           {/* Symptoms */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🩺</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Stethoscope className="h-4 w-4 text-muted-foreground" />
               Triệu chứng
-              <span className="required-star">*</span>
-            </label>
-            <textarea
+              <span className="text-destructive">*</span>
+            </Label>
+            <Textarea
               name="symptoms"
               value={formData.symptoms}
               onChange={handleChange}
               placeholder="Mô tả các triệu chứng quan sát được..."
-              rows="3"
-              className={`form-textarea-beautiful ${errors.symptoms ? 'input-error-beautiful' : ''}`}
+              rows={3}
+              className={cn(errors.symptoms && "border-destructive")}
             />
-            {errors.symptoms && <span className="error-text-beautiful">{errors.symptoms}</span>}
+            {errors.symptoms && (
+              <p className="text-sm text-destructive">{errors.symptoms}</p>
+            )}
           </div>
 
           {/* Diagnosis */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🔬</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Microscope className="h-4 w-4 text-muted-foreground" />
               Chẩn đoán
-              <span className="required-star">*</span>
-            </label>
-            <textarea
+              <span className="text-destructive">*</span>
+            </Label>
+            <Textarea
               name="diagnosis"
               value={formData.diagnosis}
               onChange={handleChange}
               placeholder="Nhập kết quả chẩn đoán..."
-              rows="3"
-              className={`form-textarea-beautiful ${errors.diagnosis ? 'input-error-beautiful' : ''}`}
+              rows={3}
+              className={cn(errors.diagnosis && "border-destructive")}
             />
-            {errors.diagnosis && <span className="error-text-beautiful">{errors.diagnosis}</span>}
+            {errors.diagnosis && (
+              <p className="text-sm text-destructive">{errors.diagnosis}</p>
+            )}
           </div>
 
           {/* Prescription */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">💊</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Pill className="h-4 w-4 text-muted-foreground" />
               Đơn thuốc
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="prescription"
               value={formData.prescription}
               onChange={handleChange}
               placeholder="Kê đơn thuốc (tên thuốc, liều lượng, cách dùng)..."
-              rows="4"
-              className="form-textarea-beautiful"
+              rows={4}
             />
           </div>
 
           {/* Treatment */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">💉</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Syringe className="h-4 w-4 text-muted-foreground" />
               Điều trị
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="treatment"
               value={formData.treatment}
               onChange={handleChange}
               placeholder="Mô tả các phương pháp điều trị đã thực hiện..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Notes */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
               Ghi chú thêm
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="notes"
               value={formData.notes}
               onChange={handleChange}
               placeholder="Lưu ý về chế độ chăm sóc, dinh dưỡng..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Follow-up Date */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🔄</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <RefreshCw className="h-4 w-4 text-muted-foreground" />
               Ngày tái khám (nếu có)
-            </label>
-            <input
+            </Label>
+            <Input
               type="date"
               name="followUpDate"
               value={formData.followUpDate}
               onChange={handleChange}
-              min="2025-10-28"
-              className="form-input-beautiful"
+              min={new Date().toISOString().split('T')[0]}
             />
           </div>
 
-          {/* Buttons */}
-          <div className="modal-footer-beautiful">
-            <button
+          {/* Footer */}
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleClose}
-              className="btn-beautiful btn-cancel-beautiful"
             >
-              <span className="btn-icon-beautiful">✕</span>
-              <span>Hủy</span>
-            </button>
-            <button
+              <X className="h-4 w-4" />
+              Hủy
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="btn-beautiful btn-primary-beautiful"
             >
               {loading ? (
                 <>
-                  <span className="spinner-beautiful"></span>
-                  <span>Đang lưu...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang lưu...
                 </>
               ) : (
                 <>
-                  <span className="btn-icon-beautiful">💾</span>
-                  <span>Lưu hồ sơ</span>
+                  <Save className="h-4 w-4" />
+                  Lưu hồ sơ
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
