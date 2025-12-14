@@ -4,6 +4,14 @@ import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import VetScheduleDetailModal from "@/components/modals/VetScheduleDetailModal";
 import VetRecordModal from "@/components/modals/VetRecordModal";
+import { Calendar, Clock, CheckCircle2, RefreshCw, Search, Eye, Play, ClipboardList, PawPrint, Cat, Stethoscope, Syringe, User } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 export default function VeterinarianSchedulePage() {
   const [selectedDate, setSelectedDate] = useState("2025-10-27");
@@ -153,7 +161,7 @@ export default function VeterinarianSchedulePage() {
         ? { ...apt, status: "in_progress" }
         : apt
     ));
-    showToast("🔄 Đã bắt đầu khám");
+    showToast("Đã bắt đầu khám");
   };
 
   const handleCompleteExam = (appointment) => {
@@ -167,7 +175,7 @@ export default function VeterinarianSchedulePage() {
         ? { ...apt, status: "completed", notes: data.recordData.notes }
         : apt
     ));
-    showToast("✅ Đã hoàn thành ca khám và lưu bệnh án!");
+    showToast("Đã hoàn thành ca khám và lưu bệnh án!");
   };
 
   const handleViewDetail = (appointment) => {
@@ -184,11 +192,21 @@ export default function VeterinarianSchedulePage() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      waiting: { label: "Chờ khám", class: "status-waiting", icon: "⏳" },
-      in_progress: { label: "Đang khám", class: "status-in-progress", icon: "🔄" },
-      completed: { label: "Hoàn thành", class: "status-completed", icon: "✓" }
+      waiting: { label: "Chờ khám", variant: "warning", icon: Clock },
+      in_progress: { label: "Đang khám", variant: "info", icon: RefreshCw },
+      completed: { label: "Hoàn thành", variant: "success", icon: CheckCircle2 }
     };
     return badges[status] || badges.waiting;
+  };
+
+  const getServiceIcon = (icon) => {
+    switch (icon) {
+      case '🏥': return Stethoscope;
+      case '💉': return Syringe;
+      case '🔄': return RefreshCw;
+      case '🩺': return Stethoscope;
+      default: return Stethoscope;
+    }
   };
 
   const stats = {
@@ -199,231 +217,195 @@ export default function VeterinarianSchedulePage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="flex-1 space-y-8 p-8">
       <DashboardHeader
         title="Lịch làm việc"
         subtitle="Quản lý lịch khám và thực hiện ca khám"
       />
 
       {/* Stats */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">📅</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tổng ca khám</p>
-              <h3 className="stat-number">{stats.total}</h3>
-            </div>
-          </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Tổng ca khám</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern stat-warning">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">⏳</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Chờ khám</p>
-              <h3 className="stat-number">{stats.waiting}</h3>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Chờ khám</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.waiting}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🔄</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang khám</p>
-              <h3 className="stat-number">{stats.inProgress}</h3>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Đang khám</CardTitle>
+            <RefreshCw className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.inProgress}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✓</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Hoàn thành</p>
-              <h3 className="stat-number">{stats.completed}</h3>
-            </div>
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Hoàn thành</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.completed}</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filter Buttons */}
-      <div className="section-separated">
-        <div className="filter-buttons-group">
-          <button
-            onClick={() => setFilter("all")}
-            className={`filter-btn-modern ${filter === "all" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">📋</span>
-            <span>Tất cả</span>
-          </button>
-          <button
-            onClick={() => setFilter("waiting")}
-            className={`filter-btn-modern ${filter === "waiting" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">⏳</span>
-            <span>Chờ khám</span>
-          </button>
-          <button
-            onClick={() => setFilter("in_progress")}
-            className={`filter-btn-modern ${filter === "in_progress" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">🔄</span>
-            <span>Đang khám</span>
-          </button>
-          <button
-            onClick={() => setFilter("completed")}
-            className={`filter-btn-modern ${filter === "completed" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">✓</span>
-            <span>Hoàn thành</span>
-          </button>
-        </div>
-      </div>
+      <Tabs value={filter} onValueChange={setFilter} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="all">Tất cả</TabsTrigger>
+          <TabsTrigger value="waiting">Chờ khám</TabsTrigger>
+          <TabsTrigger value="in_progress">Đang khám</TabsTrigger>
+          <TabsTrigger value="completed">Hoàn thành</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-      {/* Date Picker */}
-      <div className="section-separated">
-        <div className="date-filter-section">
-          <label className="filter-label">
-            <span className="filter-icon">📅</span>
-            Chọn ngày
-          </label>
-          <input
+      {/* Date Picker and Search */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <label className="text-sm font-medium">Chọn ngày:</label>
+          <Input
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="date-input-modern"
+            className="w-auto"
+          />
+        </div>
+        <div className="relative flex-1 max-w-sm w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Tìm kiếm theo tên thú cưng hoặc chủ nuôi..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
           />
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="section-separated">
-        <div className="search-section-right">
-          <div className="search-box-modern">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo tên thú cưng hoặc chủ nuôi..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-modern"
-            />
-          </div>
-        </div>
-      </div>
-
       {/* Appointments Table */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <ClipboardList className="h-6 w-6 text-primary" />
             Lịch khám ngày {selectedDate}
           </h2>
-          <span className="section-count">{filteredAppointments.length} ca khám</span>
+          <Badge variant="secondary">{filteredAppointments.length} ca khám</Badge>
         </div>
 
-        <div className="table-modern-wrapper">
-          <table className="table-modern">
-            <thead>
-              <tr>
-                <th style={{width: '8%'}}>Mã</th>
-                <th style={{width: '8%'}}>Giờ</th>
-                <th style={{width: '18%'}}>Thú cưng</th>
-                <th style={{width: '15%'}}>Chủ nuôi</th>
-                <th style={{width: '16%'}}>Dịch vụ</th>
-                <th style={{width: '12%'}}>Trạng thái</th>
-                <th style={{width: '23%', textAlign: 'center'}}>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAppointments.map((apt) => {
-                const statusBadge = getStatusBadge(apt.status);
-                return (
-                  <tr key={apt.id}>
-                    <td>
-                      <span className="code-badge">{apt.code}</span>
-                    </td>
-                    
-                    <td>
-                      <span className="time-badge">🕐 {apt.time}</span>
-                    </td>
-                    
-                    <td>
-                      <div className="pet-detail-cell">
-                        <span className="pet-icon-large">{apt.petIcon}</span>
-                        <div>
-                          <p className="pet-name-bold">{apt.petName}</p>
-                          <p className="pet-info-small">{apt.petType}</p>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[8%]">Mã</TableHead>
+                <TableHead className="w-[8%]">Giờ</TableHead>
+                <TableHead className="w-[18%]">Thú cưng</TableHead>
+                <TableHead className="w-[15%]">Chủ nuôi</TableHead>
+                <TableHead className="w-[16%]">Dịch vụ</TableHead>
+                <TableHead className="w-[12%]">Trạng thái</TableHead>
+                <TableHead className="w-[23%] text-center">Thao tác</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredAppointments.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                    <Calendar className="mx-auto h-8 w-8 mb-2" />
+                    Không có ca khám nào
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredAppointments.map((apt) => {
+                  const statusBadge = getStatusBadge(apt.status);
+                  const ServiceIcon = getServiceIcon(apt.serviceIcon);
+                  const PetIcon = apt.petIcon === '🐕' ? PawPrint : apt.petIcon === '🐈' ? Cat : PawPrint;
+                  return (
+                    <TableRow key={apt.id}>
+                      <TableCell>
+                        <Badge variant="secondary" className="font-mono text-xs">{apt.code}</Badge>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          <span className="font-medium">{apt.time}</span>
                         </div>
-                      </div>
-                    </td>
-                    
-                    <td>
-                      <div className="customer-cell">
-                        <p className="font-semibold">{apt.ownerName}</p>
-                        <p className="text-sm text-gray-500">{apt.ownerPhone}</p>
-                      </div>
-                    </td>
-                    
-                    <td>
-                      <span className="service-icon-small">{apt.serviceIcon}</span>
-                      {apt.serviceName}
-                    </td>
-                    
-                    <td>
-                      <span className={`status-badge-wide ${statusBadge.class}`}>
-                        <span className="status-icon">{statusBadge.icon}</span>
-                        <span className="status-text">{statusBadge.label}</span>
-                      </span>
-                    </td>
-                    
-                    <td>
-                      <div className="action-buttons-modern action-buttons-centered">
-                        <button
-                          onClick={() => handleViewDetail(apt)}
-                          className="btn-icon-action btn-view-icon"
-                          title="Chi tiết"
-                        >
-                          👁️
-                        </button>
-                        
-                        {apt.status === 'waiting' && (
-                          <button
-                            onClick={() => handleStartExam(apt.id)}
-                            className="btn-icon-action btn-start-icon"
-                            title="Bắt đầu khám"
-                          >
-                            ▶️
-                          </button>
-                        )}
-                        
-                        {(apt.status === 'in_progress' || apt.status === 'waiting') && (
-                          <button
-                            onClick={() => handleCompleteExam(apt)}
-                            className="btn-icon-action btn-complete-icon"
-                            title="Hoàn thành"
-                          >
-                            ✓
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-
-          {filteredAppointments.length === 0 && (
-            <div className="empty-state-modern">
-              <div className="empty-icon">📅</div>
-              <p className="empty-text">Không có ca khám nào</p>
-            </div>
-          )}
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-secondary-foreground">
+                            <PetIcon className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="font-semibold">{apt.petName}</p>
+                            <p className="text-xs text-muted-foreground">{apt.petType}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div>
+                          <p className="font-semibold">{apt.ownerName}</p>
+                          <p className="text-sm text-muted-foreground">{apt.ownerPhone}</p>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <ServiceIcon className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">{apt.serviceName}</span>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Badge variant={statusBadge.variant} className="flex items-center gap-1 w-fit">
+                          <statusBadge.icon className="h-3 w-3" /> {statusBadge.label}
+                        </Badge>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex justify-center gap-2">
+                          <Button variant="outline" size="icon" onClick={() => handleViewDetail(apt)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          
+                          {apt.status === 'waiting' && (
+                            <Button variant="default" size="icon" onClick={() => handleStartExam(apt.id)}>
+                              <Play className="h-4 w-4" />
+                            </Button>
+                          )}
+                          
+                          {(apt.status === 'in_progress' || apt.status === 'waiting') && (
+                            <Button variant="success" size="icon" onClick={() => handleCompleteExam(apt)}>
+                              <CheckCircle2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
 
@@ -453,7 +435,7 @@ export default function VeterinarianSchedulePage() {
 
       {/* Toast */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
+        <div className={cn("fixed bottom-4 right-4 p-3 rounded-md shadow-lg text-white", toast.type === "success" ? "bg-green-500" : "bg-red-500")}>
           {toast.message}
         </div>
       )}
