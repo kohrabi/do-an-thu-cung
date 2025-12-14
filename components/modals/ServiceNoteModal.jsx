@@ -1,6 +1,25 @@
 // components/modals/ServiceNoteModal.jsx
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  FileText, 
+  X, 
+  Save, 
+  Loader2, 
+  PawPrint, 
+  Hospital, 
+  Clock, 
+  User,
+  ClipboardList,
+  CheckCircle2,
+  Heart,
+  Lightbulb
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function ServiceNoteModal({ isOpen, onClose, onSuccess, task }) {
   const [formData, setFormData] = useState({
@@ -58,442 +77,170 @@ export default function ServiceNoteModal({ isOpen, onClose, onSuccess, task }) {
 
   if (!isOpen || !task) return null;
 
-  const modalStyles = {
-    overlay: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999,
-      padding: '1rem'
-    },
-    container: {
-      backgroundColor: 'white',
-      borderRadius: '16px',
-      width: '100%',
-      maxWidth: '900px',
-      maxHeight: '90vh',
-      display: 'flex',
-      flexDirection: 'column',
-      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
-    },
-    header: {
-      padding: '1.5rem',
-      borderBottom: '1px solid #E5E7EB',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    },
-    title: {
-      fontSize: '1.5rem',
-      fontWeight: 700,
-      color: '#1F2937',
-      margin: 0,
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem'
-    },
-    closeBtn: {
-      width: '40px',
-      height: '40px',
-      borderRadius: '50%',
-      border: 'none',
-      background: '#F3F4F6',
-      fontSize: '1.25rem',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      transition: 'all 0.2s'
-    },
-    body: {
-      padding: '1.5rem',
-      overflowY: 'auto',
-      flex: 1
-    },
-    petCard: {
-      padding: '1.5rem',
-      background: 'linear-gradient(135deg, #FFF5F7 0%, #FFE4E9 100%)',
-      borderRadius: '12px',
-      marginBottom: '1.5rem',
-      border: '2px solid #FFD4DC'
-    },
-    petHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1.25rem',
-      marginBottom: '1.25rem',
-      flexWrap: 'wrap'
-    },
-    petAvatar: {
-      fontSize: '4rem',
-      width: '80px',
-      height: '80px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'white',
-      borderRadius: '50%',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-    },
-    petInfo: {
-      flex: 1,
-      minWidth: '200px'
-    },
-    petName: {
-      fontSize: '1.5rem',
-      fontWeight: 700,
-      color: '#1F2937',
-      margin: '0 0 0.375rem 0'
-    },
-    petBreed: {
-      fontSize: '0.9375rem',
-      color: '#6B7280',
-      margin: 0
-    },
-    infoGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: '1rem',
-      padding: '1rem',
-      background: 'white',
-      borderRadius: '10px'
-    },
-    infoItem: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem'
-    },
-    infoIcon: {
-      fontSize: '1.75rem',
-      flexShrink: 0
-    },
-    infoLabel: {
-      fontSize: '0.75rem',
-      color: '#9CA3AF',
-      textTransform: 'uppercase',
-      fontWeight: 600,
-      margin: '0 0 0.25rem 0'
-    },
-    infoValue: {
-      fontSize: '0.9375rem',
-      color: '#1F2937',
-      fontWeight: 600,
-      margin: 0,
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
-    },
-    formGroup: {
-      marginBottom: '1.5rem'
-    },
-    label: {
-      display: 'block',
-      fontSize: '0.875rem',
-      fontWeight: 600,
-      color: '#374151',
-      marginBottom: '0.5rem'
-    },
-    required: {
-      color: '#EF4444',
-      marginLeft: '0.25rem'
-    },
-    textarea: {
-      width: '100%',
-      padding: '0.75rem',
-      borderRadius: '8px',
-      fontSize: '0.9375rem',
-      fontFamily: 'inherit',
-      resize: 'vertical',
-      outline: 'none',
-      transition: 'all 0.2s',
-      boxSizing: 'border-box'
-    },
-    hint: {
-      fontSize: '0.8125rem',
-      color: '#6B7280',
-      fontStyle: 'italic',
-      marginTop: '0.5rem',
-      marginBottom: 0
-    },
-    error: {
-      color: '#EF4444',
-      fontSize: '0.8125rem',
-      marginTop: '0.25rem',
-      marginBottom: 0
-    },
-    footer: {
-      padding: '1.5rem',
-      borderTop: '1px solid #E5E7EB',
-      display: 'flex',
-      justifyContent: 'flex-end',
-      gap: '0.75rem'
-    },
-    btnSecondary: {
-      padding: '0.75rem 1.5rem',
-      border: '2px solid #E5E7EB',
-      borderRadius: '8px',
-      background: 'white',
-      color: '#374151',
-      fontSize: '0.9375rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      transition: 'all 0.2s'
-    },
-    btnPrimary: {
-      padding: '0.75rem 1.5rem',
-      border: 'none',
-      borderRadius: '8px',
-      background: 'linear-gradient(135deg, #FF6B9D 0%, #FF8FB3 100%)',
-      color: 'white',
-      fontSize: '0.9375rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      transition: 'all 0.2s',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem'
-    },
-    btnDisabled: {
-      background: '#D1D5DB',
-      cursor: 'not-allowed'
-    }
-  };
-
-  const getTextareaStyle = (fieldName) => ({
-    ...modalStyles.textarea,
-    border: `2px solid ${errors[fieldName] ? '#EF4444' : '#E5E7EB'}`
-  });
-
   return (
-    <div style={modalStyles.overlay} onClick={onClose}>
-      <div style={modalStyles.container} onClick={(e) => e.stopPropagation()}>
-        
-        {/* Header */}
-        <div style={modalStyles.header}>
-          <h2 style={modalStyles.title}>
-            <span>📝</span>
-            Ghi chú chăm sóc
-          </h2>
-          <button
-            onClick={onClose}
-            style={modalStyles.closeBtn}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = '#EF4444';
-              e.currentTarget.style.color = 'white';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = '#F3F4F6';
-              e.currentTarget.style.color = 'inherit';
-            }}
-          >
-            ✕
-          </button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <FileText className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Ghi chú chăm sóc</DialogTitle>
+          </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-          
-          {/* Body */}
-          <div style={modalStyles.body}>
-            
-            {/* Pet Info Card */}
-            <div style={modalStyles.petCard}>
-              <div style={modalStyles.petHeader}>
-                <span style={modalStyles.petAvatar}>{task.petIcon}</span>
-                <div style={modalStyles.petInfo}>
-                  <h3 style={modalStyles.petName}>{task.petName}</h3>
-                  <p style={modalStyles.petBreed}>{task.petType}</p>
-                </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Pet Info Card */}
+          <div className="p-5 bg-pink-50 rounded-lg border-2 border-pink-200">
+            <div className="flex items-center gap-5 mb-5 flex-wrap">
+              <div className="text-5xl w-20 h-20 flex items-center justify-center bg-white rounded-full shadow-md shrink-0">
+                {task.petIcon || "🐾"}
               </div>
-
-              <div style={modalStyles.infoGrid}>
-                <div style={modalStyles.infoItem}>
-                  <span style={modalStyles.infoIcon}>{task.serviceIcon}</span>
-                  <div style={{ minWidth: 0 }}>
-                    <p style={modalStyles.infoLabel}>Dịch vụ</p>
-                    <p style={modalStyles.infoValue}>{task.service}</p>
-                  </div>
-                </div>
-
-                <div style={modalStyles.infoItem}>
-                  <span style={modalStyles.infoIcon}>🕐</span>
-                  <div style={{ minWidth: 0 }}>
-                    <p style={modalStyles.infoLabel}>Giờ</p>
-                    <p style={modalStyles.infoValue}>{task.time}</p>
-                  </div>
-                </div>
-
-                <div style={modalStyles.infoItem}>
-                  <span style={modalStyles.infoIcon}>👤</span>
-                  <div style={{ minWidth: 0 }}>
-                    <p style={modalStyles.infoLabel}>Chủ nuôi</p>
-                    <p style={modalStyles.infoValue}>{task.ownerName}</p>
-                  </div>
-                </div>
+              <div className="flex-1 min-w-[200px]">
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  {task.petName}
+                </h3>
+                <p className="text-base text-muted-foreground">
+                  {task.petType}
+                </p>
               </div>
             </div>
 
-            {/* Note Before */}
-            <div style={modalStyles.formGroup}>
-              <label style={modalStyles.label}>
-                📋 Ghi chú trước dịch vụ
-                <span style={modalStyles.required}>*</span>
-              </label>
-              <textarea
-                name="noteBefore"
-                value={formData.noteBefore}
-                onChange={handleChange}
-                placeholder="Tình trạng ban đầu của thú cưng, điều kiện khi tiếp nhận..."
-                rows="4"
-                style={getTextareaStyle('noteBefore')}
-                onFocus={(e) => {
-                  if (!errors.noteBefore) {
-                    e.target.style.borderColor = '#FF6B9D';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 157, 0.1)';
-                  }
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = errors.noteBefore ? '#EF4444' : '#E5E7EB';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-              {errors.noteBefore && <p style={modalStyles.error}>{errors.noteBefore}</p>}
-              <p style={modalStyles.hint}>
-                💡 Ghi nhận tình trạng sức khỏe, hành vi, và mọi điều bất thường trước khi bắt đầu dịch vụ
-              </p>
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-lg">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">{task.serviceIcon || "🛁"}</span>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">
+                    Dịch vụ
+                  </p>
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {task.service}
+                  </p>
+                </div>
+              </div>
 
-            {/* Note After */}
-            <div style={modalStyles.formGroup}>
-              <label style={modalStyles.label}>
-                ✅ Ghi chú sau dịch vụ
-                <span style={modalStyles.required}>*</span>
-              </label>
-              <textarea
-                name="noteAfter"
-                value={formData.noteAfter}
-                onChange={handleChange}
-                placeholder="Quá trình thực hiện, phản ứng của thú cưng, kết quả..."
-                rows="4"
-                style={getTextareaStyle('noteAfter')}
-                onFocus={(e) => {
-                  if (!errors.noteAfter) {
-                    e.target.style.borderColor = '#FF6B9D';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 157, 0.1)';
-                  }
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = errors.noteAfter ? '#EF4444' : '#E5E7EB';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-              {errors.noteAfter && <p style={modalStyles.error}>{errors.noteAfter}</p>}
-              <p style={modalStyles.hint}>
-                💡 Mô tả chi tiết quá trình chăm sóc và phản ứng của thú cưng
-              </p>
-            </div>
+              <div className="flex items-center gap-3">
+                <Clock className="h-7 w-7 text-muted-foreground" />
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">
+                    Giờ
+                  </p>
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {task.time}
+                  </p>
+                </div>
+              </div>
 
-            {/* Health Observation */}
-            <div style={modalStyles.formGroup}>
-              <label style={modalStyles.label}>
-                ❤️ Quan sát sức khỏe
-              </label>
-              <textarea
-                name="healthObservation"
-                value={formData.healthObservation}
-                onChange={handleChange}
-                placeholder="Nhiệt độ, nhịp thở, tình trạng da lông, dấu hiệu bất thường..."
-                rows="4"
-                style={getTextareaStyle('healthObservation')}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#FF6B9D';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 157, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#E5E7EB';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-              <p style={modalStyles.hint}>
-                💡 Ghi chú về sức khỏe tổng quát và các dấu hiệu cần lưu ý
-              </p>
+              <div className="flex items-center gap-3">
+                <User className="h-7 w-7 text-muted-foreground" />
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">
+                    Chủ nuôi
+                  </p>
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {task.ownerName}
+                  </p>
+                </div>
+              </div>
             </div>
+          </div>
 
+          {/* Note Before */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <ClipboardList className="h-4 w-4 text-muted-foreground" />
+              Ghi chú trước dịch vụ
+              <span className="text-destructive">*</span>
+            </Label>
+            <Textarea
+              name="noteBefore"
+              value={formData.noteBefore}
+              onChange={handleChange}
+              placeholder="Tình trạng ban đầu của thú cưng, điều kiện khi tiếp nhận..."
+              rows={4}
+              className={cn(errors.noteBefore && "border-destructive")}
+            />
+            {errors.noteBefore && (
+              <p className="text-sm text-destructive">{errors.noteBefore}</p>
+            )}
+            <p className="text-xs text-muted-foreground italic flex items-center gap-1">
+              <Lightbulb className="h-3 w-3" />
+              Ghi nhận tình trạng sức khỏe, hành vi, và mọi điều bất thường trước khi bắt đầu dịch vụ
+            </p>
+          </div>
+
+          {/* Note After */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+              Ghi chú sau dịch vụ
+              <span className="text-destructive">*</span>
+            </Label>
+            <Textarea
+              name="noteAfter"
+              value={formData.noteAfter}
+              onChange={handleChange}
+              placeholder="Quá trình thực hiện, phản ứng của thú cưng, kết quả..."
+              rows={4}
+              className={cn(errors.noteAfter && "border-destructive")}
+            />
+            {errors.noteAfter && (
+              <p className="text-sm text-destructive">{errors.noteAfter}</p>
+            )}
+            <p className="text-xs text-muted-foreground italic flex items-center gap-1">
+              <Lightbulb className="h-3 w-3" />
+              Mô tả chi tiết quá trình chăm sóc và phản ứng của thú cưng
+            </p>
+          </div>
+
+          {/* Health Observation */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Heart className="h-4 w-4 text-muted-foreground" />
+              Quan sát sức khỏe
+            </Label>
+            <Textarea
+              name="healthObservation"
+              value={formData.healthObservation}
+              onChange={handleChange}
+              placeholder="Nhiệt độ, nhịp thở, tình trạng da lông, dấu hiệu bất thường..."
+              rows={4}
+            />
+            <p className="text-xs text-muted-foreground italic flex items-center gap-1">
+              <Lightbulb className="h-3 w-3" />
+              Ghi chú về sức khỏe tổng quát và các dấu hiệu cần lưu ý
+            </p>
           </div>
 
           {/* Footer */}
-          <div style={modalStyles.footer}>
-            <button
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              style={modalStyles.btnSecondary}
-              onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = '#D1D5DB';
-                e.currentTarget.style.background = '#F9FAFB';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.borderColor = '#E5E7EB';
-                e.currentTarget.style.background = 'white';
-              }}
             >
+              <X className="h-4 w-4" />
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              style={{
-                ...modalStyles.btnPrimary,
-                ...(loading ? modalStyles.btnDisabled : {})
-              }}
-              onMouseOver={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, #FF5A8C 0%, #FF7BA2 100%)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 107, 157, 0.4)';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, #FF6B9D 0%, #FF8FB3 100%)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }
-              }}
             >
               {loading ? (
                 <>
-                  <span style={{
-                    width: '16px',
-                    height: '16px',
-                    border: '2px solid white',
-                    borderTopColor: 'transparent',
-                    borderRadius: '50%',
-                    display: 'inline-block',
-                    animation: 'spin 0.6s linear infinite'
-                  }}></span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Đang lưu...
                 </>
               ) : (
                 <>
-                  <span>💾</span>
+                  <Save className="h-4 w-4" />
                   Lưu ghi chú
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-
-        <style jsx>{`
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
