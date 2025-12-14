@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { CheckCircle2, Printer, Mail, Calendar, Clock, PawPrint, Cat, Stethoscope, Bath, Scissors, ClipboardList, Search, User } from "lucide-react";
+import { CheckCircle2, Printer, Mail, Calendar, Clock, PawPrint, Cat, Stethoscope, Bath, Scissors, ClipboardList, Search, User, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function SlipsPage() {
