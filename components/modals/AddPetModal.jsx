@@ -152,24 +152,17 @@ export default function AddPetModal({ isOpen, onClose, onSuccess }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Tên thú cưng */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              Tên thú cưng
-              <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="VD: Lucky, Miu, Coco..."
-              className={cn(errors.name && "border-destructive")}
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name}</p>
-            )}
-          </div>
+          <Input
+            label="Tên thú cưng"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="VD: Lucky, Miu, Coco..."
+            error={errors.name}
+            icon={FileText}
+            required
+          />
 
           {/* Loại & Giống (2 cột) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -194,24 +187,17 @@ export default function AddPetModal({ isOpen, onClose, onSuccess }) {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Tag className="h-4 w-4 text-muted-foreground" />
-                Giống
-                <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                type="text"
-                name="breed"
-                value={formData.breed}
-                onChange={handleChange}
-                placeholder="VD: Golden Retriever, Mèo Ba Tư..."
-                className={cn(errors.breed && "border-destructive")}
-              />
-              {errors.breed && (
-                <p className="text-sm text-destructive">{errors.breed}</p>
-              )}
-            </div>
+            <Input
+              label="Giống"
+              name="breed"
+              type="text"
+              value={formData.breed}
+              onChange={handleChange}
+              placeholder="VD: Golden Retriever, Mèo Ba Tư..."
+              error={errors.breed}
+              icon={Tag}
+              required
+            />
           </div>
 
           {/* Giới tính & Ngày sinh (2 cột) */}
@@ -237,55 +223,40 @@ export default function AddPetModal({ isOpen, onClose, onSuccess }) {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Cake className="h-4 w-4 text-muted-foreground" />
-                Ngày sinh
-                <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                type="date"
-                name="dateOfBirth"
-                value={formData.dateOfBirth}
-                onChange={handleChange}
-                max={new Date().toISOString().split('T')[0]}
-                className={cn(errors.dateOfBirth && "border-destructive")}
-              />
-              {errors.dateOfBirth && (
-                <p className="text-sm text-destructive">{errors.dateOfBirth}</p>
-              )}
-            </div>
+            <Input
+              label="Ngày sinh"
+              name="dateOfBirth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              max={new Date().toISOString().split('T')[0]}
+              error={errors.dateOfBirth}
+              icon={Cake}
+              required
+            />
           </div>
 
           {/* Cân nặng & Màu lông (2 cột) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Scale className="h-4 w-4 text-muted-foreground" />
-                Cân nặng
-              </Label>
-              <Input
-                type="text"
-                name="weight"
-                value={formData.weight}
-                onChange={handleChange}
-                placeholder="VD: 5 kg"
-              />
-            </div>
+            <Input
+              label="Cân nặng"
+              name="weight"
+              type="text"
+              value={formData.weight}
+              onChange={handleChange}
+              placeholder="VD: 5 kg"
+              icon={Scale}
+            />
 
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Palette className="h-4 w-4 text-muted-foreground" />
-                Màu lông
-              </Label>
-              <Input
-                type="text"
-                name="color"
-                value={formData.color}
-                onChange={handleChange}
-                placeholder="VD: Vàng, Trắng, Nâu..."
-              />
-            </div>
+            <Input
+              label="Màu lông"
+              name="color"
+              type="text"
+              value={formData.color}
+              onChange={handleChange}
+              placeholder="VD: Vàng, Trắng, Nâu..."
+              icon={Palette}
+            />
           </div>
 
           {/* Lịch sử y tế */}
