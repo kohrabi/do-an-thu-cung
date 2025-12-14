@@ -360,18 +360,18 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 5.1: Refactor ServiceTable
 
-- [ ] Sử dụng shadcn/ui Table component
-- [ ] Thay thế emoji icons bằng Lucide icons
-- [ ] Thay thế CSS classes bằng Tailwind
-- [ ] Sử dụng shadcn/ui Input cho search box
-- [ ] Sử dụng shadcn/ui Badge cho status
-- [ ] Giữ nguyên filtering logic
+- [x] Sử dụng shadcn/ui Table component ✅ (Card layout cho ServiceTable)
+- [x] Thay thế emoji icons bằng Lucide icons ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
+- [x] Sử dụng shadcn/ui Input cho search box ✅
+- [x] Sử dụng shadcn/ui Badge cho status ✅
+- [x] Giữ nguyên filtering logic ✅
 
 #### Task 5.2: Refactor StaffTable
 
-- [ ] Tương tự ServiceTable
-- [ ] Sử dụng shadcn/ui Table component
-- [ ] Thay thế icons và CSS classes
+- [x] Tương tự ServiceTable ✅
+- [x] Sử dụng shadcn/ui Table component ✅
+- [x] Thay thế icons và CSS classes ✅
 
 ### Phase 6: Dashboard Components (Priority: MEDIUM)
 
