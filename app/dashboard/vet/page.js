@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import StatsCard from "@/components/dashboard/StatsCard";
 import QuickActions from "@/components/dashboard/QuickActions";
+import { Calendar, RefreshCw, CheckCircle2, FileText, Bell, Clock, Sparkles, ClipboardList, PawPrint, Cat, Stethoscope, Syringe, User } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function VeterinarianDashboard() {
   const router = useRouter();
@@ -98,22 +103,22 @@ export default function VeterinarianDashboard() {
 
   const quickActions = [
     {
-      icon: "📅",
+      icon: Calendar,
       label: "Xem lịch khám",
       onClick: () => router.push("/dashboard/vet/schedule")
     },
     {
-      icon: "👥",
+      icon: FileText,
       label: "Hồ sơ bệnh án",
       onClick: () => router.push("/dashboard/vet/records")
     },
     {
-      icon: "📋",
+      icon: ClipboardList,
       label: "Công việc hôm nay",
       onClick: () => router.push("/dashboard/vet/today")
     },
     {
-      icon: "🐾",
+      icon: PawPrint,
       label: "Bệnh nhân của tôi",
       onClick: () => router.push("/dashboard/vet/patients")
     }
@@ -121,15 +126,25 @@ export default function VeterinarianDashboard() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      waiting: { label: "Chờ khám", class: "status-waiting", icon: "⏳" },
-      in_progress: { label: "Đang khám", class: "status-in-progress", icon: "🔄" },
-      completed: { label: "Hoàn thành", class: "status-completed", icon: "✓" }
+      waiting: { label: "Chờ khám", variant: "warning", icon: Clock },
+      in_progress: { label: "Đang khám", variant: "info", icon: RefreshCw },
+      completed: { label: "Hoàn thành", variant: "success", icon: CheckCircle2 }
     };
     return badges[status] || badges.waiting;
   };
 
+  const getServiceIcon = (icon) => {
+    switch (icon) {
+      case '🏥': return Stethoscope;
+      case '💉': return Syringe;
+      case '🔄': return RefreshCw;
+      case '🩺': return Stethoscope;
+      default: return Stethoscope;
+    }
+  };
+
   return (
-    <div className="dashboard-container">
+    <div className="flex-1 space-y-8 p-8">
       <DashboardHeader
         title="Dashboard Bác sĩ thú y"
         subtitle={`Chào buổi chiều, BS. Đức Hải - ${new Date().toLocaleDateString('vi-VN')}`}
@@ -137,112 +152,81 @@ export default function VeterinarianDashboard() {
 
       {/* Upcoming Alert */}
       {upcomingAlert && (
-        <div className="section-separated">
-          <div className="alert-upcoming">
-            <span className="alert-icon">🔔</span>
-            <p className="alert-text">
-              Sắp đến giờ khám cho <strong>{upcomingAlert.petName}</strong> ({upcomingAlert.time})
-            </p>
-            <button 
-              onClick={() => router.push("/dashboard/veterinarian/schedule")}
-              className="alert-action-btn"
-            >
+        <Card className="border-primary/50 bg-primary/5">
+          <CardContent className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <Bell className="h-5 w-5 text-primary" />
+              <p className="text-sm">
+                Sắp đến giờ khám cho <strong>{upcomingAlert.petName}</strong> ({upcomingAlert.time})
+              </p>
+            </div>
+            <Button onClick={() => router.push("/dashboard/vet/schedule")} size="sm">
               Xem lịch
-            </button>
-          </div>
-        </div>
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       {/* Stats */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">📅</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Lịch khám hôm nay</p>
-              <h3 className="stat-number">{stats.todayAppointments}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🔄</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang thực hiện</p>
-              <h3 className="stat-number">{stats.inProgress}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✅</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đã hoàn thành</p>
-              <h3 className="stat-number">{stats.completed}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern stat-warning">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">📝</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Bệnh án mới</p>
-              <h3 className="stat-number">{stats.newRecords}</h3>
-            </div>
-          </div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatsCard icon={Calendar} title="Lịch khám hôm nay" value={stats.todayAppointments} color="primary" />
+        <StatsCard icon={RefreshCw} title="Đang thực hiện" value={stats.inProgress} color="info" />
+        <StatsCard icon={CheckCircle2} title="Đã hoàn thành" value={stats.completed} color="success" />
+        <StatsCard icon={FileText} title="Bệnh án mới" value={stats.newRecords} color="warning" />
       </div>
 
       {/* Quick Actions */}
-      <div className="section-separated">
-        <h2 className="section-title-large">
-          <span className="title-icon">⚡</span>
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          <Sparkles className="h-6 w-6 text-primary" />
           Thao tác nhanh
         </h2>
         <QuickActions actions={quickActions} />
       </div>
 
       {/* Today's Schedule */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <ClipboardList className="h-6 w-6 text-primary" />
             Lịch khám hôm nay
           </h2>
-          <span className="section-count">{todaySchedule.length} ca khám</span>
+          <Badge variant="secondary">{todaySchedule.length} ca khám</Badge>
         </div>
 
-        <div className="vet-schedule-list">
+        <div className="space-y-3">
           {todaySchedule.map((appointment) => {
             const statusBadge = getStatusBadge(appointment.status);
+            const ServiceIcon = getServiceIcon(appointment.serviceIcon);
+            const PetIcon = appointment.petIcon === '🐕' ? PawPrint : appointment.petIcon === '🐈' ? Cat : PawPrint;
             return (
-              <div key={appointment.id} className="vet-schedule-item">
-                <div className="schedule-time-section">
-                  <span className="schedule-time-badge">{appointment.time}</span>
+              <Card key={appointment.id} className="flex items-center gap-4 p-4">
+                <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-primary/10">
+                  <Clock className="h-6 w-6 text-primary" />
+                  <span className="ml-1 font-semibold">{appointment.time}</span>
                 </div>
 
-                <div className="schedule-pet-section">
-                  <span className="schedule-pet-icon">{appointment.petIcon}</span>
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-secondary-foreground">
+                    <PetIcon className="h-5 w-5" />
+                  </div>
                   <div>
-                    <p className="schedule-pet-name">{appointment.petName}</p>
-                    <p className="schedule-owner-name">👤 {appointment.ownerName}</p>
+                    <p className="font-semibold">{appointment.petName}</p>
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                      <User className="h-3 w-3" /> {appointment.ownerName}
+                    </p>
                   </div>
                 </div>
 
-                <div className="schedule-service-section">
-                  <span className="schedule-service-icon">{appointment.serviceIcon}</span>
-                  <p className="schedule-service-name">{appointment.service}</p>
+                <div className="flex items-center gap-2 flex-1">
+                  <ServiceIcon className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm">{appointment.service}</p>
                 </div>
 
-                <span className={`schedule-status-badge ${statusBadge.class}`}>
-                  {statusBadge.icon} {statusBadge.label}
-                </span>
-              </div>
+                <Badge variant={statusBadge.variant} className="flex items-center gap-1">
+                  <statusBadge.icon className="h-3 w-3" /> {statusBadge.label}
+                </Badge>
+              </Card>
             );
           })}
         </div>
