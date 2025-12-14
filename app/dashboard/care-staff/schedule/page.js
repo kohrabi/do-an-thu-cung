@@ -2,6 +2,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import { Calendar, Clock, RefreshCw, CheckCircle2, Search, ClipboardList, PawPrint, Cat, Bath, Scissors, Home, Sparkles, User } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 export default function CareStaffSchedulePage() {
   const [selectedDate, setSelectedDate] = useState("2025-10-27");
@@ -80,11 +87,22 @@ export default function CareStaffSchedulePage() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      pending: { label: "Chưa làm", class: "status-pending", icon: "⏳" },
-      in_progress: { label: "Đang làm", class: "status-in-progress", icon: "🔄" },
-      completed: { label: "Hoàn thành", class: "status-completed", icon: "✓" }
+      pending: { label: "Chưa làm", variant: "warning", icon: Clock },
+      in_progress: { label: "Đang làm", variant: "info", icon: RefreshCw },
+      completed: { label: "Hoàn thành", variant: "success", icon: CheckCircle2 }
     };
     return badges[status] || badges.pending;
+  };
+
+  const getServiceIcon = (icon) => {
+    switch (icon) {
+      case '🛁': return Bath;
+      case '✂️': return Scissors;
+      case '🧼': return Sparkles;
+      case '🪮': return Sparkles;
+      case '🏠': return Home;
+      default: return Sparkles;
+    }
   };
 
   const stats = {
@@ -95,169 +113,145 @@ export default function CareStaffSchedulePage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="flex-1 space-y-8 p-8">
       <DashboardHeader
         title="Lịch làm việc"
         subtitle="Quản lý lịch chăm sóc thú cưng"
       />
 
       {/* Stats */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">📅</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tổng lịch</p>
-              <h3 className="stat-number">{stats.total}</h3>
-            </div>
-          </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Tổng lịch</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern stat-warning">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">⏳</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Chưa làm</p>
-              <h3 className="stat-number">{stats.pending}</h3>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Chưa làm</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.pending}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🔄</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang làm</p>
-              <h3 className="stat-number">{stats.inProgress}</h3>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Đang làm</CardTitle>
+            <RefreshCw className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.inProgress}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✓</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Hoàn thành</p>
-              <h3 className="stat-number">{stats.completed}</h3>
-            </div>
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Hoàn thành</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.completed}</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters */}
-      <div className="section-separated">
-        <div className="filter-buttons-group">
-          <button
-            onClick={() => setFilter("all")}
-            className={`filter-btn-modern ${filter === "all" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">📋</span>
-            <span>Tất cả</span>
-          </button>
-          <button
-            onClick={() => setFilter("pending")}
-            className={`filter-btn-modern ${filter === "pending" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">⏳</span>
-            <span>Chưa làm</span>
-          </button>
-          <button
-            onClick={() => setFilter("in_progress")}
-            className={`filter-btn-modern ${filter === "in_progress" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">🔄</span>
-            <span>Đang làm</span>
-          </button>
-          <button
-            onClick={() => setFilter("completed")}
-            className={`filter-btn-modern ${filter === "completed" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">✓</span>
-            <span>Hoàn thành</span>
-          </button>
-        </div>
-      </div>
+      <Tabs value={filter} onValueChange={setFilter} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="all">Tất cả</TabsTrigger>
+          <TabsTrigger value="pending">Chưa làm</TabsTrigger>
+          <TabsTrigger value="in_progress">Đang làm</TabsTrigger>
+          <TabsTrigger value="completed">Hoàn thành</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Date Picker & Search */}
-      <div className="section-separated">
-        <div className="date-search-row">
-          <div className="date-filter-section">
-            <label className="filter-label">
-              <span className="filter-icon">📅</span>
-              Chọn ngày
-            </label>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="date-input-modern"
-            />
-          </div>
-
-          <div className="search-box-modern">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo tên thú cưng hoặc chủ nuôi..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-modern"
-            />
-          </div>
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <label className="text-sm font-medium">Chọn ngày:</label>
+          <Input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="w-auto"
+          />
+        </div>
+        <div className="relative flex-1 max-w-sm w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Tìm kiếm theo tên thú cưng hoặc chủ nuôi..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
         </div>
       </div>
 
       {/* Schedule List */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <ClipboardList className="h-6 w-6 text-primary" />
             Lịch ngày {selectedDate}
           </h2>
-          <span className="section-count">{filteredSchedule.length} lịch</span>
+          <Badge variant="secondary">{filteredSchedule.length} lịch</Badge>
         </div>
 
-        <div className="schedule-list-staff">
-          {filteredSchedule.map((item) => {
-            const statusBadge = getStatusBadge(item.status);
-            return (
-              <div key={item.id} className="schedule-item-staff">
-                <div className="schedule-time-staff">{item.time}</div>
-                
-                <div className="schedule-pet-staff">
-                  <span className="schedule-pet-icon-staff">{item.petIcon}</span>
-                  <div>
-                    <p className="schedule-pet-name-staff">{item.petName}</p>
-                    <p className="schedule-pet-type-staff">{item.petType}</p>
+        <div className="space-y-3">
+          {filteredSchedule.length === 0 ? (
+            <Card className="p-8 text-center">
+              <Calendar className="mx-auto h-12 w-12 mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">Không có lịch nào</p>
+            </Card>
+          ) : (
+            filteredSchedule.map((item) => {
+              const statusBadge = getStatusBadge(item.status);
+              const ServiceIcon = getServiceIcon(item.serviceIcon);
+              const PetIcon = item.petIcon === '🐕' ? PawPrint : item.petIcon === '🐈' ? Cat : PawPrint;
+              return (
+                <Card key={item.id} className="flex items-center gap-4 p-4">
+                  <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-primary/10">
+                    <Clock className="h-5 w-5 text-primary" />
+                    <span className="ml-1 font-semibold">{item.time}</span>
                   </div>
-                </div>
+                  
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-secondary-foreground">
+                      <PetIcon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">{item.petName}</p>
+                      <p className="text-sm text-muted-foreground">{item.petType}</p>
+                    </div>
+                  </div>
 
-                <div className="schedule-owner-staff">
-                  <p className="schedule-owner-name-staff">{item.ownerName}</p>
-                  <p className="schedule-owner-phone-staff">{item.ownerPhone}</p>
-                </div>
+                  <div className="flex-1">
+                    <p className="font-semibold">{item.ownerName}</p>
+                    <p className="text-sm text-muted-foreground">{item.ownerPhone}</p>
+                  </div>
 
-                <div className="schedule-service-staff">
-                  <span className="schedule-service-icon-staff">{item.serviceIcon}</span>
-                  <span>{item.service}</span>
-                </div>
+                  <div className="flex items-center gap-2 flex-1">
+                    <ServiceIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{item.service}</span>
+                  </div>
 
-                <span className={`schedule-status-badge-staff ${statusBadge.class}`}>
-                  {statusBadge.icon} {statusBadge.label}
-                </span>
-              </div>
-            );
-          })}
+                  <Badge variant={statusBadge.variant} className="flex items-center gap-1">
+                    <statusBadge.icon className="h-3 w-3" /> {statusBadge.label}
+                  </Badge>
+                </Card>
+              );
+            })
+          )}
         </div>
-
-        {filteredSchedule.length === 0 && (
-          <div className="empty-state-modern">
-            <div className="empty-icon">📅</div>
-            <p className="empty-text">Không có lịch nào</p>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -437,7 +437,7 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 8.4: Refactor Care Staff Pages
 
-- [ ] `app/dashboard/care-staff/page.js`
+- [x] `app/dashboard/care-staff/page.js` ✅
 - [ ] `app/dashboard/care-staff/schedule/page.js`
 - [ ] `app/dashboard/care-staff/tasks/page.js`
 - [ ] `app/dashboard/care-staff/today/page.js`
