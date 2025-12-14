@@ -11,14 +11,11 @@ const Dialog = ({ open, onOpenChange, children }) => {
 
   React.useEffect(() => {
     setMounted(true);
-    
-    // Tạo container cho portal nếu chưa có
+
+    // Tạo container cho portal chỉ khi cần
     if (!portalContainerRef.current) {
-      const container = document.createElement('div');
-      container.id = 'dialog-portal-container';
-      container.style.position = 'fixed';
-      container.style.inset = '0';
-      container.style.zIndex = '50';
+      const container = document.createElement("div");
+      container.id = "dialog-portal-container";
       document.body.appendChild(container);
       portalContainerRef.current = container;
     }
@@ -26,7 +23,9 @@ const Dialog = ({ open, onOpenChange, children }) => {
     return () => {
       // Cleanup: chỉ xóa container khi component unmount hoàn toàn
       if (portalContainerRef.current && portalContainerRef.current.parentNode) {
-        portalContainerRef.current.parentNode.removeChild(portalContainerRef.current);
+        portalContainerRef.current.parentNode.removeChild(
+          portalContainerRef.current
+        );
         portalContainerRef.current = null;
       }
     };
@@ -43,6 +42,7 @@ const Dialog = ({ open, onOpenChange, children }) => {
     };
   }, [open]);
 
+  // Chỉ render khi modal mở và đã mount
   if (!open || !mounted || !portalContainerRef.current) return null;
 
   const dialogContent = (
@@ -51,11 +51,17 @@ const Dialog = ({ open, onOpenChange, children }) => {
       onClick={() => onOpenChange?.(false)}
       role="dialog"
       aria-modal="true"
+      style={{ pointerEvents: "auto" }}
     >
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
-      <div 
-        onClick={(e) => e.stopPropagation()} 
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+        aria-hidden="true"
+        style={{ pointerEvents: "auto" }}
+      />
+      <div
+        onClick={(e) => e.stopPropagation()}
         className="relative z-50 flex items-center justify-center w-full max-w-lg mx-auto"
+        style={{ pointerEvents: "auto" }}
       >
         {children}
       </div>
@@ -65,22 +71,24 @@ const Dialog = ({ open, onOpenChange, children }) => {
   return createPortal(dialogContent, portalContainerRef.current);
 };
 
-const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "relative z-50 grid w-full max-w-lg gap-4 bg-card p-6 shadow-lg rounded-lg border border-border",
-        "animate-in fade-in-0 zoom-in-95 slide-in-from-left-1/2 slide-in-from-top-[48%] duration-200",
-        "max-h-[90vh] overflow-y-auto",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-});
+const DialogContent = React.forwardRef(
+  ({ className, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "relative z-50 grid w-full max-w-lg gap-4 bg-card p-6 shadow-lg rounded-lg border border-border",
+          "animate-in fade-in-0 zoom-in-95 slide-in-from-left-1/2 slide-in-from-top-[48%] duration-200",
+          "max-h-[90vh] overflow-y-auto",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
 DialogContent.displayName = "DialogContent";
 
 const DialogHeader = ({ className, ...props }) => (
@@ -126,21 +134,23 @@ const DialogFooter = ({ className, ...props }) => (
 );
 DialogFooter.displayName = "DialogFooter";
 
-const DialogClose = React.forwardRef(({ className, onClick, ...props }, ref) => (
-  <button
-    ref={ref}
-    type="button"
-    className={cn(
-      "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
-      className
-    )}
-    onClick={onClick}
-    {...props}
-  >
-    <X className="h-4 w-4" />
-    <span className="sr-only">Close</span>
-  </button>
-));
+const DialogClose = React.forwardRef(
+  ({ className, onClick, ...props }, ref) => (
+    <button
+      ref={ref}
+      type="button"
+      className={cn(
+        "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+        className
+      )}
+      onClick={onClick}
+      {...props}
+    >
+      <X className="h-4 w-4" />
+      <span className="sr-only">Close</span>
+    </button>
+  )
+);
 DialogClose.displayName = "DialogClose";
 
 export {
@@ -152,4 +162,3 @@ export {
   DialogFooter,
   DialogClose,
 };
-

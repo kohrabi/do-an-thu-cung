@@ -1,9 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { 
-  Users, Plus, Search, Edit, CheckCircle2, XCircle, 
-  Pause, Stethoscope, Wrench, Briefcase, ClipboardList 
+import {
+  Users,
+  Plus,
+  Search,
+  Edit,
+  CheckCircle2,
+  XCircle,
+  Pause,
+  Stethoscope,
+  Wrench,
+  Briefcase,
+  ClipboardList,
 } from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +20,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/dashboard/StatsCard";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import AddStaffModal from "@/components/modals/AddStaffModal";
 import EditStaffModal from "@/components/modals/EditStaffModal";
 import { cn } from "@/lib/utils";
@@ -26,7 +42,7 @@ export default function ManagerStaffPage() {
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
-    if (searchParams.get('action') === 'add') {
+    if (searchParams.get("action") === "add") {
       setIsAddModalOpen(true);
     }
 
@@ -39,7 +55,7 @@ export default function ManagerStaffPage() {
         role: "veterinarian",
         isActive: true,
         joinDate: "2024-01-15",
-        specialization: "Bác sĩ thú y tổng quát"
+        specialization: "Bác sĩ thú y tổng quát",
       },
       {
         id: "EMP002",
@@ -49,7 +65,7 @@ export default function ManagerStaffPage() {
         role: "care_staff",
         isActive: true,
         joinDate: "2024-03-20",
-        specialization: "Chăm sóc chó mèo"
+        specialization: "Chăm sóc chó mèo",
       },
       {
         id: "EMP003",
@@ -59,7 +75,7 @@ export default function ManagerStaffPage() {
         role: "receptionist",
         isActive: true,
         joinDate: "2024-05-10",
-        specialization: "Lễ tân - Tư vấn"
+        specialization: "Lễ tân - Tư vấn",
       },
       {
         id: "EMP004",
@@ -69,8 +85,8 @@ export default function ManagerStaffPage() {
         role: "care_staff",
         isActive: false,
         joinDate: "2023-11-05",
-        specialization: "Grooming chuyên sâu"
-      }
+        specialization: "Grooming chuyên sâu",
+      },
     ]);
   }, [searchParams]);
 
@@ -81,41 +97,58 @@ export default function ManagerStaffPage() {
 
   const handleAddStaff = (newStaff) => {
     const staff = {
-      id: `EMP${String(staffList.length + 1).padStart(3, '0')}`,
+      id: `EMP${String(staffList.length + 1).padStart(3, "0")}`,
       name: newStaff.fullName,
       email: newStaff.email,
       phone: newStaff.phone,
       role: newStaff.role,
       specialization: newStaff.specialization || "",
       isActive: true,
-      joinDate: new Date().toISOString().split('T')[0]
+      joinDate: new Date().toISOString().split("T")[0],
     };
     setStaffList([...staffList, staff]);
     showToast("Đã thêm nhân viên thành công!", "success");
   };
 
   const handleEditStaff = (updatedData) => {
-    setStaffList(staffList.map(staff =>
-      staff.id === updatedData.id
-        ? { 
-            ...staff, 
-            name: updatedData.fullName, 
-            phone: updatedData.phone, 
-            role: updatedData.role,
-            specialization: updatedData.specialization || staff.specialization
-          }
-        : staff
-    ));
+    setStaffList(
+      staffList.map((staff) =>
+        staff.id === updatedData.id
+          ? {
+              ...staff,
+              name: updatedData.fullName,
+              phone: updatedData.phone,
+              role: updatedData.role,
+              specialization:
+                updatedData.specialization || staff.specialization,
+            }
+          : staff
+      )
+    );
     showToast("Cập nhật nhân viên thành công!", "success");
   };
 
   const handleToggleStatus = (staffId) => {
-    const staff = staffList.find(s => s.id === staffId);
-    if (confirm(`Bạn có chắc muốn ${staff.isActive ? 'vô hiệu hóa' : 'kích hoạt'} nhân viên này?`)) {
-      setStaffList(staffList.map(s =>
-        s.id === staffId ? { ...s, isActive: !s.isActive } : s
-      ));
-      showToast("Đã cập nhật trạng thái nhân viên", "success");
+    const staff = staffList.find((s) => s.id === staffId);
+    if (!staff) return;
+
+    if (
+      confirm(
+        `Bạn có chắc muốn ${
+          staff.isActive ? "vô hiệu hóa" : "kích hoạt"
+        } nhân viên này?`
+      )
+    ) {
+      const newActiveStatus = !staff.isActive;
+      setStaffList(
+        staffList.map((s) =>
+          s.id === staffId ? { ...s, isActive: newActiveStatus } : s
+        )
+      );
+      showToast(
+        `Đã ${newActiveStatus ? "kích hoạt" : "vô hiệu hóa"} nhân viên`,
+        "success"
+      );
     }
   };
 
@@ -124,37 +157,38 @@ export default function ManagerStaffPage() {
     setIsEditModalOpen(true);
   };
 
-  const filteredStaff = staffList.filter(staff =>
-    staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    staff.id.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredStaff = staffList.filter(
+    (staff) =>
+      staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      staff.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getRoleBadge = (role) => {
     const badges = {
-      veterinarian: { 
-        label: "Bác sĩ", 
-        variant: "info", 
-        icon: Stethoscope 
+      veterinarian: {
+        label: "Bác sĩ",
+        variant: "info",
+        icon: Stethoscope,
       },
-      care_staff: { 
-        label: "Nhân viên", 
-        variant: "secondary", 
-        icon: Wrench 
+      care_staff: {
+        label: "Nhân viên",
+        variant: "secondary",
+        icon: Wrench,
       },
-      receptionist: { 
-        label: "Lễ tân", 
-        variant: "default", 
-        icon: Briefcase 
-      }
+      receptionist: {
+        label: "Lễ tân",
+        variant: "default",
+        icon: Briefcase,
+      },
     };
     return badges[role] || badges.care_staff;
   };
 
   const stats = {
     total: staffList.length,
-    active: staffList.filter(s => s.isActive).length,
-    inactive: staffList.filter(s => !s.isActive).length
+    active: staffList.filter((s) => s.isActive).length,
+    inactive: staffList.filter((s) => !s.isActive).length,
   };
 
   return (
@@ -246,16 +280,27 @@ export default function ManagerStaffPage() {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <p className="font-semibold text-foreground">{staff.name}</p>
+                          <p className="font-semibold text-foreground">
+                            {staff.name}
+                          </p>
                           {staff.specialization && (
-                            <p className="text-xs text-muted-foreground">{staff.specialization}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {staff.specialization}
+                            </p>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{staff.email}</TableCell>
-                      <TableCell className="text-muted-foreground">{staff.phone}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {staff.email}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {staff.phone}
+                      </TableCell>
                       <TableCell>
-                        <Badge variant={badge.variant} className="flex items-center gap-1 w-fit">
+                        <Badge
+                          variant={badge.variant}
+                          className="flex items-center gap-1 w-fit"
+                        >
                           <BadgeIcon className="h-3 w-3" />
                           {badge.label}
                         </Badge>
@@ -327,12 +372,14 @@ export default function ManagerStaffPage() {
 
       {/* Toast Notification */}
       {toast.show && (
-        <div className={cn(
-          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
-          toast.type === "success"
-            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-            : "bg-red-100 text-red-800 border border-red-200"
-        )}>
+        <div
+          className={cn(
+            "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+            toast.type === "success"
+              ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+              : "bg-red-100 text-red-800 border border-red-200"
+          )}
+        >
           <div className="flex items-center gap-2">
             {toast.type === "success" ? (
               <CheckCircle2 className="h-5 w-5" />

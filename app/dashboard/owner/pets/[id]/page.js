@@ -10,10 +10,6 @@ export default function PetDetailPage() {
   const [pet, setPet] = useState(null);
 
   useEffect(() => {
-    loadPetDetail();
-  }, [params.id]);
-
-  const loadPetDetail = () => {
     // Mock data - thực tế sẽ fetch từ API
     const mockPets = {
       "PET001": {
@@ -82,7 +78,7 @@ export default function PetDetailPage() {
     };
 
     setPet(mockPets[params.id] || null);
-  };
+  }, [params.id]);
 
   if (!pet) {
     return (

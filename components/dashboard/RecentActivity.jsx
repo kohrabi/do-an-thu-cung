@@ -37,13 +37,13 @@ export default function RecentActivity({ activities }) {
           {activities.map((activity, index) => {
             const IconComponent = activity.icon;
             return (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="flex items-start gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors"
               >
                 <Avatar className="h-10 w-10 shrink-0">
                   <AvatarFallback className="bg-primary/10 text-primary">
-                    {typeof IconComponent === 'string' ? (
+                    {typeof IconComponent === "string" ? (
                       <span className="text-lg">{IconComponent}</span>
                     ) : (
                       <IconComponent className="h-5 w-5" />

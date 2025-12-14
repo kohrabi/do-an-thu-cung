@@ -1,9 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { 
-  Sparkles, Plus, Search, Edit, Pause, Play, CheckCircle2, 
-  XCircle, DollarSign, Clock, ClipboardList 
+import {
+  Sparkles,
+  Plus,
+  Search,
+  Edit,
+  Pause,
+  Play,
+  CheckCircle2,
+  XCircle,
+  DollarSign,
+  Clock,
+  ClipboardList,
 } from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,7 +34,7 @@ export default function ManagerServicesPage() {
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
-    if (searchParams.get('action') === 'add') {
+    if (searchParams.get("action") === "add") {
       setIsAddModalOpen(true);
     }
     loadServices();
@@ -42,7 +51,7 @@ export default function ManagerServicesPage() {
         price: 200000,
         duration: 30,
         description: "Kiểm tra sức khỏe tổng quát, khám lâm sàng",
-        isActive: true
+        isActive: true,
       },
       {
         id: "SRV002",
@@ -53,7 +62,7 @@ export default function ManagerServicesPage() {
         price: 150000,
         duration: 60,
         description: "Tắm sạch, massage thư giãn, sấy khô",
-        isActive: true
+        isActive: true,
       },
       {
         id: "SRV003",
@@ -64,7 +73,7 @@ export default function ManagerServicesPage() {
         price: 180000,
         duration: 45,
         description: "Cắt tỉa lông theo yêu cầu, tạo kiểu chuyên nghiệp",
-        isActive: true
+        isActive: true,
       },
       {
         id: "SRV004",
@@ -75,7 +84,7 @@ export default function ManagerServicesPage() {
         price: 120000,
         duration: 15,
         description: "Tiêm phòng bệnh dại cho chó mèo",
-        isActive: false
+        isActive: false,
       },
       {
         id: "SRV005",
@@ -86,7 +95,7 @@ export default function ManagerServicesPage() {
         price: 250000,
         duration: 90,
         description: "Massage toàn thân cho thú cưng",
-        isActive: true
+        isActive: true,
       },
       {
         id: "SRV006",
@@ -97,8 +106,8 @@ export default function ManagerServicesPage() {
         price: 300000,
         duration: 1440,
         description: "Chăm sóc thú cưng qua đêm, môi trường an toàn",
-        isActive: true
-      }
+        isActive: true,
+      },
     ]);
   };
 
@@ -112,7 +121,7 @@ export default function ManagerServicesPage() {
       health: { label: "Tắm & vệ sinh", icon: "🛁" },
       grooming: { label: "Cắt tỉa & làm đẹp", icon: "✂️" },
       medical: { label: "Y tế & khám bệnh", icon: "💊" },
-      boarding: { label: "Lưu trú & chăm sóc", icon: "🏠" }
+      boarding: { label: "Lưu trú & chăm sóc", icon: "🏠" },
     };
     return categories[categoryValue] || { label: "Khác", icon: "✨" };
   };
@@ -120,7 +129,7 @@ export default function ManagerServicesPage() {
   const handleAddService = (newService) => {
     const categoryData = getCategoryData(newService.category);
     const service = {
-      id: `SRV${String(services.length + 1).padStart(3, '0')}`,
+      id: `SRV${String(services.length + 1).padStart(3, "0")}`,
       name: newService.name,
       category: newService.category,
       categoryLabel: categoryData.label,
@@ -128,7 +137,7 @@ export default function ManagerServicesPage() {
       price: parseFloat(newService.price),
       duration: parseInt(newService.duration),
       description: newService.description,
-      isActive: true
+      isActive: true,
     };
     setServices([...services, service]);
     showToast("Đã thêm dịch vụ thành công!", "success");
@@ -136,21 +145,23 @@ export default function ManagerServicesPage() {
 
   const handleEditService = (updatedData) => {
     const categoryData = getCategoryData(updatedData.category);
-    
-    setServices(services.map(service =>
-      service.id === updatedData.id
-        ? {
-            ...service,
-            name: updatedData.name,
-            category: updatedData.category,
-            categoryLabel: categoryData.label,
-            categoryIcon: categoryData.icon,
-            price: parseFloat(updatedData.price),
-            duration: parseInt(updatedData.duration),
-            description: updatedData.description
-          }
-        : service
-    ));
+
+    setServices(
+      services.map((service) =>
+        service.id === updatedData.id
+          ? {
+              ...service,
+              name: updatedData.name,
+              category: updatedData.category,
+              categoryLabel: categoryData.label,
+              categoryIcon: categoryData.icon,
+              price: parseFloat(updatedData.price),
+              duration: parseInt(updatedData.duration),
+              description: updatedData.description,
+            }
+          : service
+      )
+    );
     showToast("Đã cập nhật dịch vụ thành công!", "success");
   };
 
@@ -160,28 +171,37 @@ export default function ManagerServicesPage() {
   };
 
   const handleToggleService = (serviceId) => {
-    const service = services.find(s => s.id === serviceId);
-    setServices(services.map(s =>
-      s.id === serviceId ? { ...s, isActive: !s.isActive } : s
-    ));
-    showToast(`Đã ${service.isActive ? 'tạm ngưng' : 'kích hoạt'} dịch vụ`, "success");
+    const service = services.find((s) => s.id === serviceId);
+    if (!service) return;
+
+    const newActiveStatus = !service.isActive;
+    setServices(
+      services.map((s) =>
+        s.id === serviceId ? { ...s, isActive: newActiveStatus } : s
+      )
+    );
+    showToast(
+      `Đã ${newActiveStatus ? "kích hoạt" : "tạm ngưng"} dịch vụ`,
+      "success"
+    );
   };
 
-  const filteredServices = services.filter(service =>
-    service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    service.categoryLabel.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredServices = services.filter(
+    (service) =>
+      service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.categoryLabel.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(amount);
   };
 
   const stats = {
     total: services.length,
-    active: services.filter(s => s.isActive).length
+    active: services.filter((s) => s.isActive).length,
   };
 
   return (
@@ -243,11 +263,16 @@ export default function ManagerServicesPage() {
         {filteredServices.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredServices.map((service) => (
-              <Card key={service.id} className="hover:shadow-md transition-shadow">
+              <Card
+                key={service.id}
+                className="hover:shadow-md transition-shadow"
+              >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="text-4xl">{service.categoryIcon}</div>
-                    <Badge variant={service.isActive ? "success" : "destructive"}>
+                    <Badge
+                      variant={service.isActive ? "success" : "destructive"}
+                    >
                       {service.isActive ? (
                         <>
                           <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -264,7 +289,9 @@ export default function ManagerServicesPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <CardTitle className="text-lg mb-1">{service.name}</CardTitle>
+                    <CardTitle className="text-lg mb-1">
+                      {service.name}
+                    </CardTitle>
                     <Badge variant="outline" className="text-xs">
                       {service.categoryIcon} {service.categoryLabel}
                     </Badge>
@@ -286,8 +313,8 @@ export default function ManagerServicesPage() {
                       <Clock className="h-4 w-4 text-muted-foreground" />
                       <span className="text-muted-foreground">Thời gian:</span>
                       <span className="font-semibold text-foreground">
-                        {service.duration >= 60 
-                          ? `${Math.floor(service.duration / 60)} giờ` 
+                        {service.duration >= 60
+                          ? `${Math.floor(service.duration / 60)} giờ`
                           : `${service.duration} phút`}
                       </span>
                     </div>
@@ -357,12 +384,14 @@ export default function ManagerServicesPage() {
 
       {/* Toast Notification */}
       {toast.show && (
-        <div className={cn(
-          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
-          toast.type === "success"
-            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-            : "bg-red-100 text-red-800 border border-red-200"
-        )}>
+        <div
+          className={cn(
+            "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+            toast.type === "success"
+              ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+              : "bg-red-100 text-red-800 border border-red-200"
+          )}
+        >
           <div className="flex items-center gap-2">
             {toast.type === "success" ? (
               <CheckCircle2 className="h-5 w-5" />

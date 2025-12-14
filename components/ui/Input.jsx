@@ -1,5 +1,5 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
 const Input = React.forwardRef(
   ({ className, type, label, error, icon: Icon, ...props }, ref) => {
@@ -30,9 +30,9 @@ const Input = React.forwardRef(
           <p className="text-sm font-medium text-destructive">{error}</p>
         )}
       </div>
-    )
+    );
   }
-)
-Input.displayName = "Input"
+);
+Input.displayName = "Input";
 
-export { Input }
+export { Input };
