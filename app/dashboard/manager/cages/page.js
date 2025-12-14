@@ -1,12 +1,18 @@
-// FILE: app/(dashboard)/manager/cages/page.js
-// THAY THẾ TOÀN BỘ NỘI DUNG CŨ
-
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Home, Plus, Edit, Eye, Trash2, CheckCircle2, 
+  XCircle, AlertTriangle, ClipboardList, BarChart3 
+} from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import { Card, CardContent } from "@/components/ui/card";
 import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/badge";
+import StatsCard from "@/components/dashboard/StatsCard";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import CageFormModal from "@/components/modals/CageFormModal";
 import CageDetailModal from "@/components/modals/CageDetailModal";
+import { cn } from "@/lib/utils";
 
 export default function ManagerCagesPage() {
   const [cages, setCages] = useState([]);
@@ -77,7 +83,7 @@ export default function ManagerCagesPage() {
 
   const handleAddCage = (cageData) => {
     if (cages.some(c => c.code === cageData.code)) {
-      showToast("❌ Mã chuồng đã tồn tại", "error");
+      showToast("Mã chuồng đã tồn tại", "error");
       return;
     }
 
@@ -87,27 +93,27 @@ export default function ManagerCagesPage() {
       pets: []
     };
     setCages([...cages, newCage]);
-    showToast("✅ Đã thêm chuồng thành công!");
+    showToast("Đã thêm chuồng thành công!", "success");
   };
 
   const handleUpdateCage = (cageData) => {
     setCages(cages.map(cage =>
       cage.id === editingCage.id ? { ...cage, ...cageData } : cage
     ));
-    showToast("💾 Cập nhật chuồng thành công!");
+    showToast("Cập nhật chuồng thành công!", "success");
     setEditingCage(null);
   };
 
   const handleDeleteCage = (cageId) => {
     const cage = cages.find(c => c.id === cageId);
     if (cage.status === 'occupied') {
-      showToast("⚠️ Không thể xóa chuồng đang có thú cưng", "error");
+      showToast("Không thể xóa chuồng đang có thú cưng", "error");
       return;
     }
 
     if (confirm(`Xác nhận xóa chuồng ${cage.code}?`)) {
       setCages(cages.filter(c => c.id !== cageId));
-      showToast("🗑️ Đã xóa chuồng");
+      showToast("Đã xóa chuồng", "success");
     }
   };
 
@@ -130,13 +136,25 @@ export default function ManagerCagesPage() {
     return labels[type] || type;
   };
 
-  const getCageTypeIcon = (type) => {
-    const icons = {
-      small: "🏠",
-      medium: "🏡",
-      large: "🏘️"
+  const getStatusBadge = (status) => {
+    const badges = {
+      available: { 
+        label: "Trống", 
+        variant: "success", 
+        icon: CheckCircle2 
+      },
+      occupied: { 
+        label: "Đang sử dụng", 
+        variant: "warning", 
+        icon: AlertTriangle 
+      },
+      maintenance: { 
+        label: "Bảo trì", 
+        variant: "destructive", 
+        icon: XCircle 
+      }
     };
-    return icons[type] || "🏠";
+    return badges[status] || badges.available;
   };
 
   const stats = {
@@ -150,179 +168,176 @@ export default function ManagerCagesPage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="p-6 space-y-6">
       <DashboardHeader
         title="Quản lý chuồng nuôi"
         subtitle="Theo dõi và quản lý khu lưu trú thú cưng"
       />
 
-      {/* 1. STATS SECTION - TÁCH RIÊNG */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🏠</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tổng chuồng</p>
-              <h3 className="stat-number">{stats.total}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🟢</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang trống</p>
-              <h3 className="stat-number">{stats.available}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🟡</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang sử dụng</p>
-              <h3 className="stat-number">{stats.occupied}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">📊</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tỷ lệ sử dụng</p>
-              <h3 className="stat-number">{stats.occupancyRate}%</h3>
-            </div>
-          </div>
-        </div>
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatsCard
+          icon={Home}
+          title="Tổng chuồng"
+          value={stats.total}
+          color="primary"
+        />
+        <StatsCard
+          icon={CheckCircle2}
+          title="Đang trống"
+          value={stats.available}
+          color="success"
+        />
+        <StatsCard
+          icon={AlertTriangle}
+          title="Đang sử dụng"
+          value={stats.occupied}
+          color="warning"
+        />
+        <StatsCard
+          icon={BarChart3}
+          title="Tỷ lệ sử dụng"
+          value={`${stats.occupancyRate}%`}
+          color="info"
+        />
       </div>
 
-      {/* 2. ADD BUTTON SECTION - TÁCH RIÊNG */}
-      <div className="section-separated">
-        <div className="action-button-section">
-          <Button 
-            onClick={() => {
-              setEditingCage(null);
-              setIsFormModalOpen(true);
-            }}
-            className="btn-add-large"
-          >
-            <span className="btn-icon">➕</span>
-            <span>Thêm chuồng mới</span>
-          </Button>
-        </div>
+      {/* Add Button */}
+      <div className="flex justify-start">
+        <Button
+          onClick={() => {
+            setEditingCage(null);
+            setIsFormModalOpen(true);
+          }}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Thêm chuồng mới
+        </Button>
       </div>
 
-      {/* 3. TABLE SECTION - VỚI DÒNG "DANH SÁCH CHUỒNG NUÔI" */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      {/* Table */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-primary" />
             Danh sách chuồng nuôi
           </h2>
-          <span className="section-count">{cages.length} chuồng</span>
+          <Badge variant="outline" className="text-sm">
+            {cages.length} chuồng
+          </Badge>
         </div>
 
-        <div className="table-modern-wrapper">
-          <table className="table-modern">
-            <thead>
-              <tr>
-                <th style={{ width: '12%' }}>Mã chuồng</th>
-                <th style={{ width: '15%' }}>Loại</th>
-                <th style={{ width: '10%' }}>Sức chứa</th>
-                <th style={{ width: '13%' }}>Trạng thái</th>
-                <th style={{ width: '25%' }}>Thú cưng hiện tại</th>
-                <th style={{ width: '15%' }}>Ghi chú</th>
-                <th style={{ width: '10%' }}>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cages.map((cage) => (
-                <tr key={cage.id}>
-                  <td>
-                    <span className="staff-id-badge">{cage.code}</span>
-                  </td>
-                  <td>
-                    <div className="pet-info-cell">
-                      <span className="cage-type-icon-cell">{getCageTypeIcon(cage.type)}</span>
-                      <span>{getCageTypeLabel(cage.type)}</span>
-                    </div>
-                  </td>
-                  <td className="text-center font-semibold">{cage.capacity}</td>
-                  <td>
-                    <span className={`status-badge-modern ${
-                      cage.status === 'available' ? 'status-available' :
-                      cage.status === 'occupied' ? 'status-occupied' :
-                      'status-maintenance'
-                    }`}>
-                      {cage.status === 'available' && '🟢 Trống'}
-                      {cage.status === 'occupied' && '🟡 Đang sử dụng'}
-                      {cage.status === 'maintenance' && '🔴 Bảo trì'}
-                    </span>
-                  </td>
-                  <td>
-                    {cage.pets && cage.pets.length > 0 ? (
-                      <div className="pets-in-cage-cell">
-                        {cage.pets.map((pet, idx) => (
-                          <span key={idx} className="pet-tag-small">
-                            {pet.icon} {pet.name}
+        {cages.length > 0 ? (
+          <div className="rounded-md border overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[100px]">Mã chuồng</TableHead>
+                  <TableHead className="min-w-[100px]">Loại</TableHead>
+                  <TableHead className="min-w-[100px]">Sức chứa</TableHead>
+                  <TableHead className="min-w-[120px]">Trạng thái</TableHead>
+                  <TableHead className="min-w-[200px]">Thú cưng hiện tại</TableHead>
+                  <TableHead className="min-w-[150px]">Ghi chú</TableHead>
+                  <TableHead className="min-w-[120px] text-right">Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {cages.map((cage) => {
+                  const statusBadge = getStatusBadge(cage.status);
+                  const StatusIcon = statusBadge.icon;
+                  return (
+                    <TableRow key={cage.id}>
+                      <TableCell>
+                        <Badge variant="outline" className="font-mono text-xs">
+                          {cage.code}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Home className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm font-medium text-foreground">
+                            {getCageTypeLabel(cage.type)}
                           </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
-                  </td>
-                  <td className="text-sm text-gray-700">
-                    {cage.notes || <span className="text-gray-400 italic">Không có</span>}
-                  </td>
-                  <td>
-                    <div className="action-buttons-modern">
-                      {cage.status === 'occupied' && (
-                        <button
-                          onClick={() => handleViewDetail(cage)}
-                          className="btn-icon-action btn-view-icon"
-                          title="Xem chi tiết"
-                        >
-                          👁️
-                        </button>
-                      )}
-                      <button
-                        onClick={() => handleOpenEdit(cage)}
-                        className="btn-icon-action btn-edit-icon"
-                        title="Chỉnh sửa"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        onClick={() => handleDeleteCage(cage.id)}
-                        className="btn-icon-action btn-delete-icon"
-                        title="Xóa"
-                        disabled={cage.status === 'occupied'}
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {cages.length === 0 && (
-            <div className="empty-state-modern">
-              <div className="empty-icon">🏠</div>
-              <p className="empty-text">Chưa có chuồng nào</p>
-            </div>
-          )}
-        </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center font-semibold">
+                        {cage.capacity}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={statusBadge.variant} className="flex items-center gap-1 w-fit">
+                          <StatusIcon className="h-3 w-3" />
+                          {statusBadge.label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {cage.pets && cage.pets.length > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {cage.pets.map((pet, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs">
+                                <span className="mr-1">{pet.icon}</span>
+                                {pet.name}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground italic">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-foreground">
+                          {cage.notes || <span className="text-muted-foreground italic">Không có</span>}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          {cage.status === 'occupied' && (
+                            <Button
+                              onClick={() => handleViewDetail(cage)}
+                              variant="ghost"
+                              size="icon"
+                              title="Xem chi tiết"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <Button
+                            onClick={() => handleOpenEdit(cage)}
+                            variant="ghost"
+                            size="icon"
+                            title="Chỉnh sửa"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteCage(cage.id)}
+                            variant="ghost"
+                            size="icon"
+                            title="Xóa"
+                            disabled={cage.status === 'occupied'}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <Home className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground font-medium">
+                Chưa có chuồng nào
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
-      {/* MODALS */}
+      {/* Modals */}
       <CageFormModal
         isOpen={isFormModalOpen}
         onClose={() => {
@@ -342,10 +357,22 @@ export default function ManagerCagesPage() {
         cage={selectedCage}
       />
 
-      {/* TOAST */}
+      {/* Toast Notification */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
-          {toast.message}
+        <div className={cn(
+          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+          toast.type === "success"
+            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+            : "bg-red-100 text-red-800 border border-red-200"
+        )}>
+          <div className="flex items-center gap-2">
+            {toast.type === "success" ? (
+              <CheckCircle2 className="h-5 w-5" />
+            ) : (
+              <XCircle className="h-5 w-5" />
+            )}
+            <p className="font-medium">{toast.message}</p>
+          </div>
         </div>
       )}
     </div>
