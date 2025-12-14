@@ -3,6 +3,14 @@
 import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import VetPatientDetailModal from "@/components/modals/VetPatientDetailModal";
+import { PawPrint, Cat, Search, Eye, Calendar, Cake, ClipboardList, User } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 export default function VeterinarianPatientsPage() {
   const [patients, setPatients] = useState([]);
@@ -161,178 +169,159 @@ export default function VeterinarianPatientsPage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="flex-1 space-y-8 p-8">
       <DashboardHeader
         title="Bệnh nhân của tôi"
         subtitle="Danh sách thú cưng đã và đang điều trị"
       />
 
       {/* Stats */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🐾</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tổng bệnh nhân</p>
-              <h3 className="stat-number">{stats.total}</h3>
-            </div>
-          </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Tổng bệnh nhân</CardTitle>
+            <PawPrint className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🐕</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Chó</p>
-              <h3 className="stat-number">{stats.dogs}</h3>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Chó</CardTitle>
+            <PawPrint className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.dogs}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">🐈</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Mèo</p>
-              <h3 className="stat-number">{stats.cats}</h3>
-            </div>
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Mèo</CardTitle>
+            <Cat className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.cats}</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filter Buttons */}
-      <div className="section-separated">
-        <div className="filter-buttons-group">
-          <button
-            onClick={() => setFilter("all")}
-            className={`filter-btn-modern ${filter === "all" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">🐾</span>
-            <span>Tất cả</span>
-          </button>
-          <button
-            onClick={() => setFilter("dog")}
-            className={`filter-btn-modern ${filter === "dog" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">🐕</span>
-            <span>Chó</span>
-          </button>
-          <button
-            onClick={() => setFilter("cat")}
-            className={`filter-btn-modern ${filter === "cat" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">🐈</span>
-            <span>Mèo</span>
-          </button>
-        </div>
-      </div>
+      <Tabs value={filter} onValueChange={setFilter} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">Tất cả</TabsTrigger>
+          <TabsTrigger value="dog">Chó</TabsTrigger>
+          <TabsTrigger value="cat">Mèo</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Search Bar */}
-      <div className="section-separated">
-        <div className="search-section-right">
-          <div className="search-box-modern">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo tên thú cưng, chủ nuôi, giống..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-modern"
-            />
-          </div>
-        </div>
+      <div className="relative flex-1 max-w-sm ml-auto">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Tìm kiếm theo tên thú cưng, chủ nuôi, giống..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-9"
+        />
       </div>
 
       {/* Patients Table */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <ClipboardList className="h-6 w-6 text-primary" />
             Danh sách bệnh nhân
           </h2>
-          <span className="section-count">{filteredPatients.length} bệnh nhân</span>
+          <Badge variant="secondary">{filteredPatients.length} bệnh nhân</Badge>
         </div>
 
-        <div className="table-modern-wrapper">
-          <table className="table-modern">
-            <thead>
-              <tr>
-                <th style={{width: '8%'}}>Mã</th>
-                <th style={{width: '18%'}}>Thú cưng</th>
-                <th style={{width: '12%'}}>Giống</th>
-                <th style={{width: '10%'}}>Tuổi</th>
-                <th style={{width: '15%'}}>Chủ nuôi</th>
-                <th style={{width: '12%'}}>Lần khám gần nhất</th>
-                <th style={{width: '10%'}}>Tổng lần khám</th>
-                <th style={{width: '10%'}}>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPatients.map((patient) => (
-                <tr key={patient.id}>
-                  <td>
-                    <span className="code-badge">{patient.code}</span>
-                  </td>
-                  
-                  <td>
-                    <div className="pet-detail-cell">
-                      <span className="pet-icon-large">{patient.icon}</span>
-                      <div>
-                        <p className="pet-name-bold">{patient.name}</p>
-                        <p className="pet-info-small">{patient.gender} - {patient.color}</p>
-                      </div>
-                    </div>
-                  </td>
-                  
-                  <td>
-                    <span className="breed-text">{patient.breed}</span>
-                  </td>
-                  
-                  <td>
-                    <span className="age-text">🎂 {patient.age}</span>
-                  </td>
-                  
-                  <td>
-                    <div className="customer-cell">
-                      <p className="font-semibold">{patient.ownerName}</p>
-                      <p className="text-sm text-gray-500">{patient.ownerPhone}</p>
-                    </div>
-                  </td>
-                  
-                  <td>
-                    <span className="date-text">📅 {patient.lastVisit}</span>
-                  </td>
-                  
-                  <td>
-                    <span className="visit-count-badge">
-                      {patient.totalVisits} lần
-                    </span>
-                  </td>
-                  
-                  <td>
-                    <div className="action-buttons-modern">
-                      <button
-                        onClick={() => handleViewDetail(patient)}
-                        className="btn-icon-action btn-view-icon"
-                        title="Chi tiết"
-                      >
-                        👁️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {filteredPatients.length === 0 && (
-            <div className="empty-state-modern">
-              <div className="empty-icon">🐾</div>
-              <p className="empty-text">Không có bệnh nhân nào</p>
-            </div>
-          )}
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[8%]">Mã</TableHead>
+                <TableHead className="w-[18%]">Thú cưng</TableHead>
+                <TableHead className="w-[12%]">Giống</TableHead>
+                <TableHead className="w-[10%]">Tuổi</TableHead>
+                <TableHead className="w-[15%]">Chủ nuôi</TableHead>
+                <TableHead className="w-[12%]">Lần khám gần nhất</TableHead>
+                <TableHead className="w-[10%]">Tổng lần khám</TableHead>
+                <TableHead className="w-[10%]">Thao tác</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredPatients.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                    <PawPrint className="mx-auto h-8 w-8 mb-2" />
+                    Không có bệnh nhân nào
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredPatients.map((patient) => {
+                  const PetIcon = patient.icon === '🐕' ? PawPrint : patient.icon === '🐈' ? Cat : PawPrint;
+                  return (
+                    <TableRow key={patient.id}>
+                      <TableCell>
+                        <Badge variant="secondary" className="font-mono text-xs">{patient.code}</Badge>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-secondary-foreground">
+                            <PetIcon className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="font-semibold">{patient.name}</p>
+                            <p className="text-xs text-muted-foreground">{patient.gender} - {patient.color}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <span className="text-sm">{patient.breed}</span>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Cake className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-sm">{patient.age}</span>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div>
+                          <p className="font-semibold">{patient.ownerName}</p>
+                          <p className="text-sm text-muted-foreground">{patient.ownerPhone}</p>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-sm">{patient.lastVisit}</span>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Badge variant="secondary">{patient.totalVisits} lần</Badge>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Button variant="outline" size="icon" onClick={() => handleViewDetail(patient)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
 
