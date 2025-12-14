@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Calendar, Clock, CheckCircle2, XCircle, Search, PawPrint, Cat, Stethoscope, Bath, Scissors, ClipboardList } from "lucide-react";
+import { Calendar, Clock, CheckCircle2, XCircle, Search, PawPrint, Cat, Stethoscope, Bath, Scissors, ClipboardList, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AppointmentsPage() {
