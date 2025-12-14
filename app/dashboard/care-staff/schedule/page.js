@@ -23,32 +23,7 @@ export default function CareStaffSchedulePage() {
   const loadSchedule = () => {
     // Mock data
     setSchedule([
-      {
-        id: "SCH001",
-        time: "09:00",
-        petName: "Lucky",
-        petIcon: "🐕",
-        petType: "Chó Golden Retriever",
-        ownerName: "Nguyễn Văn A",
-        ownerPhone: "0901234567",
-        service: "Tắm & Spa",
-        serviceIcon: "🛁",
-        status: "completed",
-        notes: "Đã hoàn thành tốt"
-      },
-      {
-        id: "SCH002",
-        time: "10:30",
-        petName: "Miu",
-        petIcon: "🐈",
-        petType: "Mèo Ba Tư",
-        ownerName: "Trần Thị B",
-        ownerPhone: "0909876543",
-        service: "Cắt tỉa lông",
-        serviceIcon: "✂️",
-        status: "in_progress",
-        notes: ""
-      },
+      
       {
         id: "SCH003",
         time: "14:00",
