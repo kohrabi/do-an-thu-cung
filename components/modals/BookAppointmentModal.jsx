@@ -1,6 +1,23 @@
 // components/modals/BookAppointmentModal.jsx
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Calendar, 
+  PawPrint, 
+  ShoppingBag, 
+  Clock, 
+  FileText, 
+  X, 
+  Check,
+  Loader2
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import Input from "@/components/ui/Input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function BookAppointmentModal({ isOpen, onClose, onSuccess }) {
   const [pets, setPets] = useState([]);
@@ -20,17 +37,17 @@ export default function BookAppointmentModal({ isOpen, onClose, onSuccess }) {
     if (isOpen) {
       // Load pets
       setPets([
-        { id: "PET001", name: "Lucky", icon: "🐕" },
-        { id: "PET002", name: "Miu", icon: "🐈" },
-        { id: "PET003", name: "Coco", icon: "🐩" }
+        { id: "PET001", name: "Lucky" },
+        { id: "PET002", name: "Miu" },
+        { id: "PET003", name: "Coco" }
       ]);
 
       // Load services
       setServices([
-        { id: "SRV001", name: "Khám sức khỏe tổng quát", icon: "🏥" },
-        { id: "SRV002", name: "Tiêm phòng dại", icon: "💉" },
-        { id: "SRV003", name: "Tắm spa cao cấp", icon: "🛁" },
-        { id: "SRV004", name: "Cắt tỉa lông tạo kiểu", icon: "✂️" }
+        { id: "SRV001", name: "Khám sức khỏe tổng quát" },
+        { id: "SRV002", name: "Tiêm phòng dại" },
+        { id: "SRV003", name: "Tắm spa cao cấp" },
+        { id: "SRV004", name: "Cắt tỉa lông tạo kiểu" }
       ]);
     }
   }, [isOpen]);
@@ -83,10 +100,8 @@ export default function BookAppointmentModal({ isOpen, onClose, onSuccess }) {
       const appointmentData = {
         petId: formData.petId,
         petName: pet.name,
-        petIcon: pet.icon,
         serviceId: formData.serviceId,
         serviceName: service.name,
-        serviceIcon: service.icon,
         date: formData.date,
         time: formData.time,
         notes: formData.notes
@@ -120,160 +135,157 @@ export default function BookAppointmentModal({ isOpen, onClose, onSuccess }) {
     onClose();
   };
 
-  if (!isOpen) return null;
+  const timeSlots = [
+    "08:00", "09:00", "10:00", "11:00",
+    "13:00", "14:00", "15:00", "16:00"
+  ];
 
   return (
-    <div className="modal-overlay-beautiful" onClick={handleClose}>
-      <div className="modal-container-beautiful" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="modal-header-beautiful">
-          <div className="modal-header-content">
-            <span className="modal-icon-beautiful">📅</span>
-            <h2 className="modal-title-beautiful">Đặt lịch mới</h2>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <Calendar className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Đặt lịch mới</DialogTitle>
           </div>
-          <button onClick={handleClose} className="modal-close-beautiful">
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Chọn thú cưng */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🐾</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <PawPrint className="h-4 w-4 text-muted-foreground" />
               Chọn thú cưng
-              <span className="required-star">*</span>
-            </label>
-            <select
+              <span className="text-destructive">*</span>
+            </Label>
+            <Select
               name="petId"
               value={formData.petId}
               onChange={handleChange}
-              className={`form-select-beautiful ${errors.petId ? 'input-error-beautiful' : ''}`}
+              className={cn(errors.petId && "border-destructive")}
             >
               <option value="">-- Chọn thú cưng --</option>
               {pets.map(pet => (
                 <option key={pet.id} value={pet.id}>
-                  {pet.icon} {pet.name}
+                  {pet.name}
                 </option>
               ))}
-            </select>
-            {errors.petId && <span className="error-text-beautiful">{errors.petId}</span>}
+            </Select>
+            {errors.petId && (
+              <p className="text-sm text-destructive">{errors.petId}</p>
+            )}
           </div>
 
           {/* Chọn dịch vụ */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🛍️</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <ShoppingBag className="h-4 w-4 text-muted-foreground" />
               Chọn dịch vụ
-              <span className="required-star">*</span>
-            </label>
-            <select
+              <span className="text-destructive">*</span>
+            </Label>
+            <Select
               name="serviceId"
               value={formData.serviceId}
               onChange={handleChange}
-              className={`form-select-beautiful ${errors.serviceId ? 'input-error-beautiful' : ''}`}
+              className={cn(errors.serviceId && "border-destructive")}
             >
               <option value="">-- Chọn dịch vụ --</option>
               {services.map(service => (
                 <option key={service.id} value={service.id}>
-                  {service.icon} {service.name}
+                  {service.name}
                 </option>
               ))}
-            </select>
-            {errors.serviceId && <span className="error-text-beautiful">{errors.serviceId}</span>}
+            </Select>
+            {errors.serviceId && (
+              <p className="text-sm text-destructive">{errors.serviceId}</p>
+            )}
           </div>
 
           {/* Ngày & Giờ */}
-          <div className="form-row-beautiful">
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">📅</span>
-                Ngày
-                <span className="required-star">*</span>
-              </label>
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                min={new Date().toISOString().split('T')[0]}
-                className={`form-input-beautiful ${errors.date ? 'input-error-beautiful' : ''}`}
-              />
-              {errors.date && <span className="error-text-beautiful">{errors.date}</span>}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Ngày"
+              name="date"
+              type="date"
+              value={formData.date}
+              onChange={handleChange}
+              min={new Date().toISOString().split('T')[0]}
+              error={errors.date}
+              icon={Calendar}
+              required
+            />
 
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🕐</span>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
                 Giờ
-                <span className="required-star">*</span>
-              </label>
-              <select
+                <span className="text-destructive">*</span>
+              </Label>
+              <Select
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
-                className={`form-select-beautiful ${errors.time ? 'input-error-beautiful' : ''}`}
+                className={cn(errors.time && "border-destructive")}
               >
                 <option value="">-- Chọn giờ --</option>
-                <option value="08:00">08:00</option>
-                <option value="09:00">09:00</option>
-                <option value="10:00">10:00</option>
-                <option value="11:00">11:00</option>
-                <option value="13:00">13:00</option>
-                <option value="14:00">14:00</option>
-                <option value="15:00">15:00</option>
-                <option value="16:00">16:00</option>
-              </select>
-              {errors.time && <span className="error-text-beautiful">{errors.time}</span>}
+                {timeSlots.map(time => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </Select>
+              {errors.time && (
+                <p className="text-sm text-destructive">{errors.time}</p>
+              )}
             </div>
           </div>
 
           {/* Ghi chú */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
               Ghi chú
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="notes"
               value={formData.notes}
               onChange={handleChange}
               placeholder="Thông tin thêm về yêu cầu của bạn..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Buttons */}
-          <div className="modal-footer-beautiful">
-            <button
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleClose}
-              className="btn-beautiful btn-cancel-beautiful"
             >
-              <span className="btn-icon-beautiful">✕</span>
-              <span>Hủy</span>
-            </button>
-            <button
+              <X className="h-4 w-4" />
+              Hủy
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="btn-beautiful btn-primary-beautiful"
             >
               {loading ? (
                 <>
-                  <span className="spinner-beautiful"></span>
-                  <span>Đang đặt...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang đặt...
                 </>
               ) : (
                 <>
-                  <span className="btn-icon-beautiful">✓</span>
-                  <span>Đặt lịch</span>
+                  <Check className="h-4 w-4" />
+                  Đặt lịch
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
