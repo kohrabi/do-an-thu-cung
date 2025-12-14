@@ -1,6 +1,13 @@
 "use client";
 import { useState } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Calendar, Clock, CheckCircle2, Send, Bell, Search, PawPrint, Cat, Stethoscope, Bath, Scissors, ClipboardList, Phone } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function RemindersPage() {
   const [reminders, setReminders] = useState([
@@ -56,6 +63,15 @@ export default function RemindersPage() {
     reminder.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const getServiceIcon = (icon) => {
+    switch (icon) {
+      case '🏥': return Stethoscope;
+      case '🛁': return Bath;
+      case '✂️': return Scissors;
+      default: return ClipboardList;
+    }
+  };
+
   const pendingCount = reminders.filter(r => r.status === 'pending').length;
   const sentCount = reminders.filter(r => r.status === 'sent').length;
 
@@ -76,570 +92,167 @@ export default function RemindersPage() {
   };
 
   return (
-    <>
-      <style jsx>{`
-        table td {
-          vertical-align: middle !important;
-        }
-      `}</style>
+    <div className="flex-1 space-y-8 p-8">
+      <DashboardHeader
+        title="Gửi nhắc lịch"
+        subtitle="Gửi thông báo nhắc lịch cho khách hàng trước giờ hẹn"
+      />
 
-      <div className="dashboard-container">
-        <DashboardHeader
-          title="Gửi nhắc lịch"
-          subtitle="Gửi thông báo nhắc lịch cho khách hàng trước giờ hẹn"
-        />
+      {/* Stats Row */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Lịch sắp tới</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{reminders.length}</div>
+          </CardContent>
+        </Card>
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-yellow-700">Cần gửi nhắc</CardTitle>
+            <Clock className="h-4 w-4 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-yellow-600">{pendingCount}</div>
+          </CardContent>
+        </Card>
+        <Card className="border-green-200 bg-green-50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-green-700">Đã gửi</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-600">{sentCount}</div>
+          </CardContent>
+        </Card>
+      </div>
 
-        {/* Stats Row */}
-        <div className="section-separated">
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '20px'
-          }}>
-            <div style={{
-              background: 'white',
-              padding: '28px',
-              borderRadius: '16px',
-              border: '2px solid #F3F4F6',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '20px'
-            }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '16px',
-                background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '32px',
-                flexShrink: 0
-              }}>
-                📅
+      {/* Action Bar */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10">
+                <Bell className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p style={{
-                  margin: '0 0 8px 0',
-                  fontSize: '13px',
-                  color: '#6B7280',
-                  fontWeight: 600,
-                  textTransform: 'uppercase'
-                }}>
-                  Lịch sắp tới
-                </p>
-                <h3 style={{
-                  margin: 0,
-                  fontSize: '36px',
-                  fontWeight: 800,
-                  color: '#1F2937'
-                }}>
-                  {reminders.length}
-                </h3>
+                <h3 className="text-lg font-semibold">Danh sách lịch sắp tới</h3>
+                <p className="text-sm text-muted-foreground">{filteredReminders.length} lịch hẹn cần nhắc</p>
               </div>
             </div>
-
-            <div style={{
-              background: 'white',
-              padding: '28px',
-              borderRadius: '16px',
-              border: '2px solid #F3F4F6',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '20px'
-            }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '16px',
-                background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '32px',
-                flexShrink: 0
-              }}>
-                ⏳
-              </div>
-              <div>
-                <p style={{
-                  margin: '0 0 8px 0',
-                  fontSize: '13px',
-                  color: '#6B7280',
-                  fontWeight: 600,
-                  textTransform: 'uppercase'
-                }}>
-                  Cần gửi nhắc
-                </p>
-                <h3 style={{
-                  margin: 0,
-                  fontSize: '36px',
-                  fontWeight: 800,
-                  color: '#1F2937'
-                }}>
-                  {pendingCount}
-                </h3>
-              </div>
-            </div>
-
-            <div style={{
-              background: 'white',
-              padding: '28px',
-              borderRadius: '16px',
-              border: '2px solid #F3F4F6',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '20px'
-            }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '16px',
-                background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '32px',
-                flexShrink: 0
-              }}>
-                ✅
-              </div>
-              <div>
-                <p style={{
-                  margin: '0 0 8px 0',
-                  fontSize: '13px',
-                  color: '#6B7280',
-                  fontWeight: 600,
-                  textTransform: 'uppercase'
-                }}>
-                  Đã gửi
-                </p>
-                <h3 style={{
-                  margin: 0,
-                  fontSize: '36px',
-                  fontWeight: 800,
-                  color: '#1F2937'
-                }}>
-                  {sentCount}
-                </h3>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Action Bar */}
-        <div className="section-separated">
-          <div style={{
-            background: 'white',
-            padding: '20px 24px',
-            borderRadius: '16px',
-            border: '2px solid #F3F4F6',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '16px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '12px',
-                background: 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '24px'
-              }}>
-                🔔
-              </div>
-              <div>
-                <h3 style={{
-                  margin: '0 0 4px 0',
-                  fontSize: '18px',
-                  fontWeight: 700,
-                  color: '#1F2937'
-                }}>
-                  Danh sách lịch sắp tới
-                </h3>
-                <p style={{
-                  margin: 0,
-                  fontSize: '14px',
-                  color: '#6B7280'
-                }}>
-                  {filteredReminders.length} lịch hẹn cần nhắc
-                </p>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <div style={{
-                position: 'relative',
-                minWidth: '280px'
-              }}>
-                <input
+            <div className="flex gap-3 w-full md:w-auto">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
                   type="text"
-                  placeholder="🔍 Tìm theo tên, SĐT, mã..."
+                  placeholder="Tìm theo tên, SĐT, mã..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: '12px',
-                    border: '2px solid #E5E7EB',
-                    fontSize: '14px',
-                    outline: 'none',
-                    background: '#F9FAFB'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#667EEA';
-                    e.target.style.background = 'white';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#E5E7EB';
-                    e.target.style.background = '#F9FAFB';
-                  }}
+                  className="pl-9"
                 />
               </div>
-
-              <button
-                onClick={handleSendAll}
-                disabled={pendingCount === 0}
-                style={{
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: pendingCount > 0 ? 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)' : '#D1D5DB',
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  cursor: pendingCount > 0 ? 'pointer' : 'not-allowed',
-                  whiteSpace: 'nowrap',
-                  boxShadow: pendingCount > 0 ? '0 4px 12px rgba(236, 72, 153, 0.3)' : 'none',
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-                onMouseEnter={(e) => {
-                  if (pendingCount > 0) {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(236, 72, 153, 0.4)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = pendingCount > 0 ? '0 4px 12px rgba(236, 72, 153, 0.3)' : 'none';
-                }}
-              >
-                <span>📤</span>
-                <span>Gửi tất cả nhắc lịch</span>
-              </button>
+              <Button onClick={handleSendAll} disabled={pendingCount === 0}>
+                <Send className="h-4 w-4 mr-2" /> Gửi tất cả nhắc lịch
+              </Button>
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Table */}
-        <div className="section-separated">
-          <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            overflow: 'hidden',
-            border: '2px solid #F3F4F6',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-          }}>
-            <table style={{
-              width: '100%',
-              borderCollapse: 'collapse'
-            }}>
-              <thead>
-                <tr style={{
-                  background: 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)'
-                }}>
-                  <th style={{
-                    padding: '18px 20px',
-                    textAlign: 'left',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: 'white',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>Mã</th>
-                  <th style={{
-                    padding: '18px 20px',
-                    textAlign: 'left',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: 'white',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>Khách hàng</th>
-                  <th style={{
-                    padding: '18px 20px',
-                    textAlign: 'left',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: 'white',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>Thú cưng</th>
-                  <th style={{
-                    padding: '18px 20px',
-                    textAlign: 'left',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: 'white',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>Dịch vụ</th>
-                  <th style={{
-                    padding: '18px 20px',
-                    textAlign: 'left',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: 'white',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>Ngày & Giờ</th>
-                  <th style={{
-                    padding: '18px 20px',
-                    textAlign: 'left',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: 'white',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>Còn lại</th>
-                  <th style={{
-                    padding: '18px 20px',
-                    textAlign: 'left',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: 'white',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>Lần gửi cuối</th>
-                  <th style={{
-                    padding: '18px 20px',
-                    textAlign: 'center',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: 'white',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredReminders.map((reminder, index) => {
+      {/* Table */}
+      <div className="space-y-6">
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Mã</TableHead>
+                <TableHead>Khách hàng</TableHead>
+                <TableHead>Thú cưng</TableHead>
+                <TableHead>Dịch vụ</TableHead>
+                <TableHead>Ngày & Giờ</TableHead>
+                <TableHead>Trạng thái</TableHead>
+                <TableHead>Lần gửi cuối</TableHead>
+                <TableHead className="text-center">Thao tác</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredReminders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                    <Bell className="mx-auto h-8 w-8 mb-2" />
+                    Không có lịch hẹn nào
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredReminders.map((reminder) => {
                   const statusBadge = reminder.status === 'pending' 
-                    ? { label: 'Đã qua', color: '#F59E0B', bg: '#FEF3C7' }
-                    : { label: 'Đã gửi', color: '#10B981', bg: '#D1FAE5' };
-
+                    ? { label: 'Cần gửi', variant: 'warning', icon: Clock }
+                    : { label: 'Đã gửi', variant: 'success', icon: CheckCircle2 };
+                  const PetIcon = reminder.petIcon === '🐕' ? PawPrint : Cat;
+                  const ServiceIcon = getServiceIcon(reminder.serviceIcon);
                   return (
-                    <tr key={reminder.id} style={{
-                      borderBottom: '1px solid #F3F4F6',
-                      background: index % 2 === 0 ? 'white' : '#F9FAFB',
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#FEF3C7'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = index % 2 === 0 ? 'white' : '#F9FAFB'}
-                    >
-                      <td style={{ padding: '20px' }}>
-                        <span style={{
-                          padding: '8px 14px',
-                          background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
-                          color: '#92400E',
-                          borderRadius: '10px',
-                          fontSize: '13px',
-                          fontWeight: 700,
-                          fontFamily: 'monospace',
-                          border: '2px solid #FCD34D'
-                        }}>
-                          {reminder.id}
-                        </span>
-                      </td>
-                      <td style={{ padding: '20px' }}>
+                    <TableRow key={reminder.id}>
+                      <TableCell>
+                        <Badge variant="secondary" className="font-mono">{reminder.id}</Badge>
+                      </TableCell>
+                      <TableCell>
                         <div>
-                          <p style={{
-                            margin: '0 0 4px 0',
-                            fontSize: '14px',
-                            fontWeight: 700,
-                            color: '#1F2937'
-                          }}>
-                            {reminder.customerName}
-                          </p>
-                          <p style={{
-                            margin: 0,
-                            fontSize: '13px',
-                            color: '#6B7280'
-                          }}>
-                            📞 {reminder.phone}
+                          <p className="font-medium">{reminder.customerName}</p>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Phone className="h-3 w-3" /> {reminder.phone}
                           </p>
                         </div>
-                      </td>
-                      <td style={{ padding: '20px' }}>
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px'
-                        }}>
-                          <span style={{ fontSize: '24px' }}>{reminder.petIcon}</span>
-                          <span style={{
-                            fontSize: '14px',
-                            fontWeight: 600,
-                            color: '#1F2937'
-                          }}>
-                            {reminder.petName}
-                          </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <PetIcon className="h-5 w-5 text-muted-foreground" />
+                          <span className="font-medium">{reminder.petName}</span>
                         </div>
-                      </td>
-                      <td style={{ padding: '20px' }}>
-                        <div style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '8px 14px',
-                          background: '#EEF2FF',
-                          borderRadius: '10px',
-                          border: '2px solid #C7D2FE'
-                        }}>
-                          <span style={{ fontSize: '20px' }}>{reminder.serviceIcon}</span>
-                          <span style={{
-                            fontSize: '13px',
-                            fontWeight: 700,
-                            color: '#4338CA'
-                          }}>
-                            {reminder.service}
-                          </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <ServiceIcon className="h-5 w-5 text-muted-foreground" />
+                          <span>{reminder.service}</span>
                         </div>
-                      </td>
-                      <td style={{ padding: '20px' }}>
+                      </TableCell>
+                      <TableCell>
                         <div>
-                          <p style={{
-                            margin: '0 0 4px 0',
-                            fontSize: '14px',
-                            fontWeight: 700,
-                            color: '#1F2937'
-                          }}>
-                            📅 {reminder.date}
+                          <p className="font-medium flex items-center gap-1">
+                            <Calendar className="h-4 w-4" /> {reminder.date}
                           </p>
-                          <p style={{
-                            margin: 0,
-                            fontSize: '13px',
-                            color: '#6B7280'
-                          }}>
-                            🕐 {reminder.time}
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {reminder.time}
                           </p>
                         </div>
-                      </td>
-                      <td style={{ padding: '20px' }}>
-                        <span style={{
-                          padding: '8px 14px',
-                          borderRadius: '20px',
-                          fontSize: '13px',
-                          fontWeight: 700,
-                          background: statusBadge.bg,
-                          color: statusBadge.color,
-                          border: `2px solid ${statusBadge.color}`,
-                          display: 'inline-block'
-                        }}>
-                          {statusBadge.label}
-                        </span>
-                      </td>
-                      <td style={{ padding: '20px' }}>
-                        <span style={{
-                          fontSize: '13px',
-                          color: '#6B7280',
-                          fontWeight: 600
-                        }}>
-                          {reminder.lastReminder}
-                        </span>
-                      </td>
-                      <td style={{ padding: '20px' }}>
-                        <button
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={statusBadge.variant} className="flex items-center gap-1 w-fit">
+                          <statusBadge.icon className="h-3 w-3" /> {statusBadge.label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-muted-foreground">{reminder.lastReminder}</span>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Button
+                          size="sm"
                           onClick={() => handleSendReminder(reminder.id)}
                           disabled={reminder.status === 'sent'}
-                          style={{
-                            padding: '10px 20px',
-                            borderRadius: '10px',
-                            border: 'none',
-                            background: reminder.status === 'pending' 
-                              ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' 
-                              : '#D1D5DB',
-                            color: 'white',
-                            fontSize: '13px',
-                            fontWeight: 700,
-                            cursor: reminder.status === 'pending' ? 'pointer' : 'not-allowed',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            margin: '0 auto',
-                            transition: 'all 0.2s',
-                            boxShadow: reminder.status === 'pending' ? '0 4px 12px rgba(16, 185, 129, 0.3)' : 'none'
-                          }}
-                          onMouseEnter={(e) => {
-                            if (reminder.status === 'pending') {
-                              e.currentTarget.style.transform = 'translateY(-2px)';
-                              e.currentTarget.style.boxShadow = '0 8px 20px rgba(16, 185, 129, 0.4)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = reminder.status === 'pending' ? '0 4px 12px rgba(16, 185, 129, 0.3)' : 'none';
-                          }}
+                          variant={reminder.status === 'pending' ? 'default' : 'secondary'}
                         >
-                          <span>📤</span>
-                          <span>Gửi</span>
-                        </button>
-                      </td>
-                    </tr>
+                          <Send className="h-4 w-4 mr-2" /> Gửi
+                        </Button>
+                      </TableCell>
+                    </TableRow>
                   );
-                })}
-              </tbody>
-            </table>
-
-            {filteredReminders.length === 0 && (
-              <div style={{
-                padding: '80px 20px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  width: '120px',
-                  height: '120px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px',
-                  fontSize: '56px'
-                }}>
-                  🔔
-                </div>
-                <h3 style={{
-                  margin: '0 0 8px 0',
-                  fontSize: '20px',
-                  fontWeight: 700,
-                  color: '#1F2937'
-                }}>
-                  Không có lịch hẹn nào
-                </h3>
-                <p style={{
-                  margin: 0,
-                  fontSize: '14px',
-                  color: '#6B7280'
-                }}>
-                  Thử tìm kiếm với từ khóa khác
-                </p>
-              </div>
-            )}
-          </div>
+                })
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
-    </>
+    </div>
   );
 }
