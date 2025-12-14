@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import ServiceNoteModal from "@/components/modals/ServiceNoteModal";
+import { ClipboardList, Clock, RefreshCw, CheckCircle2, Play, FileText, AlertCircle, PawPrint, Cat, Bath, Scissors, Home, Sparkles, User } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function CareStaffTasksPage() {
   const [tasks, setTasks] = useState([]);
@@ -81,20 +86,20 @@ export default function CareStaffTasksPage() {
     setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, status: 'in_progress' } : task
     ));
-    showToast("▶️ Đã bắt đầu dịch vụ");
+    showToast("Đã bắt đầu dịch vụ");
   };
 
   const handleCompleteTask = (taskId) => {
     const task = tasks.find(t => t.id === taskId);
     if (!task.notes || task.notes.length === 0) {
-      showToast("⚠️ Vui lòng ghi chú trước khi hoàn thành", "warning");
+      showToast("Vui lòng ghi chú trước khi hoàn thành", "error");
       return;
     }
     
     setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, status: 'completed' } : task
     ));
-    showToast("✅ Đã hoàn thành dịch vụ");
+    showToast("Đã hoàn thành dịch vụ");
   };
 
   const handleOpenNoteModal = (task) => {
@@ -118,120 +123,144 @@ export default function CareStaffTasksPage() {
           }
         : task
     ));
-    showToast("💾 Đã lưu ghi chú chăm sóc");
+    showToast("Đã lưu ghi chú chăm sóc");
+  };
+
+  const getServiceIcon = (icon) => {
+    switch (icon) {
+      case '🛁': return Bath;
+      case '✂️': return Scissors;
+      case '🏠': return Home;
+      case '💆': return Sparkles;
+      default: return Sparkles;
+    }
+  };
+
+  const stats = {
+    total: tasks.length,
+    inProgress: tasks.filter(t => t.status === 'in_progress').length,
+    completed: tasks.filter(t => t.status === 'completed').length
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="flex-1 space-y-8 p-8">
       <DashboardHeader
         title="Công việc hôm nay"
         subtitle="Quản lý và thực hiện các dịch vụ chăm sóc"
       />
 
       {/* Stats */}
-      <div className="stats-grid">
-        <div className="stats-card stats-card-primary">
-          <div className="stats-icon">📋</div>
-          <div className="stats-content">
-            <p className="stats-title">Tổng công việc</p>
-            <h3 className="stats-value">{tasks.length}</h3>
-          </div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Tổng công việc</CardTitle>
+            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
+        </Card>
 
-        <div className="stats-card stats-card-warning">
-          <div className="stats-icon">⏳</div>
-          <div className="stats-content">
-            <p className="stats-title">Đang thực hiện</p>
-            <h3 className="stats-value">{tasks.filter(t => t.status === 'in_progress').length}</h3>
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Đang thực hiện</CardTitle>
+            <RefreshCw className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.inProgress}</div>
+          </CardContent>
+        </Card>
 
-        <div className="stats-card stats-card-success">
-          <div className="stats-icon">✅</div>
-          <div className="stats-content">
-            <p className="stats-title">Đã hoàn thành</p>
-            <h3 className="stats-value">{tasks.filter(t => t.status === 'completed').length}</h3>
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Đã hoàn thành</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.completed}</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Task List */}
-      <div className="section-card">
-        <h3 className="section-title">📋 Danh sách công việc</h3>
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          <ClipboardList className="h-6 w-6 text-primary" />
+          Danh sách công việc
+        </h2>
 
-        <div className="task-list">
-          {tasks.map(task => (
-            <div key={task.id} className={`task-item task-${task.status}`}>
-              <div className="task-time">
-                <div className="time-icon">🕐</div>
-                <div className="time-value">{task.time}</div>
-              </div>
-
-              <div className="task-details">
-                <div className="task-header">
-                  <div className="task-pet-info">
-                    <span className="task-pet-icon">{task.petIcon}</span>
-                    <h4 className="task-pet">{task.pet}</h4>
+        <div className="space-y-3">
+          {tasks.map(task => {
+            const ServiceIcon = getServiceIcon(task.serviceIcon);
+            const PetIcon = task.petIcon === '🐕' ? PawPrint : task.petIcon === '🐈' ? Cat : PawPrint;
+            return (
+              <Card key={task.id} className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-center w-20 h-20 rounded-lg bg-primary/10">
+                    <Clock className="h-5 w-5 text-primary" />
+                    <span className="ml-1 text-sm font-semibold">{task.time}</span>
                   </div>
-                  {task.priority === 'high' && (
-                    <span className="priority-badge">⚠️ Ưu tiên</span>
-                  )}
+
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-secondary-foreground">
+                          <PetIcon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">{task.pet}</h4>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <User className="h-3 w-3" /> {task.owner}
+                          </p>
+                        </div>
+                      </div>
+                      {task.priority === 'high' && (
+                        <Badge variant="destructive" className="flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" /> Ưu tiên
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ServiceIcon className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{task.service}</span>
+                    </div>
+                    {task.notes.length > 0 && (
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <FileText className="h-3 w-3" />
+                        <span>{task.notes.length} ghi chú</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    {task.status === 'pending' && (
+                      <>
+                        <Button size="sm" onClick={() => handleStartTask(task.id)}>
+                          <Play className="h-4 w-4 mr-2" /> Bắt đầu
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => handleOpenNoteModal(task)}>
+                          <FileText className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+                    {task.status === 'in_progress' && (
+                      <>
+                        <Button variant="outline" size="sm" onClick={() => handleOpenNoteModal(task)}>
+                          <FileText className="h-4 w-4 mr-2" /> Ghi chú
+                        </Button>
+                        <Button variant="success" size="sm" onClick={() => handleCompleteTask(task.id)}>
+                          <CheckCircle2 className="h-4 w-4 mr-2" /> Hoàn thành
+                        </Button>
+                      </>
+                    )}
+                    {task.status === 'completed' && (
+                      <Badge variant="success">Đã xong</Badge>
+                    )}
+                  </div>
                 </div>
-                <p className="task-owner">👤 Chủ nuôi: {task.owner}</p>
-                <p className="task-service">
-                  <span className="service-icon">{task.serviceIcon}</span>
-                  {task.service}
-                </p>
-
-                {task.notes.length > 0 && (
-                  <div className="task-notes-preview">
-                    <span className="notes-icon">📝</span>
-                    <span className="notes-count">{task.notes.length} ghi chú</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="task-actions">
-                {task.status === 'pending' && (
-                  <>
-                    <button
-                      onClick={() => handleStartTask(task.id)}
-                      className="btn-task-start"
-                    >
-                      ▶️ Bắt đầu
-                    </button>
-                    <button
-                      onClick={() => handleOpenNoteModal(task)}
-                      className="btn-task-note"
-                    >
-                      📝
-                    </button>
-                  </>
-                )}
-                {task.status === 'in_progress' && (
-                  <>
-                    <button
-                      onClick={() => handleOpenNoteModal(task)}
-                      className="btn-task-note"
-                    >
-                      📝 Ghi chú
-                    </button>
-                    <button
-                      onClick={() => handleCompleteTask(task.id)}
-                      className="btn-task-complete"
-                    >
-                      ✅ Hoàn thành
-                    </button>
-                  </>
-                )}
-                {task.status === 'completed' && (
-                  <span className="task-status-completed">
-                    ✓ Đã xong
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       </div>
 
@@ -247,7 +276,7 @@ export default function CareStaffTasksPage() {
       />
 
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
+        <div className={cn("fixed bottom-4 right-4 p-3 rounded-md shadow-lg text-white", toast.type === "success" ? "bg-green-500" : "bg-red-500")}>
           {toast.message}
         </div>
       )}
