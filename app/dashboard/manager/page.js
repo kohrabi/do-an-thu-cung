@@ -1,14 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  PawPrint, Users, DollarSign, Calendar, Zap, 
+  Users as UsersIcon, Sparkles, Home, Receipt, BarChart3 
+} from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import StatsCard from "@/components/dashboard/StatsCard";
 import QuickActions from "@/components/dashboard/QuickActions";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import EditStaffModal from "@/components/modals/EditStaffModal";
-import EditServiceModal from "@/components/modals/EditServiceModal.jsx";
+import EditServiceModal from "@/components/modals/EditServiceModal";
 import EditAppointmentModal from "@/components/modals/EditAppointmentModal";
 import InvoiceDetailModal from "@/components/modals/InvoiceDetailModal";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 export default function ManagerDashboard() {
   const router = useRouter();
@@ -21,19 +27,16 @@ export default function ManagerDashboard() {
     activeStaff: 0
   });
 
-  // Modal states
   const [isEditStaffModalOpen, setIsEditStaffModalOpen] = useState(false);
   const [isEditServiceModalOpen, setIsEditServiceModalOpen] = useState(false);
   const [isEditAppointmentModalOpen, setIsEditAppointmentModalOpen] = useState(false);
   const [isInvoiceDetailModalOpen, setIsInvoiceDetailModalOpen] = useState(false);
 
-  // Selected items for modals
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
 
-  // Toast notification
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
@@ -52,7 +55,6 @@ export default function ManagerDashboard() {
     setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
   };
 
-  // Modal handlers
   const handleEditStaff = (staff) => {
     setSelectedStaff(staff);
     setIsEditStaffModalOpen(true);
@@ -73,50 +75,49 @@ export default function ManagerDashboard() {
     setIsInvoiceDetailModalOpen(true);
   };
 
-  // Success handlers
   const handleEditStaffSuccess = (data) => {
     console.log("Staff updated:", data);
-    showToast("✅ Cập nhật nhân viên thành công!");
+    showToast("Cập nhật nhân viên thành công!", "success");
   };
 
   const handleEditServiceSuccess = (data) => {
     console.log("Service updated:", data);
-    showToast("✅ Cập nhật dịch vụ thành công!");
+    showToast("Cập nhật dịch vụ thành công!", "success");
   };
 
   const handleEditAppointmentSuccess = (data) => {
     console.log("Appointment updated:", data);
-    showToast("✅ Cập nhật lịch đặt thành công!");
+    showToast("Cập nhật lịch đặt thành công!", "success");
   };
 
   const quickActions = [
     {
-      icon: "👥",
+      icon: UsersIcon,
       label: "Thêm nhân viên",
       onClick: () => router.push("/dashboard/manager/staff?action=add")
     },
     {
-      icon: "✨",
+      icon: Sparkles,
       label: "Thêm dịch vụ",
       onClick: () => router.push("/dashboard/manager/services?action=add")
     },
     {
-      icon: "📅",
+      icon: Calendar,
       label: "Xem lịch đặt",
       onClick: () => router.push("/dashboard/manager/appointments")
     },
     {
-      icon: "🏠",
+      icon: Home,
       label: "Xem chuồng nuôi",
       onClick: () => router.push("/dashboard/manager/cages")
     },
     {
-      icon: "💰",
+      icon: Receipt,
       label: "Xem hóa đơn",
       onClick: () => router.push("/dashboard/manager/invoices")
     },
     {
-      icon: "📊",
+      icon: BarChart3,
       label: "Xem báo cáo",
       onClick: () => router.push("/dashboard/manager/reports")
     }
@@ -124,7 +125,7 @@ export default function ManagerDashboard() {
 
   const recentActivities = [
     {
-      icon: "✅",
+      icon: CheckCircle2,
       text: "Nguyễn Văn A đã hoàn thành dịch vụ spa cho Lucky",
       time: "5 phút trước",
       action: () => handleViewInvoice({
@@ -155,86 +156,37 @@ export default function ManagerDashboard() {
           }
         ],
         subtotal: 320000,
+        discount: 0,
         total: 320000,
-        paymentMethod: "cash"
-      })
-    },
-    {
-      icon: "📅",
-      text: "Khách hàng Trần Thị B đặt lịch khám cho Miu",
-      time: "15 phút trước",
-      action: () => handleEditAppointment({
-        petName: "Miu",
-        petIcon: "🐈",
-        service: "Khám sức khỏe",
-        date: "2025-11-15",
-        time: "10:00",
-        owner: "Trần Thị B",
-        status: "confirmed",
-        assignedStaff: "",
+        isPaid: true,
+        paymentMethod: "Tiền mặt",
+        paymentDate: "2025-01-15T11:00:00",
         notes: ""
       })
     },
     {
-      icon: "💰",
-      text: "Hóa đơn #INV-2024-001 đã được thanh toán",
-      time: "30 phút trước",
-      action: () => handleViewInvoice({
-        id: "INV-2024-001",
-        date: "09:00 15/01/2025",
-        status: "paid",
-        customerName: "Lê Văn C",
-        customerPhone: "0912345678",
-        customerEmail: "levanc@gmail.com",
-        petName: "Coco",
-        petIcon: "🐩",
-        petBreed: "Poodle",
-        petAge: "2 tuổi",
-        services: [
-          {
-            icon: "🛁",
-            name: "Tắm spa cao cấp",
-            quantity: 1,
-            price: 250000,
-            total: 250000
-          }
-        ],
-        subtotal: 250000,
-        total: 250000,
-        paymentMethod: "card"
-      })
+      icon: UsersIcon,
+      text: "Đã thêm nhân viên mới: Trần Thị B",
+      time: "1 giờ trước"
     },
     {
-      icon: "👤",
-      text: "Nhân viên mới Lê Văn C đã được thêm vào hệ thống",
-      time: "1 giờ trước",
-      action: () => handleEditStaff({
-        id: "EMP003",
-        name: "Lê Văn C",
-        email: "levanc@pawlovers.com",
-        phone: "0912345678",
-        role: "vet",
-        specialty: "Bác sĩ thú y tổng quát"
-      })
-    },
-    {
-      icon: "🏠",
-      text: "Chuồng A03 đã được làm sạch và sẵn sàng",
+      icon: Sparkles,
+      text: "Đã cập nhật dịch vụ: Tắm spa cao cấp",
       time: "2 giờ trước"
     }
   ];
 
   return (
-    <div className="dashboard-container">
+    <div className="p-6 space-y-6">
       <DashboardHeader 
         title="Dashboard Quản lý" 
         subtitle="Tổng quan hoạt động trung tâm PAW LOVERS"
       />
 
       {/* Stats Grid */}
-      <div className="stats-grid">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          icon="🐾"
+          icon={PawPrint}
           title="Tổng số thú cưng"
           value={stats.totalPets}
           change="+12%"
@@ -242,7 +194,7 @@ export default function ManagerDashboard() {
           color="primary"
         />
         <StatsCard
-          icon="👥"
+          icon={UsersIcon}
           title="Khách hàng"
           value={stats.totalCustomers}
           change="+8%"
@@ -250,7 +202,7 @@ export default function ManagerDashboard() {
           color="success"
         />
         <StatsCard
-          icon="💰"
+          icon={DollarSign}
           title="Doanh thu tháng"
           value={`${(stats.monthlyRevenue / 1000000).toFixed(1)}M`}
           change="+15%"
@@ -258,7 +210,7 @@ export default function ManagerDashboard() {
           color="warning"
         />
         <StatsCard
-          icon="📅"
+          icon={Calendar}
           title="Lịch hẹn hôm nay"
           value={stats.todayAppointments}
           color="info"
@@ -266,123 +218,12 @@ export default function ManagerDashboard() {
       </div>
 
       {/* Quick Actions & Recent Activity */}
-      <div className="dashboard-content-grid">
-        <div className="dashboard-col-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
           <QuickActions actions={quickActions} />
         </div>
-        <div className="dashboard-col-1">
+        <div className="lg:col-span-1">
           <RecentActivity activities={recentActivities} />
-        </div>
-      </div>
-
-      {/* Test Modals Section - FOR DEMO */}
-      <div className="section-separated">
-        <h2 className="section-title-large">
-          <span className="title-icon">🧪</span>
-          Test Modal Functions
-        </h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '15px',
-          marginTop: '15px'
-        }}>
-          <button
-            onClick={() => handleEditStaff({
-              id: "EMP001",
-              name: "Nguyễn Văn A",
-              email: "vet@pawlovers.com",
-              phone: "0901234567",
-              role: "vet",
-              specialty: "Bác sĩ thú y tổng quát"
-            })}
-            className="btn btn-primary"
-            style={{ width: '100%' }}
-          >
-            ✏️ Test Edit Staff
-          </button>
-
-          <button
-            onClick={() => handleEditService({
-              id: "SRV001",
-              name: "Tắm spa cao cấp",
-              category: "health",
-              price: "150000",
-              duration: "60",
-              description: "Tắm sạch, massage thư giãn, sấy khô"
-            })}
-            className="btn btn-primary"
-            style={{ width: '100%' }}
-          >
-            ✏️ Test Edit Service
-          </button>
-
-          <button
-            onClick={() => handleEditAppointment({
-              petName: "Lucky",
-              petIcon: "🐕",
-              service: "Khám sức khỏe",
-              date: "2025-11-15",
-              time: "10:00",
-              owner: "Nguyễn Văn A",
-              status: "pending",
-              assignedStaff: "",
-              notes: ""
-            })}
-            className="btn btn-primary"
-            style={{ width: '100%' }}
-          >
-            ✏️ Test Edit Appointment
-          </button>
-
-          <button
-            onClick={() => handleViewInvoice({
-              id: "INV-2025-001",
-              date: "10:30 15/01/2025",
-              status: "paid",
-              customerName: "Nguyễn Văn A",
-              customerPhone: "0901234567",
-              customerEmail: "nguyenvana@gmail.com",
-              petName: "Lucky",
-              petIcon: "🐕",
-              petBreed: "Golden Retriever",
-              petAge: "3 tuổi",
-              services: [
-                {
-                  icon: "🩺",
-                  name: "Khám sức khỏe tổng quát",
-                  quantity: 1,
-                  price: 200000,
-                  total: 200000
-                },
-                {
-                  icon: "💉",
-                  name: "Tiêm phòng dại",
-                  quantity: 1,
-                  price: 120000,
-                  total: 120000
-                }
-              ],
-              subtotal: 320000,
-              total: 320000,
-              paymentMethod: "cash"
-            })}
-            className="btn btn-primary"
-            style={{ width: '100%' }}
-          >
-            📄 Test View Invoice
-          </button>
-        </div>
-      </div>
-
-      {/* Charts Section */}
-      <div className="charts-section">
-        <div className="chart-card">
-          <h3 className="section-title">📈 Doanh thu 6 tháng gần đây</h3>
-          <div className="chart-placeholder">
-            <p className="text-gray-500">Biểu đồ sẽ được hiển thị ở đây</p>
-            <p className="text-sm text-gray-400 mt-2">(Sử dụng Recharts hoặc Chart.js)</p>
-          </div>
         </div>
       </div>
 
@@ -428,8 +269,20 @@ export default function ManagerDashboard() {
 
       {/* Toast Notification */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
-          {toast.message}
+        <div className={cn(
+          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+          toast.type === "success"
+            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+            : "bg-red-100 text-red-800 border border-red-200"
+        )}>
+          <div className="flex items-center gap-2">
+            {toast.type === "success" ? (
+              <CheckCircle2 className="h-5 w-5" />
+            ) : (
+              <XCircle className="h-5 w-5" />
+            )}
+            <p className="font-medium">{toast.message}</p>
+          </div>
         </div>
       )}
     </div>
