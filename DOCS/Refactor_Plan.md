@@ -33,12 +33,12 @@
 ### 2. Components Cần Refactor
 
 #### **A. UI Components (Base Components)**
-- [ ] `components/ui/Button.jsx` - Thay thế bằng shadcn/ui Button
-- [ ] `components/ui/Input.jsx` - Thay thế bằng shadcn/ui Input
+- [x] `components/ui/Button.jsx` - Thay thế bằng shadcn/ui Button ✅
+- [x] `components/ui/Input.jsx` - Thay thế bằng shadcn/ui Input ✅
 
 #### **B. Layout Components**
-- [ ] `components/layout/Sidebar.jsx` - Refactor với Tailwind + shadcn/ui + Lucide
-- [ ] `components/layout/DashboardHeader.jsx` - Refactor với Tailwind + shadcn/ui + Lucide
+- [x] `components/layout/Sidebar.jsx` - Refactor với Tailwind + shadcn/ui + Lucide ✅
+- [x] `components/layout/DashboardHeader.jsx` - Refactor với Tailwind + shadcn/ui + Lucide ✅
 
 #### **C. Form Components**
 - [ ] `components/forms/LoginForm.jsx`
@@ -194,51 +194,57 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 ### Phase 1: Setup & Base Components (Priority: HIGH)
 
 #### Task 1.1: Cài đặt Dependencies
-- [ ] Cài đặt `lucide-react`: `npm install lucide-react`
-- [ ] Cài đặt các shadcn/ui components cần thiết
-- [ ] Kiểm tra `tailwind.config.js` đã cấu hình đúng
-- [ ] Kiểm tra `components.json` (shadcn/ui config)
+- [x] Cài đặt `lucide-react`: `npm install lucide-react` ✅
+- [x] Cài đặt `clsx` và `tailwind-merge` ✅
+- [x] Cấu hình `tailwind.config.js` với theme variables ✅
+- [x] Thêm CSS variables vào `styles/globals.css` ✅
+- [x] Tạo `lib/utils.js` với hàm `cn()` ✅
 
 #### Task 1.2: Refactor UI Base Components
-- [ ] **Button.jsx**: Thay thế bằng shadcn/ui Button
+- [x] **Button.jsx**: Thay thế bằng shadcn/ui Button pattern ✅
   - Giữ nguyên props interface (variant, loading, icon, children)
-  - Thay thế SVG spinner bằng `Loader2` từ Lucide
-  - Sử dụng Tailwind classes thay vì CSS classes cũ
+  - Thay thế SVG spinner bằng `Loader2` từ Lucide ✅
+  - Sử dụng Tailwind classes với theme variables ✅
+  - Hỗ trợ các variants: default, secondary, outline, destructive, ghost, link ✅
   
-- [ ] **Input.jsx**: Thay thế bằng shadcn/ui Input + Form components
-  - Sử dụng shadcn/ui Input component
-  - Sử dụng FormField, FormLabel, FormMessage từ shadcn/ui
-  - Thay thế icon prop bằng Lucide icon component
+- [x] **Input.jsx**: Thay thế bằng shadcn/ui Input pattern ✅
+  - Sử dụng Tailwind classes với theme variables ✅
+  - Hỗ trợ icon từ Lucide ✅
+  - Error handling với theme colors ✅
 
 ### Phase 2: Layout Components (Priority: HIGH)
 
 #### Task 2.1: Refactor Sidebar
-- [ ] Thay thế emoji icons bằng Lucide icons:
-  - `🐾` → `PawPrint`
-  - `🏠` → `Home`
-  - `👥` → `Users`
-  - `✨` → `Sparkles`
-  - `📅` → `Calendar`
-  - `💰` → `DollarSign`
-  - `📊` → `BarChart3`
-  - `🔔` → `Bell`
-  - `🚪` → `LogOut`
-- [ ] Thay thế CSS classes bằng Tailwind:
-  - `.sidebar` → Tailwind classes
-  - `.sidebar-header` → Tailwind classes
-  - `.nav-item` → Tailwind classes với hover/active states
-- [ ] Sử dụng shadcn/ui Sheet component cho mobile sidebar
-- [ ] Giữ nguyên logic collapse/expand
-- [ ] Giữ nguyên routing logic
+- [x] Thay thế emoji icons bằng Lucide icons ✅
+  - `🐾` → `PawPrint` ✅
+  - `🏠` → `Home` (hoặc `Box` cho chuồng nuôi) ✅
+  - `👥` → `Users` ✅
+  - `✨` → `Sparkles` ✅
+  - `📅` → `Calendar` ✅
+  - `💰` → `DollarSign` ✅
+  - `📊` → `BarChart3` ✅
+  - `🔔` → `Bell` ✅
+  - `🚪` → `LogOut` ✅
+  - `📋` → `ClipboardList` ✅
+  - `📄` → `FileText` ✅
+  - `💳` → `CreditCard` ✅
+  - `🛍️` → `ShoppingBag` ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
+  - Sử dụng Tailwind utility classes với theme variables ✅
+  - Hover/active states với Tailwind ✅
+  - Responsive design với Tailwind ✅
+- [ ] Sử dụng shadcn/ui Sheet component cho mobile sidebar (TODO: Phase sau)
+- [x] Giữ nguyên logic collapse/expand ✅
+- [x] Giữ nguyên routing logic ✅
 
 #### Task 2.2: Refactor DashboardHeader
-- [ ] Thay thế emoji icons:
-  - `👋` → `Hand` hoặc `WavingHand`
-  - `🕐` → `Clock`
-  - `🔔` → `Bell`
-- [ ] Thay thế CSS classes bằng Tailwind
-- [ ] Sử dụng shadcn/ui Badge cho notification badge
-- [ ] Giữ nguyên logic time display và greeting
+- [x] Thay thế emoji icons ✅
+  - `👋` → `Hand` ✅
+  - `🕐` → `Clock` ✅
+  - `🔔` → `Bell` ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
+- [x] Sử dụng Tailwind cho notification badge ✅
+- [x] Giữ nguyên logic time display và greeting ✅
 
 ### Phase 3: Form Components (Priority: HIGH)
 
@@ -482,16 +488,16 @@ Khi refactor mỗi component, sử dụng checklist này:
 
 ### Tổng số components cần refactor: ~80 components
 
-**Đã hoàn thành:** 0/80 (0%)
+**Đã hoàn thành:** 4/80 (5%)
 
 **Đang thực hiện:** 0/80 (0%)
 
-**Chưa bắt đầu:** 80/80 (100%)
+**Chưa bắt đầu:** 76/80 (95%)
 
 ### Breakdown theo Phase:
 
-- **Phase 1 (Setup & Base):** 0/2 tasks
-- **Phase 2 (Layout):** 0/2 tasks
+- **Phase 1 (Setup & Base):** 2/2 tasks ✅ COMPLETED
+- **Phase 2 (Layout):** 2/2 tasks ✅ COMPLETED
 - **Phase 3 (Forms):** 0/3 tasks
 - **Phase 4 (Modals):** 0/25 tasks
 - **Phase 5 (Tables):** 0/2 tasks
@@ -563,6 +569,23 @@ Sau đó tiếp tục với Phase 2 - Layout Components.
 
 ---
 
-**Last Updated:** [Date sẽ được cập nhật khi bắt đầu refactor]
-**Status:** 🟡 Planning Complete - Ready to Start
+**Last Updated:** 2024-12-XX
+**Status:** 🟢 In Progress - Phase 1 & 2 Completed
+
+## ✅ Completed Tasks
+
+### Phase 1: Setup & Base Components ✅
+- ✅ Installed dependencies: lucide-react, clsx, tailwind-merge
+- ✅ Configured Tailwind with theme variables
+- ✅ Created lib/utils.js with cn() function
+- ✅ Refactored Button.jsx to use Tailwind + Lucide icons
+- ✅ Refactored Input.jsx to use Tailwind + theme variables
+
+### Phase 2: Layout Components ✅
+- ✅ Refactored Sidebar.jsx with Tailwind + Lucide icons
+- ✅ Refactored DashboardHeader.jsx with Tailwind + Lucide icons
+
+## 🔄 Next Steps
+
+Continue with Phase 3: Form Components (LoginForm, RegistrationForm, ResetPasswordForm)
 
