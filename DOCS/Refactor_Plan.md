@@ -429,11 +429,11 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 8.3: Refactor Vet Pages
 
-- [ ] `app/dashboard/vet/page.js`
-- [ ] `app/dashboard/vet/schedule/page.js`
-- [ ] `app/dashboard/vet/records/page.js`
-- [ ] `app/dashboard/vet/today/page.js`
-- [ ] `app/dashboard/vet/patients/page.js`
+- [x] `app/dashboard/vet/page.js` ✅
+- [x] `app/dashboard/vet/schedule/page.js` ✅
+- [x] `app/dashboard/vet/records/page.js` ✅
+- [x] `app/dashboard/vet/today/page.js` ✅
+- [x] `app/dashboard/vet/patients/page.js` ✅
 
 #### Task 8.4: Refactor Care Staff Pages
 

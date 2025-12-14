@@ -3,6 +3,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import CareNoteModal from "@/components/modals/CareNoteModal";
+import QuickActions from "@/components/dashboard/QuickActions";
+import StatsCard from "@/components/dashboard/StatsCard";
+import { ClipboardList, Clock, RefreshCw, CheckCircle2, Calendar, Sparkles, FileText, Save, Play, PawPrint, Cat, Bath, Scissors, Home, Sparkles as SparklesIcon, User } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function CareStaffDashboard() {
   const router = useRouter();
@@ -92,10 +100,10 @@ export default function CareStaffDashboard() {
 
   const handleSaveNote = () => {
     if (!noteText.trim()) {
-      showToast("⚠️ Vui lòng nhập nội dung ghi chú", "error");
+      showToast("Vui lòng nhập nội dung ghi chú", "error");
       return;
     }
-    showToast("💾 Đã lưu ghi chú thành công!");
+    showToast("Đã lưu ghi chú thành công!");
     setNoteText("");
   };
 
@@ -103,49 +111,38 @@ export default function CareStaffDashboard() {
     setTodayTasks(todayTasks.map(task =>
       task.id === taskId ? { ...task, status: "in_progress" } : task
     ));
-    showToast("▶️ Đã bắt đầu công việc!");
+    showToast("Đã bắt đầu công việc!");
   };
 
   const handleOpenNoteModal = (task) => {
-    console.log('=================================');
-    console.log('🎯 OPENING MODAL WITH TASK:');
-    console.log('Task ID:', task.id);
-    console.log('Pet Name:', task.petName);
-    console.log('Pet Type:', task.petType);
-    console.log('Owner Name:', task.ownerName);
-    console.log('Service:', task.service);
-    console.log('Full Task Object:', task);
-    console.log('=================================');
-    
     setSelectedTask(task);
     setIsNoteModalOpen(true);
   };
 
   const handleNoteSuccess = (data) => {
-    console.log("Note saved:", data);
-    showToast("✅ Đã lưu ghi chú chăm sóc!");
+    showToast("Đã lưu ghi chú chăm sóc!");
   };
 
   const handleCompleteTask = (taskId) => {
     setTodayTasks(todayTasks.map(task =>
       task.id === taskId ? { ...task, status: "completed" } : task
     ));
-    showToast("✅ Đã hoàn thành công việc!");
+    showToast("Đã hoàn thành công việc!");
   };
 
   const quickActions = [
     {
-      icon: "📅",
+      icon: Calendar,
       label: "Xem lịch làm việc",
       onClick: () => router.push("/dashboard/care-staff/schedule")
     },
     {
-      icon: "📋",
+      icon: ClipboardList,
       label: "Công việc hôm nay",
       onClick: () => router.push("/dashboard/care-staff/today")
     },
     {
-      icon: "📝",
+      icon: FileText,
       label: "Ghi chú nhanh",
       onClick: () => {
         document.getElementById('note-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -153,156 +150,139 @@ export default function CareStaffDashboard() {
     }
   ];
 
+  const getStatusBadge = (status) => {
+    const badges = {
+      pending: { label: "Chưa làm", variant: "warning", icon: Clock },
+      in_progress: { label: "Đang làm", variant: "info", icon: RefreshCw },
+      completed: { label: "Hoàn thành", variant: "success", icon: CheckCircle2 }
+    };
+    return badges[status] || badges.pending;
+  };
+
+  const getServiceIcon = (icon) => {
+    switch (icon) {
+      case '🛁': return Bath;
+      case '✂️': return Scissors;
+      case '🏠': return Home;
+      case '🪮': return SparklesIcon;
+      default: return FileText;
+    }
+  };
+
   return (
-    <div className="dashboard-container">
+    <div className="flex-1 space-y-8 p-8">
       <DashboardHeader
         title="Công việc hôm nay"
         subtitle="Quản lý và thực hiện các dịch vụ chăm sóc"
       />
 
       {/* Stats */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">📋</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tổng công việc</p>
-              <h3 className="stat-number">{stats.totalTasks}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">⏳</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang thực hiện</p>
-              <h3 className="stat-number">{stats.inProgress}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✓</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đã hoàn thành</p>
-              <h3 className="stat-number">{stats.completed}</h3>
-            </div>
-          </div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <StatsCard icon={ClipboardList} title="Tổng công việc" value={stats.totalTasks} color="primary" />
+        <StatsCard icon={RefreshCw} title="Đang thực hiện" value={stats.inProgress} color="info" />
+        <StatsCard icon={CheckCircle2} title="Đã hoàn thành" value={stats.completed} color="success" />
       </div>
 
       {/* Quick Actions */}
-      <div className="section-separated">
-        <h2 className="section-title-large">
-          <span className="title-icon">⚡</span>
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          <Sparkles className="h-6 w-6 text-primary" />
           Thao tác nhanh
         </h2>
-        <div className="quick-actions-grid">
-          {quickActions.map((action, index) => (
-            <button
-              key={index}
-              onClick={action.onClick}
-              className="quick-action-card"
-            >
-              <span className="quick-action-icon">{action.icon}</span>
-              <span className="quick-action-label">{action.label}</span>
-            </button>
-          ))}
-        </div>
+        <QuickActions actions={quickActions} />
       </div>
 
       {/* Task List */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <ClipboardList className="h-6 w-6 text-primary" />
             Danh sách công việc
           </h2>
-          <span className="section-count">{todayTasks.length} công việc</span>
+          <Badge variant="secondary">{todayTasks.length} công việc</Badge>
         </div>
 
-        <div className="staff-task-list">
-          {todayTasks.map((task) => (
-            <div key={task.id} className="staff-task-card">
-              <div className="task-time-badge-staff">{task.time}</div>
-              
-              <div className="task-pet-info-staff">
-                <span className="task-pet-icon-staff">{task.petIcon}</span>
-                <div>
-                  <p className="task-pet-name-staff">{task.petName}</p>
-                  <p className="task-owner-name-staff">Chủ nuôi: {task.ownerName}</p>
+        <div className="space-y-3">
+          {todayTasks.map((task) => {
+            const statusBadge = getStatusBadge(task.status);
+            const ServiceIcon = getServiceIcon(task.serviceIcon);
+            const PetIcon = task.petIcon === '🐕' ? PawPrint : task.petIcon === '🐈' ? Cat : PawPrint;
+            return (
+              <Card key={task.id} className="flex items-center gap-4 p-4">
+                <div className="flex items-center justify-center w-20 h-20 rounded-lg bg-primary/10">
+                  <Clock className="h-5 w-5 text-primary" />
+                  <span className="ml-1 text-sm font-semibold">{task.time}</span>
                 </div>
-              </div>
+                
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-secondary-foreground">
+                    <PetIcon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">{task.petName}</p>
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                      <User className="h-3 w-3" /> {task.ownerName}
+                    </p>
+                  </div>
+                </div>
 
-              <div className="task-service-info-staff">
-                <span className="task-service-icon-staff">{task.serviceIcon}</span>
-                <span className="task-service-name-staff">{task.service}</span>
-              </div>
+                <div className="flex items-center gap-2 flex-1">
+                  <ServiceIcon className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">{task.service}</span>
+                </div>
 
-              <div className="task-actions-group-staff">
-                {task.status === 'pending' && (
-                  <button
-                    onClick={() => handleStartTask(task.id)}
-                    className="btn-start-task-staff"
-                  >
-                    ▶️ Bắt đầu
-                  </button>
-                )}
+                <Badge variant={statusBadge.variant} className="flex items-center gap-1">
+                  <statusBadge.icon className="h-3 w-3" /> {statusBadge.label}
+                </Badge>
 
-                {task.status === 'in_progress' && (
-                  <>
-                    <button
-                      onClick={() => handleOpenNoteModal(task)}
-                      className="btn-note-task-staff"
-                    >
-                      📝 Ghi chú
-                    </button>
-                    <button
-                      onClick={() => handleCompleteTask(task.id)}
-                      className="btn-complete-task-staff"
-                    >
-                      ✓ Hoàn thành
-                    </button>
-                  </>
-                )}
+                <div className="flex gap-2">
+                  {task.status === 'pending' && (
+                    <Button size="sm" onClick={() => handleStartTask(task.id)}>
+                      <Play className="h-4 w-4 mr-2" /> Bắt đầu
+                    </Button>
+                  )}
 
-                {task.status === 'completed' && (
-                  <span className="task-completed-badge-staff">✅ Đã xong</span>
-                )}
-              </div>
-            </div>
-          ))}
+                  {task.status === 'in_progress' && (
+                    <>
+                      <Button variant="outline" size="sm" onClick={() => handleOpenNoteModal(task)}>
+                        <FileText className="h-4 w-4 mr-2" /> Ghi chú
+                      </Button>
+                      <Button variant="success" size="sm" onClick={() => handleCompleteTask(task.id)}>
+                        <CheckCircle2 className="h-4 w-4 mr-2" /> Hoàn thành
+                      </Button>
+                    </>
+                  )}
+
+                  {task.status === 'completed' && (
+                    <Badge variant="success">Đã xong</Badge>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </div>
 
       {/* Note Section */}
-      <div className="section-separated" id="note-section">
-        <h2 className="section-title-large">
-          <span className="title-icon">📝</span>
-          Ghi chú công việc
-        </h2>
-        
-        <div className="note-input-section">
-          <textarea
+      <Card id="note-section" className="p-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Ghi chú công việc
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Textarea
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
             placeholder="Nhập ghi chú về công việc hôm nay..."
-            rows="4"
-            className="note-textarea-staff"
+            rows={4}
           />
-          <button
-            onClick={handleSaveNote}
-            className="btn-save-note-staff"
-          >
-            <span className="btn-icon">💾</span>
-            <span>Lưu ghi chú</span>
-          </button>
-        </div>
-      </div>
+          <Button onClick={handleSaveNote}>
+            <Save className="h-4 w-4 mr-2" /> Lưu ghi chú
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Modal */}
       {isNoteModalOpen && selectedTask && (
@@ -319,7 +299,7 @@ export default function CareStaffDashboard() {
 
       {/* Toast */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
+        <div className={cn("fixed bottom-4 right-4 p-3 rounded-md shadow-lg text-white", toast.type === "success" ? "bg-green-500" : "bg-red-500")}>
           {toast.message}
         </div>
       )}
