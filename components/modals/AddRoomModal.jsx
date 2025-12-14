@@ -1,6 +1,21 @@
 // components/modals/AddRoomModal.jsx
 "use client";
 import { useState } from "react";
+import { 
+  Plus, 
+  X, 
+  Check, 
+  Loader2, 
+  Hash, 
+  Home, 
+  FileText
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import Input from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function AddRoomModal({ isOpen, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -13,9 +28,9 @@ export default function AddRoomModal({ isOpen, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
 
   const roomTypes = [
-    { value: "small", label: "🏠 Nhỏ", subtitle: "Sức chứa: 1 thú cưng", desc: "Dành cho mèo hoặc chó nhỏ" },
-    { value: "medium", label: "🏡 Trung", subtitle: "Sức chứa: 2 thú cưng", desc: "Dành cho chó cỡ trung" },
-    { value: "large", label: "🏘️ Lớn", subtitle: "Sức chứa: 3 thú cưng", desc: "Dành cho chó lớn hoặc nhiều thú cưng" }
+    { value: "small", label: "Nhỏ", icon: Home, subtitle: "Sức chứa: 1 thú cưng", desc: "Dành cho mèo hoặc chó nhỏ" },
+    { value: "medium", label: "Trung", icon: Home, subtitle: "Sức chứa: 2 thú cưng", desc: "Dành cho chó cỡ trung" },
+    { value: "large", label: "Lớn", icon: Home, subtitle: "Sức chứa: 3 thú cưng", desc: "Dành cho chó lớn hoặc nhiều thú cưng" }
   ];
 
   const handleChange = (e) => {
@@ -76,121 +91,128 @@ export default function AddRoomModal({ isOpen, onClose, onSuccess }) {
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="modal-overlay-beautiful" onClick={handleClose}>
-      <div className="modal-container-beautiful" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="modal-header-beautiful">
-          <div className="modal-header-content">
-            <span className="modal-icon-beautiful">➕</span>
-            <h2 className="modal-title-beautiful">Thêm chuồng mới</h2>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <Plus className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Thêm chuồng mới</DialogTitle>
           </div>
-          <button onClick={handleClose} className="modal-close-beautiful">
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Mã chuồng */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🔢</span>
-              Mã chuồng
-              <span className="required-star">*</span>
-            </label>
-            <input
-              type="text"
-              name="code"
-              value={formData.code}
-              onChange={handleChange}
-              placeholder="Ví dụ: A01, B12, C03..."
-              className={`form-input-beautiful ${errors.code ? 'input-error-beautiful' : ''}`}
-            />
-            {errors.code && <span className="error-text-beautiful">{errors.code}</span>}
-          </div>
+          <Input
+            label="Mã chuồng"
+            name="code"
+            type="text"
+            value={formData.code}
+            onChange={handleChange}
+            placeholder="Ví dụ: A01, B12, C03..."
+            error={errors.code}
+            icon={Hash}
+            required
+          />
 
           {/* Loại chuồng */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🏠</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Home className="h-4 w-4 text-muted-foreground" />
               Loại chuồng
-              <span className="required-star">*</span>
-            </label>
-            <div className="room-type-cards">
-              {roomTypes.map((room) => (
-                <button
-                  key={room.value}
-                  type="button"
-                  onClick={() => {
-                    setFormData(prev => ({ ...prev, type: room.value }));
-                    if (errors.type) {
-                      setErrors(prev => ({ ...prev, type: "" }));
-                    }
-                  }}
-                  className={`room-type-card ${formData.type === room.value ? 'room-type-card-active' : ''}`}
-                >
-                  <div className="room-type-header">
-                    <span className="room-type-label">{room.label}</span>
-                    {formData.type === room.value && (
-                      <span className="room-type-check">✓</span>
+              <span className="text-destructive">*</span>
+            </Label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {roomTypes.map((room) => {
+                const RoomIcon = room.icon;
+                const isSelected = formData.type === room.value;
+                return (
+                  <button
+                    key={room.value}
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, type: room.value }));
+                      if (errors.type) {
+                        setErrors(prev => ({ ...prev, type: "" }));
+                      }
+                    }}
+                    className={cn(
+                      "p-4 rounded-lg border-2 transition-all text-left",
+                      isSelected
+                        ? "border-primary bg-primary/10"
+                        : "border-input bg-background hover:border-primary/50"
                     )}
-                  </div>
-                  <p className="room-type-subtitle">{room.subtitle}</p>
-                  <p className="room-type-desc">{room.desc}</p>
-                </button>
-              ))}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <RoomIcon className="h-5 w-5 text-primary" />
+                        <span className="font-semibold text-foreground">{room.label}</span>
+                      </div>
+                      {isSelected && (
+                        <Check className="h-5 w-5 text-primary" />
+                      )}
+                    </div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                      {room.subtitle}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {room.desc}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
-            {errors.type && <span className="error-text-beautiful">{errors.type}</span>}
+            {errors.type && (
+              <p className="text-sm text-destructive">{errors.type}</p>
+            )}
           </div>
 
           {/* Ghi chú */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
               Ghi chú
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="notes"
               value={formData.notes}
               onChange={handleChange}
               placeholder="Ghi chú về vị trí, đặc điểm..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
-          {/* Buttons */}
-          <div className="modal-footer-beautiful">
-            <button
+          {/* Footer */}
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleClose}
-              className="btn-beautiful btn-cancel-beautiful"
             >
-              <span className="btn-icon-beautiful">✕</span>
-              <span>Hủy</span>
-            </button>
-            <button
+              <X className="h-4 w-4" />
+              Hủy
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="btn-beautiful btn-primary-beautiful"
             >
               {loading ? (
                 <>
-                  <span className="spinner-beautiful"></span>
-                  <span>Đang thêm...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang thêm...
                 </>
               ) : (
                 <>
-                  <span className="btn-icon-beautiful">✓</span>
-                  <span>Thêm chuồng</span>
+                  <Check className="h-4 w-4" />
+                  Thêm chuồng
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
