@@ -444,12 +444,12 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 8.5: Refactor Receptionist Pages
 
-- [ ] `app/dashboard/receptionist/page.js`
-- [ ] `app/dashboard/receptionist/appointments/page.js`
-- [ ] `app/dashboard/receptionist/slips/page.js`
-- [ ] `app/dashboard/receptionist/reminders/page.js`
-- [ ] `app/dashboard/receptionist/payments/page.js`
-- [ ] `app/dashboard/receptionist/customers/page.js`
+- [x] `app/dashboard/receptionist/page.js` ✅
+- [x] `app/dashboard/receptionist/appointments/page.js` ✅
+- [x] `app/dashboard/receptionist/slips/page.js` ✅
+- [x] `app/dashboard/receptionist/reminders/page.js` ✅
+- [x] `app/dashboard/receptionist/payments/page.js` ✅
+- [x] `app/dashboard/receptionist/customers/page.js` ✅
 
 ### Phase 9: Auth Pages (Priority: HIGH)
 
@@ -570,13 +570,13 @@ Khi refactor mỗi component, sử dụng checklist này:
   - ✅ QuickActions.jsx
   - ✅ RecentActivity.jsx
 
-- **Phase 7 (Charts):** 0/1 task
+- **Phase 7 (Charts):** 1/1 task ✅ COMPLETED
 
-  - ⏳ RevenueChart.jsx
+  - ✅ RevenueChart.jsx
 
-- **Phase 8 (Pages):** 0/25 tasks
+- **Phase 8 (Pages):** 25/25 tasks ✅ COMPLETED
 
-  - ⏳ Tất cả dashboard pages
+  - ✅ Tất cả dashboard pages (Owner: 6, Manager: 7, Vet: 5, Care Staff: 4, Receptionist: 6)
 
 - **Phase 9 (Auth):** 0/3 tasks
 
