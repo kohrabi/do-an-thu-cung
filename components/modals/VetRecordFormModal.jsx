@@ -1,6 +1,30 @@
 // components/modals/VetRecordFormModal.jsx
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Edit, 
+  Plus, 
+  X, 
+  Save, 
+  Check, 
+  Loader2, 
+  PawPrint, 
+  Stethoscope, 
+  Microscope, 
+  Pill, 
+  Syringe, 
+  FileText, 
+  RefreshCw,
+  User,
+  Phone
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function VetRecordFormModal({ isOpen, onClose, onSuccess, record }) {
   const [formData, setFormData] = useState({
@@ -167,35 +191,37 @@ export default function VetRecordFormModal({ isOpen, onClose, onSuccess, record 
   const isEditMode = !!record;
 
   return (
-    <div className="modal-overlay-beautiful" onClick={handleClose}>
-      <div className="modal-container-beautiful modal-large-beautiful" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="modal-header-beautiful">
-          <div className="modal-header-content">
-            <span className="modal-icon-beautiful">{isEditMode ? '✏️' : '➕'}</span>
-            <h2 className="modal-title-beautiful">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              {isEditMode ? (
+                <Edit className="h-5 w-5 text-primary" />
+              ) : (
+                <Plus className="h-5 w-5 text-primary" />
+              )}
+            </div>
+            <DialogTitle>
               {isEditMode ? 'Chỉnh sửa hồ sơ bệnh án' : 'Tạo hồ sơ bệnh án mới'}
-            </h2>
+            </DialogTitle>
           </div>
-          <button onClick={handleClose} className="modal-close-beautiful">
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Select Pet (only in create mode) */}
           {!isEditMode && (
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🐾</span>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <PawPrint className="h-4 w-4 text-muted-foreground" />
                 Chọn thú cưng
-                <span className="required-star">*</span>
-              </label>
-              <select
+                <span className="text-destructive">*</span>
+              </Label>
+              <Select
                 name="petId"
                 value={formData.petId}
                 onChange={handlePetSelect}
-                className={`form-select-beautiful ${errors.petId ? 'input-error-beautiful' : ''}`}
+                className={cn(errors.petId && "border-destructive")}
               >
                 <option value="">-- Chọn thú cưng --</option>
                 {pets.map(pet => (
@@ -203,158 +229,176 @@ export default function VetRecordFormModal({ isOpen, onClose, onSuccess, record 
                     {pet.icon} {pet.name} - {pet.ownerName}
                   </option>
                 ))}
-              </select>
-              {errors.petId && <span className="error-text-beautiful">{errors.petId}</span>}
+              </Select>
+              {errors.petId && (
+                <p className="text-sm text-destructive">{errors.petId}</p>
+              )}
             </div>
           )}
 
           {/* Show pet info if selected */}
           {formData.petId && (
-            <div className="selected-pet-info">
-              <div className="selected-pet-header">
-                <span className="selected-pet-icon">{formData.petIcon}</span>
+            <div className="p-4 bg-pink-50 rounded-lg border-2 border-pink-200">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="text-4xl">{formData.petIcon}</div>
                 <div>
-                  <p className="selected-pet-name">{formData.petName}</p>
-                  <p className="selected-pet-type">{formData.petType}</p>
+                  <p className="text-lg font-bold text-foreground">{formData.petName}</p>
+                  <p className="text-sm text-muted-foreground">{formData.petType}</p>
                 </div>
               </div>
-              <div className="selected-owner-info">
-                <p>👤 {formData.ownerName}</p>
-                <p>📱 {formData.ownerPhone}</p>
+              <div className="pt-3 border-t border-pink-200 space-y-1 text-sm">
+                <p className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Chủ nuôi:</span>
+                  <span className="font-semibold text-foreground">{formData.ownerName}</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Điện thoại:</span>
+                  <span className="font-semibold text-foreground">{formData.ownerPhone}</span>
+                </p>
               </div>
             </div>
           )}
 
           {/* Symptoms */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🩺</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Stethoscope className="h-4 w-4 text-muted-foreground" />
               Triệu chứng
-              <span className="required-star">*</span>
-            </label>
-            <textarea
+              <span className="text-destructive">*</span>
+            </Label>
+            <Textarea
               name="symptoms"
               value={formData.symptoms}
               onChange={handleChange}
               placeholder="Mô tả các triệu chứng quan sát được..."
-              rows="3"
-              className={`form-textarea-beautiful ${errors.symptoms ? 'input-error-beautiful' : ''}`}
+              rows={3}
+              className={cn(errors.symptoms && "border-destructive")}
             />
-            {errors.symptoms && <span className="error-text-beautiful">{errors.symptoms}</span>}
+            {errors.symptoms && (
+              <p className="text-sm text-destructive">{errors.symptoms}</p>
+            )}
           </div>
 
           {/* Diagnosis */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🔬</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Microscope className="h-4 w-4 text-muted-foreground" />
               Chẩn đoán
-              <span className="required-star">*</span>
-            </label>
-            <textarea
+              <span className="text-destructive">*</span>
+            </Label>
+            <Textarea
               name="diagnosis"
               value={formData.diagnosis}
               onChange={handleChange}
               placeholder="Nhập kết quả chẩn đoán..."
-              rows="3"
-              className={`form-textarea-beautiful ${errors.diagnosis ? 'input-error-beautiful' : ''}`}
+              rows={3}
+              className={cn(errors.diagnosis && "border-destructive")}
             />
-            {errors.diagnosis && <span className="error-text-beautiful">{errors.diagnosis}</span>}
+            {errors.diagnosis && (
+              <p className="text-sm text-destructive">{errors.diagnosis}</p>
+            )}
           </div>
 
           {/* Prescription */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">💊</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Pill className="h-4 w-4 text-muted-foreground" />
               Đơn thuốc
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="prescription"
               value={formData.prescription}
               onChange={handleChange}
               placeholder="Kê đơn thuốc (tên thuốc, liều lượng, cách dùng)..."
-              rows="4"
-              className="form-textarea-beautiful"
+              rows={4}
             />
           </div>
 
           {/* Treatment */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">💉</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Syringe className="h-4 w-4 text-muted-foreground" />
               Điều trị
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="treatment"
               value={formData.treatment}
               onChange={handleChange}
               placeholder="Mô tả các phương pháp điều trị đã thực hiện..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Notes */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
               Ghi chú thêm
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="notes"
               value={formData.notes}
               onChange={handleChange}
               placeholder="Lưu ý về chế độ chăm sóc, dinh dưỡng..."
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
           {/* Follow-up Date */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🔄</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <RefreshCw className="h-4 w-4 text-muted-foreground" />
               Ngày tái khám (nếu có)
-            </label>
-            <input
+            </Label>
+            <Input
               type="date"
               name="followUpDate"
               value={formData.followUpDate}
               onChange={handleChange}
               min={new Date().toISOString().split('T')[0]}
-              className="form-input-beautiful"
             />
           </div>
 
-          {/* Buttons */}
-          <div className="modal-footer-beautiful">
-            <button
+          {/* Footer */}
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleClose}
-              className="btn-beautiful btn-cancel-beautiful"
             >
-              <span className="btn-icon-beautiful">✕</span>
-              <span>Hủy</span>
-            </button>
-            <button
+              <X className="h-4 w-4" />
+              Hủy
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="btn-beautiful btn-primary-beautiful"
             >
               {loading ? (
                 <>
-                  <span className="spinner-beautiful"></span>
-                  <span>{isEditMode ? 'Đang lưu...' : 'Đang tạo...'}</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {isEditMode ? 'Đang lưu...' : 'Đang tạo...'}
                 </>
               ) : (
                 <>
-                  <span className="btn-icon-beautiful">{isEditMode ? '💾' : '✓'}</span>
-                  <span>{isEditMode ? 'Lưu thay đổi' : 'Tạo hồ sơ'}</span>
+                  {isEditMode ? (
+                    <>
+                      <Save className="h-4 w-4" />
+                      Lưu thay đổi
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Tạo hồ sơ
+                    </>
+                  )}
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
