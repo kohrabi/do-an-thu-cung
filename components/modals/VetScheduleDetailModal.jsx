@@ -12,7 +12,9 @@ import {
   Scale, 
   FileText,
   ClipboardList,
-  Hash
+  Hash,
+  Stethoscope,
+  Calendar
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import Button from "@/components/ui/Button";

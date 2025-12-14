@@ -59,25 +59,25 @@
 - [x] `components/modals/EditServiceModal.jsx` ✅
 - [x] `components/modals/AddStaffModal.jsx` ✅
 - [x] `components/modals/EditStaffModal.jsx` ✅
-- [ ] `components/modals/AddRoomModal.jsx`
+- [x] `components/modals/AddRoomModal.jsx` ✅
 - [x] `components/modals/BookAppointmentModal.jsx` ✅
-- [ ] `components/modals/AppointmentDetailModal.jsx`
-- [ ] `components/modals/EditAppointmentModal.jsx`
-- [ ] `components/modals/UpdateAppointmentModal.jsx`
-- [ ] `components/modals/CancelAppointmentModal.jsx`
-- [ ] `components/modals/CancelAppointmentOwnerModal.jsx`
-- [ ] `components/modals/ConfirmAppointmentModal.jsx`
-- [ ] `components/modals/CageDetailModal.jsx`
-- [ ] `components/modals/CageFormModal.jsx`
-- [ ] `components/modals/CareNoteModal.jsx`
-- [ ] `components/modals/ServiceNoteModal.jsx`
-- [ ] `components/modals/InvoiceDetailModal.jsx`
-- [ ] `components/modals/PaymentDetailModal.jsx`
-- [ ] `components/modals/VetPatientDetailModal.jsx`
-- [ ] `components/modals/VetRecordDetailModal.jsx`
-- [ ] `components/modals/VetRecordFormModal.jsx`
-- [ ] `components/modals/VetRecordModal.jsx`
-- [ ] `components/modals/VetScheduleDetailModal.jsx`
+- [x] `components/modals/AppointmentDetailModal.jsx` ✅
+- [x] `components/modals/EditAppointmentModal.jsx` ✅
+- [x] `components/modals/UpdateAppointmentModal.jsx` ✅
+- [x] `components/modals/CancelAppointmentModal.jsx` ✅
+- [x] `components/modals/CancelAppointmentOwnerModal.jsx` ✅
+- [x] `components/modals/ConfirmAppointmentModal.jsx` ✅
+- [x] `components/modals/CageDetailModal.jsx` ✅
+- [x] `components/modals/CageFormModal.jsx` ✅
+- [x] `components/modals/CareNoteModal.jsx` ✅
+- [x] `components/modals/ServiceNoteModal.jsx` ✅
+- [x] `components/modals/InvoiceDetailModal.jsx` ✅
+- [x] `components/modals/PaymentDetailModal.jsx` ✅
+- [x] `components/modals/VetPatientDetailModal.jsx` ✅
+- [x] `components/modals/VetRecordDetailModal.jsx` ✅
+- [x] `components/modals/VetRecordFormModal.jsx` ✅
+- [x] `components/modals/VetRecordModal.jsx` ✅
+- [x] `components/modals/VetScheduleDetailModal.jsx` ✅
 
 #### **E. Table Components**
 
@@ -529,11 +529,11 @@ Khi refactor mỗi component, sử dụng checklist này:
 
 ### Tổng số components cần refactor: ~80 components
 
-**Đã hoàn thành:** 15/80 (19%)
+**Đã hoàn thành:** 33/80 (41%)
 
 **Đang thực hiện:** 0/80 (0%)
 
-**Chưa bắt đầu:** 65/80 (81%)
+**Chưa bắt đầu:** 47/80 (59%)
 
 ### Breakdown theo Phase:
 
