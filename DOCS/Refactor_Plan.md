@@ -268,24 +268,24 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 3.1: Refactor LoginForm
 
-- [ ] Sử dụng shadcn/ui Form components (Form, FormField, FormLabel, FormMessage)
-- [ ] Thay thế Input component cũ bằng shadcn/ui Input
-- [ ] Thay thế Button component cũ bằng shadcn/ui Button
-- [ ] Thay thế emoji icons bằng Lucide icons
-- [ ] Thay thế CSS classes bằng Tailwind
-- [ ] Giữ nguyên toàn bộ logic validation và submit
+- [x] Sử dụng shadcn/ui Form components (Form, FormField, FormLabel, FormMessage) ✅
+- [x] Thay thế Input component cũ bằng shadcn/ui Input ✅
+- [x] Thay thế Button component cũ bằng shadcn/ui Button ✅
+- [x] Thay thế emoji icons bằng Lucide icons ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
+- [x] Giữ nguyên toàn bộ logic validation và submit ✅
 
 #### Task 3.2: Refactor RegistrationForm
 
-- [ ] Tương tự LoginForm
-- [ ] Sử dụng shadcn/ui Form components
-- [ ] Thay thế icons và CSS classes
+- [x] Tương tự LoginForm ✅
+- [x] Sử dụng shadcn/ui Form components ✅
+- [x] Thay thế icons và CSS classes ✅
 
 #### Task 3.3: Refactor ResetPasswordForm
 
-- [ ] Tương tự LoginForm
-- [ ] Sử dụng shadcn/ui Form components
-- [ ] Thay thế icons và CSS classes
+- [x] Tương tự LoginForm ✅
+- [x] Sử dụng shadcn/ui Form components ✅
+- [x] Thay thế icons và CSS classes ✅
 
 ### Phase 4: Modal Components (Priority: MEDIUM)
 
