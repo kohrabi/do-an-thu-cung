@@ -377,24 +377,24 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 6.1: Refactor StatsCard
 
-- [ ] Sử dụng shadcn/ui Card component
-- [ ] Thay thế emoji icons bằng Lucide icons
-- [ ] Thay thế CSS classes bằng Tailwind
-- [ ] Sử dụng shadcn/ui Badge cho trend indicators
-- [ ] Giữ nguyên props interface
+- [x] Sử dụng shadcn/ui Card component ✅
+- [x] Thay thế emoji icons bằng Lucide icons ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
+- [x] Sử dụng shadcn/ui Badge cho trend indicators ✅
+- [x] Giữ nguyên props interface ✅
 
 #### Task 6.2: Refactor QuickActions
 
-- [ ] Sử dụng shadcn/ui Card hoặc Button components
-- [ ] Thay thế emoji icons bằng Lucide icons
-- [ ] Thay thế CSS classes bằng Tailwind
+- [x] Sử dụng shadcn/ui Card hoặc Button components ✅
+- [x] Thay thế emoji icons bằng Lucide icons ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
 
 #### Task 6.3: Refactor RecentActivity
 
-- [ ] Sử dụng shadcn/ui Card component
-- [ ] Thay thế emoji icons bằng Lucide icons
-- [ ] Thay thế CSS classes bằng Tailwind
-- [ ] Sử dụng shadcn/ui Avatar cho user avatars
+- [x] Sử dụng shadcn/ui Card component ✅
+- [x] Thay thế emoji icons bằng Lucide icons ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
+- [x] Sử dụng shadcn/ui Avatar cho user avatars ✅
 
 ### Phase 7: Chart Components (Priority: LOW)
 
