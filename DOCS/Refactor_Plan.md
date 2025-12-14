@@ -410,12 +410,12 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 8.1: Refactor Owner Pages
 
-- [ ] `app/dashboard/owner/pets/page.js`
-- [ ] `app/dashboard/owner/appointments/page.js`
+- [x] `app/dashboard/owner/pets/page.js` ✅
+- [x] `app/dashboard/owner/appointments/page.js` ✅
 - [ ] `app/dashboard/owner/invoices/page.js`
 - [ ] `app/dashboard/owner/payments/page.js`
-- [ ] `app/dashboard/owner/services/page.js`
-- [ ] `app/dashboard/owner/page.js`
+- [x] `app/dashboard/owner/services/page.js` ✅
+- [x] `app/dashboard/owner/page.js` ✅
 
 #### Task 8.2: Refactor Manager Pages
 
