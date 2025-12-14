@@ -538,21 +538,25 @@ Khi refactor mỗi component, sử dụng checklist này:
 ### Breakdown theo Phase:
 
 - **Phase 1 (Setup & Base):** 2/2 tasks ✅ COMPLETED
+
   - ✅ Button.jsx, Input.jsx
   - ✅ Setup dependencies (lucide-react, clsx, tailwind-merge)
   - ✅ Tailwind config với theme variables
   - ✅ Created Dialog, Select, Textarea, Label components
 
 - **Phase 2 (Layout):** 2/2 tasks ✅ COMPLETED
+
   - ✅ Sidebar.jsx
   - ✅ DashboardHeader.jsx
 
 - **Phase 3 (Forms):** 3/3 tasks ✅ COMPLETED
+
   - ✅ LoginForm.jsx
   - ✅ RegistrationForm.jsx
   - ✅ ResetPasswordForm.jsx
 
 - **Phase 4 (Modals):** 7/25 tasks (28%)
+
   - ✅ AddPetModal.jsx
   - ✅ EditPetModal.jsx
   - ✅ AddServiceModal.jsx
@@ -563,21 +567,26 @@ Khi refactor mỗi component, sử dụng checklist này:
   - ⏳ Còn lại: 18 modals
 
 - **Phase 5 (Tables):** 0/2 tasks
+
   - ⏳ ServiceTable.jsx
   - ⏳ StaffTable.jsx
 
 - **Phase 6 (Dashboard):** 1/3 tasks (33%)
+
   - ✅ StatsCard.jsx
   - ⏳ QuickActions.jsx
   - ⏳ RecentActivity.jsx
 
 - **Phase 7 (Charts):** 0/1 task
+
   - ⏳ RevenueChart.jsx
 
 - **Phase 8 (Pages):** 0/25 tasks
+
   - ⏳ Tất cả dashboard pages
 
 - **Phase 9 (Auth):** 0/3 tasks
+
   - ⏳ Auth pages
 
 - **Phase 10 (Cleanup):** 0/3 tasks
