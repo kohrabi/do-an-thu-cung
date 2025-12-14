@@ -1,9 +1,16 @@
-// app/(dashboard)/manager/reports/page.js
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  DollarSign, Calendar, Users, BarChart3, Download, 
+  FileSpreadsheet, FileText, TrendingUp, Trophy, Star 
+} from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
-import RevenueChart from "@/components/charts/RevenueChart";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select } from "@/components/ui/select";
 import Button from "@/components/ui/Button";
+import StatsCard from "@/components/dashboard/StatsCard";
+import RevenueChart from "@/components/charts/RevenueChart";
+import { cn } from "@/lib/utils";
 
 export default function ManagerReportsPage() {
   const [period, setPeriod] = useState("month");
@@ -22,7 +29,6 @@ export default function ManagerReportsPage() {
   }, [period, year]);
 
   const loadRevenueData = () => {
-    // Mock data - Replace with actual API call
     const mockData = [
       { month: 1, year: 2025, revenue: 15600000 },
       { month: 2, year: 2025, revenue: 18200000 },
@@ -55,13 +61,11 @@ export default function ManagerReportsPage() {
   };
 
   const handleExportExcel = () => {
-    showToast("📊 Đang xuất báo cáo ra Excel...", "info");
-    // Implementation: Export to Excel
+    showToast("Đang xuất báo cáo ra Excel...", "info");
   };
 
   const handleExportPDF = () => {
-    showToast("📄 Đang xuất báo cáo ra PDF...", "info");
-    // Implementation: Export to PDF
+    showToast("Đang xuất báo cáo ra PDF...", "info");
   };
 
   const formatCurrency = (amount) => {
@@ -72,151 +76,194 @@ export default function ManagerReportsPage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="p-6 space-y-6">
       <DashboardHeader
         title="Báo cáo & Thống kê"
         subtitle="Phân tích doanh thu và hoạt động trung tâm"
       />
 
       {/* Overview Stats */}
-      <div className="stats-grid">
-        <div className="stats-card stats-card-primary">
-          <div className="stats-icon">💰</div>
-          <div className="stats-content">
-            <p className="stats-title">Tổng doanh thu {year}</p>
-            <h3 className="stats-value">{formatCurrency(stats.totalRevenue)}</h3>
-          </div>
-        </div>
-
-        <div className="stats-card stats-card-success">
-          <div className="stats-icon">📅</div>
-          <div className="stats-content">
-            <p className="stats-title">Tổng lượt dịch vụ</p>
-            <h3 className="stats-value">{stats.totalAppointments}</h3>
-          </div>
-        </div>
-
-        <div className="stats-card stats-card-info">
-          <div className="stats-icon">👥</div>
-          <div className="stats-content">
-            <p className="stats-title">Tổng khách hàng</p>
-            <h3 className="stats-value">{stats.totalCustomers}</h3>
-          </div>
-        </div>
-
-        <div className="stats-card stats-card-warning">
-          <div className="stats-icon">📊</div>
-          <div className="stats-content">
-            <p className="stats-title">TB/Khách hàng</p>
-            <h3 className="stats-value">{formatCurrency(stats.avgRevenuePerCustomer)}</h3>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatsCard
+          icon={DollarSign}
+          title={`Tổng doanh thu ${year}`}
+          value={formatCurrency(stats.totalRevenue)}
+          color="primary"
+        />
+        <StatsCard
+          icon={Calendar}
+          title="Tổng lượt dịch vụ"
+          value={stats.totalAppointments}
+          color="success"
+        />
+        <StatsCard
+          icon={Users}
+          title="Tổng khách hàng"
+          value={stats.totalCustomers}
+          color="info"
+        />
+        <StatsCard
+          icon={BarChart3}
+          title="TB/Khách hàng"
+          value={formatCurrency(stats.avgRevenuePerCustomer)}
+          color="warning"
+        />
       </div>
 
       {/* Revenue Chart Section */}
-      <div className="section-card">
-        <div className="section-header">
-          <div>
-            <h3 className="section-title">📈 Biểu đồ doanh thu</h3>
-            <p className="section-subtitle">Theo dõi xu hướng doanh thu theo thời gian</p>
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Biểu đồ doanh thu
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Theo dõi xu hướng doanh thu theo thời gian
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Select
+                value={year.toString()}
+                onChange={(e) => setYear(parseInt(e.target.value))}
+                className="w-32"
+              >
+                <option value="2025">Năm 2025</option>
+                <option value="2024">Năm 2024</option>
+                <option value="2023">Năm 2023</option>
+              </Select>
+              <Select
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                className="w-32"
+              >
+                <option value="month">Theo tháng</option>
+                <option value="quarter">Theo quý</option>
+                <option value="year">Theo năm</option>
+              </Select>
+            </div>
           </div>
-          <div className="chart-controls">
-            <select
-              value={year}
-              onChange={(e) => setYear(parseInt(e.target.value))}
-              className="filter-select"
-            >
-              <option value={2025}>Năm 2025</option>
-              <option value={2024}>Năm 2024</option>
-              <option value={2023}>Năm 2023</option>
-            </select>
-            <select
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              className="filter-select"
-            >
-              <option value="month">Theo tháng</option>
-              <option value="quarter">Theo quý</option>
-              <option value="year">Theo năm</option>
-            </select>
-          </div>
-        </div>
-
-        <RevenueChart data={revenueData} period={period} />
-      </div>
+        </CardHeader>
+        <CardContent>
+          <RevenueChart data={revenueData} period={period} />
+        </CardContent>
+      </Card>
 
       {/* Export Actions */}
-      <div className="section-card">
-        <div className="export-section">
-          <div>
-            <h3 className="section-title">📥 Xuất báo cáo</h3>
-            <p className="section-subtitle">Tải báo cáo doanh thu và thống kê</p>
-          </div>
-          <div className="export-buttons">
-            <Button onClick={handleExportExcel}>
-              📊 Xuất Excel
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Download className="h-5 w-5 text-primary" />
+            Xuất báo cáo
+          </CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            Tải báo cáo doanh thu và thống kê
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-2">
+            <Button onClick={handleExportExcel} variant="outline">
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              Xuất Excel
             </Button>
-            <Button onClick={handleExportPDF} variant="secondary">
-              📄 Xuất PDF
+            <Button onClick={handleExportPDF} variant="outline">
+              <FileText className="h-4 w-4 mr-2" />
+              Xuất PDF
             </Button>
           </div>
-        </div>
+        </CardContent>
+      </Card>
+
+      {/* Top Services & Customers */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-primary" />
+              Dịch vụ phổ biến nhất
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { rank: 1, icon: "🏥", name: "Khám sức khỏe", count: 89, revenue: 17800000 },
+                { rank: 2, icon: "🛁", name: "Tắm spa", count: 76, revenue: 11400000 },
+                { rank: 3, icon: "✂️", name: "Cắt tỉa lông", count: 64, revenue: 11520000 },
+                { rank: 4, icon: "💉", name: "Tiêm phòng", count: 52, revenue: 6240000 },
+                { rank: 5, icon: "🏠", name: "Lưu trú", count: 45, revenue: 4500000 }
+              ].map((service) => (
+                <div key={service.rank} className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">
+                    {service.rank}
+                  </div>
+                  <div className="text-2xl">{service.icon}</div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-foreground">{service.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {service.count} lượt • {formatCurrency(service.revenue)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Star className="h-5 w-5 text-primary" />
+              Khách hàng thân thiết
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { rank: 1, name: "Nguyễn Văn A", pets: 3, spent: 5600000 },
+                { rank: 2, name: "Trần Thị B", pets: 2, spent: 4200000 },
+                { rank: 3, name: "Lê Văn C", pets: 2, spent: 3800000 },
+                { rank: 4, name: "Phạm Thị D", pets: 1, spent: 3200000 },
+                { rank: 5, name: "Hoàng Văn E", pets: 4, spent: 2900000 }
+              ].map((customer) => (
+                <div key={customer.rank} className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">
+                    {customer.rank}
+                  </div>
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted-foreground/10">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-foreground">{customer.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {customer.pets} thú cưng • {formatCurrency(customer.spent)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Top Services */}
-      <div className="reports-grid">
-        <div className="section-card">
-          <h3 className="section-title">🏆 Dịch vụ phổ biến nhất</h3>
-          <div className="ranking-list">
-            {[
-              { rank: 1, icon: "🏥", name: "Khám sức khỏe", count: 89, revenue: 17800000 },
-              { rank: 2, icon: "🛁", name: "Tắm spa", count: 76, revenue: 11400000 },
-              { rank: 3, icon: "✂️", name: "Cắt tỉa lông", count: 64, revenue: 11520000 },
-              { rank: 4, icon: "💉", name: "Tiêm phòng", count: 52, revenue: 6240000 },
-              { rank: 5, icon: "🏠", name: "Lưu trú", count: 45, revenue: 4500000 }
-            ].map((service) => (
-              <div key={service.rank} className="ranking-item">
-                <div className="ranking-badge">{service.rank}</div>
-                <span className="ranking-icon">{service.icon}</span>
-                <div className="ranking-info">
-                  <p className="ranking-name">{service.name}</p>
-                  <p className="ranking-stats">
-                    {service.count} lượt • {formatCurrency(service.revenue)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="section-card">
-          <h3 className="section-title">⭐ Khách hàng thân thiết</h3>
-          <div className="ranking-list">
-            {[
-              { rank: 1, name: "Nguyễn Văn A", pets: 3, spent: 5600000 },
-              { rank: 2, name: "Trần Thị B", pets: 2, spent: 4200000 },
-              { rank: 3, name: "Lê Văn C", pets: 2, spent: 3800000 },
-              { rank: 4, name: "Phạm Thị D", pets: 1, spent: 3200000 },
-              { rank: 5, name: "Hoàng Văn E", pets: 4, spent: 2900000 }
-            ].map((customer) => (
-              <div key={customer.rank} className="ranking-item">
-                <div className="ranking-badge">{customer.rank}</div>
-                <span className="ranking-icon">👤</span>
-                <div className="ranking-info">
-                  <p className="ranking-name">{customer.name}</p>
-                  <p className="ranking-stats">
-                    {customer.pets} thú cưng • {formatCurrency(customer.spent)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      {/* Toast Notification */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
-          {toast.message}
+        <div className={cn(
+          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+          toast.type === "success"
+            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+            : toast.type === "info"
+            ? "bg-blue-100 text-blue-800 border border-blue-200"
+            : "bg-red-100 text-red-800 border border-red-200"
+        )}>
+          <div className="flex items-center gap-2">
+            {toast.type === "success" ? (
+              <CheckCircle2 className="h-5 w-5" />
+            ) : (
+              <Download className="h-5 w-5" />
+            )}
+            <p className="font-medium">{toast.message}</p>
+          </div>
         </div>
       )}
     </div>
