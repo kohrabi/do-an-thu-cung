@@ -412,8 +412,8 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 - [x] `app/dashboard/owner/pets/page.js` ✅
 - [x] `app/dashboard/owner/appointments/page.js` ✅
-- [ ] `app/dashboard/owner/invoices/page.js`
-- [ ] `app/dashboard/owner/payments/page.js`
+- [x] `app/dashboard/owner/invoices/page.js` ✅
+- [x] `app/dashboard/owner/payments/page.js` ✅
 - [x] `app/dashboard/owner/services/page.js` ✅
 - [x] `app/dashboard/owner/page.js` ✅
 
