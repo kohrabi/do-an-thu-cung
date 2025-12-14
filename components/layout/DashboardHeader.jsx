@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Clock, Bell, Hand } from "lucide-react";
+import { cn } from "@/lib/utils.js";
 
 export default function DashboardHeader({ title, subtitle }) {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -18,28 +20,40 @@ export default function DashboardHeader({ title, subtitle }) {
   };
 
   return (
-    <div className="dashboard-header">
-      <div>
-        <div className="greeting-text">{getGreeting()} 👋</div>
-        <h1 className="page-title">{title}</h1>
-        {subtitle && <p className="page-subtitle">{subtitle}</p>}
+    <div className="flex items-center justify-between p-6 bg-card border-b border-border">
+      <div className="flex-1">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+          <Hand className="h-4 w-4" />
+          <span>{getGreeting()}</span>
+        </div>
+        <h1 className="text-3xl font-bold text-foreground">{title}</h1>
+        {subtitle && (
+          <p className="text-muted-foreground mt-1">{subtitle}</p>
+        )}
       </div>
-      <div className="header-actions">
-        <div className="time-display">
-          <div className="time-icon">🕐</div>
-          <div>
-            <div className="time-value">
+      
+      <div className="flex items-center gap-4">
+        {/* Time Display */}
+        <div className="flex items-center gap-3 px-4 py-2 bg-muted rounded-lg">
+          <Clock className="h-5 w-5 text-muted-foreground" />
+          <div className="text-right">
+            <div className="text-sm font-semibold text-foreground">
               {currentTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
             </div>
-            <div className="date-value">
+            <div className="text-xs text-muted-foreground">
               {currentTime.toLocaleDateString('vi-VN')}
             </div>
           </div>
         </div>
-        <button className="notification-btn">
-          <span className="relative">
-            🔔
-            <span className="notification-badge">3</span>
+
+        {/* Notification Button */}
+        <button 
+          className="relative p-2 rounded-lg hover:bg-muted transition-colors"
+          aria-label="Thông báo"
+        >
+          <Bell className="h-5 w-5 text-muted-foreground" />
+          <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground">
+            3
           </span>
         </button>
       </div>
