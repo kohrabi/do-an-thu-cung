@@ -4,6 +4,14 @@ import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import VetRecordDetailModal from "@/components/modals/VetRecordDetailModal";
 import VetRecordFormModal from "@/components/modals/VetRecordFormModal";
+import { FileText, DollarSign, Clock, Plus, Search, Eye, Edit, Receipt, Calendar, RefreshCw, ClipboardList, PawPrint, Cat, User, CheckCircle2, XCircle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 export default function VeterinarianRecordsPage() {
   const [records, setRecords] = useState([]);
@@ -141,7 +149,7 @@ export default function VeterinarianRecordsPage() {
           ? { ...rec, ...recordData, date: new Date().toISOString().split('T')[0] }
           : rec
       ));
-      showToast("💾 Đã cập nhật hồ sơ bệnh án!");
+      showToast("Đã cập nhật hồ sơ bệnh án!");
     } else {
       // Create new record
       const newRecord = {
@@ -155,7 +163,7 @@ export default function VeterinarianRecordsPage() {
         invoiceId: null
       };
       setRecords([newRecord, ...records]);
-      showToast("🎉 Đã tạo hồ sơ bệnh án mới!");
+      showToast("Đã tạo hồ sơ bệnh án mới!");
     }
   };
 
@@ -168,7 +176,7 @@ export default function VeterinarianRecordsPage() {
           ? { ...rec, invoiceCreated: true, invoiceId: newInvoiceId }
           : rec
       ));
-      showToast(`💰 Đã tạo hóa đơn ${newInvoiceId}`);
+      showToast(`Đã tạo hóa đơn ${newInvoiceId}`);
     }
   };
 
@@ -189,215 +197,182 @@ export default function VeterinarianRecordsPage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="flex-1 space-y-8 p-8">
       <DashboardHeader
         title="Hồ sơ bệnh án"
         subtitle="Quản lý và tra cứu hồ sơ khám bệnh"
       />
 
       {/* Stats */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">📋</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tổng hồ sơ</p>
-              <h3 className="stat-number">{stats.total}</h3>
-            </div>
-          </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Tổng hồ sơ</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">💰</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đã có hóa đơn</p>
-              <h3 className="stat-number">{stats.withInvoice}</h3>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Đã có hóa đơn</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.withInvoice}</div>
+          </CardContent>
+        </Card>
 
-          <div className="stat-card-modern stat-warning">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">⏳</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Chưa có hóa đơn</p>
-              <h3 className="stat-number">{stats.noInvoice}</h3>
-            </div>
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Chưa có hóa đơn</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.noInvoice}</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filter Buttons */}
-      <div className="section-separated">
-        <div className="filter-buttons-group">
-          <button
-            onClick={() => setFilter("all")}
-            className={`filter-btn-modern ${filter === "all" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">📋</span>
-            <span>Tất cả</span>
-          </button>
-          <button
-            onClick={() => setFilter("with_invoice")}
-            className={`filter-btn-modern ${filter === "with_invoice" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">💰</span>
-            <span>Đã có hóa đơn</span>
-          </button>
-          <button
-            onClick={() => setFilter("no_invoice")}
-            className={`filter-btn-modern ${filter === "no_invoice" ? "filter-btn-active" : ""}`}
-          >
-            <span className="filter-icon">⏳</span>
-            <span>Chưa có hóa đơn</span>
-          </button>
-        </div>
-      </div>
+      <Tabs value={filter} onValueChange={setFilter} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">Tất cả</TabsTrigger>
+          <TabsTrigger value="with_invoice">Đã có hóa đơn</TabsTrigger>
+          <TabsTrigger value="no_invoice">Chưa có hóa đơn</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-      {/* Add Button */}
-      <div className="section-separated">
-        <div className="action-button-section">
-          <button
-            onClick={handleCreateRecord}
-            className="btn-add-large"
-          >
-            <span className="btn-icon">➕</span>
-            <span>Tạo hồ sơ mới</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Search Bar */}
-      <div className="section-separated">
-        <div className="search-section-right">
-          <div className="search-box-modern">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo tên thú cưng, chủ nuôi, mã hồ sơ..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-modern"
-            />
-          </div>
+      {/* Add Button and Search */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <Button onClick={handleCreateRecord} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" /> Tạo hồ sơ mới
+        </Button>
+        <div className="relative flex-1 max-w-sm w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Tìm kiếm theo tên thú cưng, chủ nuôi, mã hồ sơ..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
         </div>
       </div>
 
       {/* Records Table */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <ClipboardList className="h-6 w-6 text-primary" />
             Danh sách hồ sơ bệnh án
           </h2>
-          <span className="section-count">{filteredRecords.length} hồ sơ</span>
+          <Badge variant="secondary">{filteredRecords.length} hồ sơ</Badge>
         </div>
 
-        <div className="table-modern-wrapper">
-          <table className="table-modern">
-            <thead>
-              <tr>
-                <th style={{width: '8%'}}>Mã</th>
-                <th style={{width: '10%'}}>Ngày khám</th>
-                <th style={{width: '15%'}}>Thú cưng</th>
-                <th style={{width: '13%'}}>Chủ nuôi</th>
-                <th style={{width: '20%'}}>Chẩn đoán</th>
-                <th style={{width: '12%'}}>Tái khám</th>
-                <th style={{width: '10%'}}>Hóa đơn</th>
-                <th style={{width: '12%'}}>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRecords.map((record) => (
-                <tr key={record.id}>
-                  <td>
-                    <span className="code-badge">{record.code}</span>
-                  </td>
-                  
-                  <td>
-                    <span className="date-text">📅 {record.date}</span>
-                  </td>
-                  
-                  <td>
-                    <div className="pet-detail-cell">
-                      <span className="pet-icon-large">{record.petIcon}</span>
-                      <div>
-                        <p className="pet-name-bold">{record.petName}</p>
-                        <p className="pet-info-small">{record.petType}</p>
-                      </div>
-                    </div>
-                  </td>
-                  
-                  <td>
-                    <div className="customer-cell">
-                      <p className="font-semibold">{record.ownerName}</p>
-                      <p className="text-sm text-gray-500">{record.ownerPhone}</p>
-                    </div>
-                  </td>
-                  
-                  <td>
-                    <p className="diagnosis-text">{record.diagnosis}</p>
-                  </td>
-                  
-                  <td>
-                    <span className="follow-up-date">
-                      🔄 {record.followUpDate}
-                    </span>
-                  </td>
-                  
-                  <td>
-                    {record.invoiceCreated ? (
-                      <span className="invoice-badge invoice-created">
-                        ✓ {record.invoiceId}
-                      </span>
-                    ) : (
-                      <span className="invoice-badge invoice-pending">
-                        ✕ Chưa có
-                      </span>
-                    )}
-                  </td>
-                  
-                  <td>
-                    <div className="action-buttons-modern">
-                      <button
-                        onClick={() => handleViewDetail(record)}
-                        className="btn-icon-action btn-view-icon"
-                        title="Chi tiết"
-                      >
-                        👁️
-                      </button>
-                      <button
-                        onClick={() => handleEditRecord(record)}
-                        className="btn-icon-action btn-edit-icon"
-                        title="Chỉnh sửa"
-                      >
-                        ✏️
-                      </button>
-                      {!record.invoiceCreated && (
-                        <button
-                          onClick={() => handleCreateInvoice(record.id)}
-                          className="btn-icon-action btn-invoice-icon"
-                          title="Tạo hóa đơn"
-                        >
-                          💰
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {filteredRecords.length === 0 && (
-            <div className="empty-state-modern">
-              <div className="empty-icon">📋</div>
-              <p className="empty-text">Không có hồ sơ nào</p>
-            </div>
-          )}
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[8%]">Mã</TableHead>
+                <TableHead className="w-[10%]">Ngày khám</TableHead>
+                <TableHead className="w-[15%]">Thú cưng</TableHead>
+                <TableHead className="w-[13%]">Chủ nuôi</TableHead>
+                <TableHead className="w-[20%]">Chẩn đoán</TableHead>
+                <TableHead className="w-[12%]">Tái khám</TableHead>
+                <TableHead className="w-[10%]">Hóa đơn</TableHead>
+                <TableHead className="w-[12%]">Thao tác</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredRecords.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                    <FileText className="mx-auto h-8 w-8 mb-2" />
+                    Không có hồ sơ nào
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredRecords.map((record) => {
+                  const PetIcon = record.petIcon === '🐕' ? PawPrint : record.petIcon === '🐈' ? Cat : PawPrint;
+                  return (
+                    <TableRow key={record.id}>
+                      <TableCell>
+                        <Badge variant="secondary" className="font-mono text-xs">{record.code}</Badge>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-sm">{record.date}</span>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-secondary-foreground">
+                            <PetIcon className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="font-semibold">{record.petName}</p>
+                            <p className="text-xs text-muted-foreground">{record.petType}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div>
+                          <p className="font-semibold">{record.ownerName}</p>
+                          <p className="text-sm text-muted-foreground">{record.ownerPhone}</p>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <p className="text-sm">{record.diagnosis}</p>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <RefreshCw className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-sm">{record.followUpDate}</span>
+                        </div>
+                      </TableCell>
+                      
+                      <TableCell>
+                        {record.invoiceCreated ? (
+                          <Badge variant="success" className="flex items-center gap-1 w-fit">
+                            <CheckCircle2 className="h-3 w-3" /> {record.invoiceId}
+                          </Badge>
+                        ) : (
+                          <Badge variant="warning" className="flex items-center gap-1 w-fit">
+                            <XCircle className="h-3 w-3" /> Chưa có
+                          </Badge>
+                        )}
+                      </TableCell>
+                      
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="icon" onClick={() => handleViewDetail(record)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="icon" onClick={() => handleEditRecord(record)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          {!record.invoiceCreated && (
+                            <Button variant="outline" size="icon" onClick={() => handleCreateInvoice(record.id)}>
+                              <Receipt className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
 
@@ -423,7 +398,7 @@ export default function VeterinarianRecordsPage() {
 
       {/* Toast */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
+        <div className={cn("fixed bottom-4 right-4 p-3 rounded-md shadow-lg text-white", toast.type === "success" ? "bg-green-500" : "bg-red-500")}>
           {toast.message}
         </div>
       )}
