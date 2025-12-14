@@ -419,13 +419,13 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 8.2: Refactor Manager Pages
 
-- [ ] `app/dashboard/manager/page.js`
-- [ ] `app/dashboard/manager/staff/page.js`
-- [ ] `app/dashboard/manager/services/page.js`
-- [ ] `app/dashboard/manager/appointments/page.js`
-- [ ] `app/dashboard/manager/cages/page.js`
-- [ ] `app/dashboard/manager/invoices/page.js`
-- [ ] `app/dashboard/manager/reports/page.js`
+- [x] `app/dashboard/manager/page.js` ✅
+- [x] `app/dashboard/manager/staff/page.js` ✅
+- [x] `app/dashboard/manager/services/page.js` ✅
+- [x] `app/dashboard/manager/appointments/page.js` ✅
+- [x] `app/dashboard/manager/cages/page.js` ✅
+- [x] `app/dashboard/manager/invoices/page.js` ✅
+- [x] `app/dashboard/manager/reports/page.js` ✅
 
 #### Task 8.3: Refactor Vet Pages
 
