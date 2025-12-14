@@ -2,10 +2,12 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PawPrint, User, Mail, Phone, Lock, CheckCircle2, XCircle } from "lucide-react";
 import { validateRegister } from "@/lib/utils/validation";
 import { AccountController } from "@/lib/controllers/AccountController";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 /**
  * Boundary Class: RegistrationForm
@@ -71,11 +73,16 @@ export default function RegistrationForm() {
   };
 
   return (
-    <div className="form-container">
-      <div className="form-header">
-        <div className="form-icon">🐾</div>
-        <h2 className="form-title">Đăng ký tài khoản</h2>
-        <p className="form-subtitle">Tạo tài khoản để quản lý thú cưng của bạn</p>
+    <div className="w-full max-w-[440px] bg-card p-10 rounded-2xl shadow-lg border border-border">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <div className="flex justify-center mb-4">
+          <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
+            <PawPrint className="h-8 w-8 text-primary animate-bounce" />
+          </div>
+        </div>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Đăng ký tài khoản</h2>
+        <p className="text-sm text-muted-foreground">Tạo tài khoản để quản lý thú cưng của bạn</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,6 +93,7 @@ export default function RegistrationForm() {
           onChange={handleChange}
           error={errors.fullName}
           placeholder="Nguyễn Văn A"
+          icon={User}
           required
         />
 
@@ -97,6 +105,7 @@ export default function RegistrationForm() {
           onChange={handleChange}
           error={errors.email}
           placeholder="email@example.com"
+          icon={Mail}
           required
         />
 
@@ -107,6 +116,7 @@ export default function RegistrationForm() {
           onChange={handleChange}
           error={errors.phone}
           placeholder="0901234567"
+          icon={Phone}
           required
         />
 
@@ -118,6 +128,7 @@ export default function RegistrationForm() {
           onChange={handleChange}
           error={errors.password}
           placeholder="••••••••"
+          icon={Lock}
           required
         />
 
@@ -129,6 +140,7 @@ export default function RegistrationForm() {
           onChange={handleChange}
           error={errors.confirmPassword}
           placeholder="••••••••"
+          icon={Lock}
           required
         />
 
@@ -141,14 +153,24 @@ export default function RegistrationForm() {
         </Button>
 
         {message.text && (
-          <div className={`message ${message.type === 'success' ? 'message-success' : 'message-error'}`}>
+          <div className={cn(
+            "flex items-center gap-2 p-4 rounded-lg text-sm font-medium",
+            message.type === 'success' 
+              ? "bg-green-50 text-green-800 border border-green-200" 
+              : "bg-destructive/10 text-destructive border border-destructive/20"
+          )}>
+            {message.type === 'success' ? (
+              <CheckCircle2 className="h-4 w-4" />
+            ) : (
+              <XCircle className="h-4 w-4" />
+            )}
             {message.text}
           </div>
         )}
 
-        <p className="text-center text-sm text-gray-600 mt-4">
+        <p className="text-center text-sm text-muted-foreground mt-4">
           Đã có tài khoản?{' '}
-          <a href="/login" className="text-blue-600 hover:underline font-medium">
+          <a href="/login" className="text-primary hover:underline font-medium">
             Đăng nhập ngay
           </a>
         </p>
