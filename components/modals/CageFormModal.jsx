@@ -1,11 +1,34 @@
 // components/modals/CageFormModal.jsx
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Edit, 
+  Plus, 
+  X, 
+  Save, 
+  Check, 
+  Loader2, 
+  Hash, 
+  Home, 
+  RefreshCw,
+  FileText,
+  Lightbulb,
+  CheckCircle2,
+  AlertCircle,
+  XCircle
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import Input from "@/components/ui/Input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 const CAGE_TYPES = [
-  { value: "small", label: "Nhỏ", icon: "🏠", capacity: 1, description: "Dành cho mèo hoặc chó nhỏ" },
-  { value: "medium", label: "Trung", icon: "🏡", capacity: 2, description: "Dành cho chó cỡ trung" },
-  { value: "large", label: "Lớn", icon: "🏘️", capacity: 3, description: "Dành cho chó lớn hoặc nhiều thú cưng" }
+  { value: "small", label: "Nhỏ", icon: Home, capacity: 1, description: "Dành cho mèo hoặc chó nhỏ" },
+  { value: "medium", label: "Trung", icon: Home, capacity: 2, description: "Dành cho chó cỡ trung" },
+  { value: "large", label: "Lớn", icon: Home, capacity: 3, description: "Dành cho chó lớn hoặc nhiều thú cưng" }
 ];
 
 export default function CageFormModal({ isOpen, onClose, onSuccess, cage = null }) {
@@ -20,7 +43,7 @@ export default function CageFormModal({ isOpen, onClose, onSuccess, cage = null 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (cage) {
+    if (cage && isOpen) {
       setForm({
         code: cage.code || "",
         type: cage.type || "",
@@ -89,141 +112,163 @@ export default function CageFormModal({ isOpen, onClose, onSuccess, cage = null 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay-beautiful" onClick={onClose}>
-      <div className="modal-container-beautiful" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="modal-header-beautiful">
-          <div className="modal-header-content">
-            <span className="modal-icon-beautiful">{cage ? '✏️' : '➕'}</span>
-            <h2 className="modal-title-beautiful">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              {cage ? (
+                <Edit className="h-5 w-5 text-primary" />
+              ) : (
+                <Plus className="h-5 w-5 text-primary" />
+              )}
+            </div>
+            <DialogTitle>
               {cage ? 'Chỉnh sửa chuồng' : 'Thêm chuồng mới'}
-            </h2>
+            </DialogTitle>
           </div>
-          <button onClick={onClose} className="modal-close-beautiful">
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="modal-body-beautiful">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Mã chuồng */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🔢</span>
-              Mã chuồng
-              <span className="required-star">*</span>
-            </label>
-            <input
-              type="text"
-              name="code"
-              value={form.code}
-              onChange={handleChange}
-              placeholder="Ví dụ: A01, B12, C03..."
-              disabled={!!cage}
-              className={`form-input-beautiful ${errors.code ? 'input-error-beautiful' : ''} ${cage ? 'input-disabled' : ''}`}
-            />
-            {errors.code && <span className="error-text-beautiful">{errors.code}</span>}
-            {cage && (
-              <span className="hint-text-beautiful">
-                💡 Không thể thay đổi mã chuồng sau khi tạo
-              </span>
-            )}
-          </div>
+          <Input
+            label="Mã chuồng"
+            name="code"
+            type="text"
+            value={form.code}
+            onChange={handleChange}
+            placeholder="Ví dụ: A01, B12, C03..."
+            disabled={!!cage}
+            error={errors.code}
+            icon={Hash}
+            required
+          />
+          {cage && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Lightbulb className="h-3 w-3" />
+              <span>Không thể thay đổi mã chuồng sau khi tạo</span>
+            </div>
+          )}
 
           {/* Loại chuồng */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">🏠</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Home className="h-4 w-4 text-muted-foreground" />
               Loại chuồng
-              <span className="required-star">*</span>
-            </label>
-            <div className="room-type-cards">
-              {CAGE_TYPES.map((type) => (
-                <button
-                  key={type.value}
-                  type="button"
-                  onClick={() => handleTypeSelect(type.value)}
-                  className={`room-type-card ${form.type === type.value ? 'room-type-card-active' : ''}`}
-                >
-                  <div className="room-type-header">
-                    <span className="room-type-label">{type.icon} {type.label}</span>
-                    {form.type === type.value && (
-                      <span className="room-type-check">✓</span>
+              <span className="text-destructive">*</span>
+            </Label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {CAGE_TYPES.map((type) => {
+                const TypeIcon = type.icon;
+                const isSelected = form.type === type.value;
+                return (
+                  <button
+                    key={type.value}
+                    type="button"
+                    onClick={() => handleTypeSelect(type.value)}
+                    className={cn(
+                      "p-4 rounded-lg border-2 transition-all text-left",
+                      isSelected
+                        ? "border-primary bg-primary/10"
+                        : "border-input bg-background hover:border-primary/50"
                     )}
-                  </div>
-                  <p className="room-type-subtitle">Sức chứa: {type.capacity} thú cưng</p>
-                  <p className="room-type-desc">{type.description}</p>
-                </button>
-              ))}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <TypeIcon className="h-5 w-5 text-primary" />
+                        <span className="font-semibold text-foreground">{type.label}</span>
+                      </div>
+                      {isSelected && (
+                        <CheckCircle2 className="h-5 w-5 text-primary" />
+                      )}
+                    </div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                      Sức chứa: {type.capacity} thú cưng
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {type.description}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
-            {errors.type && <span className="error-text-beautiful">{errors.type}</span>}
+            {errors.type && (
+              <p className="text-sm text-destructive">{errors.type}</p>
+            )}
           </div>
 
           {/* Trạng thái (chỉ khi edit) */}
           {cage && (
-            <div className="form-group-beautiful">
-              <label className="form-label-beautiful">
-                <span className="label-icon-beautiful">🔄</span>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <RefreshCw className="h-4 w-4 text-muted-foreground" />
                 Trạng thái
-              </label>
-              <select
+              </Label>
+              <Select
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="form-select-beautiful"
               >
-                <option value="available">🟢 Trống</option>
-                <option value="occupied">🟡 Đang sử dụng</option>
-                <option value="maintenance">🔴 Bảo trì</option>
-              </select>
+                <option value="available">Trống</option>
+                <option value="occupied">Đang sử dụng</option>
+                <option value="maintenance">Bảo trì</option>
+              </Select>
             </div>
           )}
 
           {/* Ghi chú */}
-          <div className="form-group-beautiful">
-            <label className="form-label-beautiful">
-              <span className="label-icon-beautiful">📝</span>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
               Ghi chú
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               name="notes"
               value={form.notes}
               onChange={handleChange}
               placeholder="Ghi chú về chuồng (vị trí, đặc điểm...)"
-              rows="3"
-              className="form-textarea-beautiful"
+              rows={3}
             />
           </div>
 
-          {/* Buttons */}
-          <div className="modal-footer-beautiful">
-            <button
+          {/* Footer */}
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="btn-beautiful btn-cancel-beautiful"
             >
-              <span className="btn-icon-beautiful">✕</span>
-              <span>Hủy</span>
-            </button>
-            <button
+              <X className="h-4 w-4" />
+              Hủy
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="btn-beautiful btn-primary-beautiful"
             >
               {loading ? (
                 <>
-                  <span className="spinner-beautiful"></span>
-                  <span>{cage ? 'Đang cập nhật...' : 'Đang thêm...'}</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {cage ? 'Đang cập nhật...' : 'Đang thêm...'}
                 </>
               ) : (
                 <>
-                  <span className="btn-icon-beautiful">{cage ? '💾' : '✓'}</span>
-                  <span>{cage ? 'Cập nhật' : 'Thêm chuồng'}</span>
+                  {cage ? (
+                    <>
+                      <Save className="h-4 w-4" />
+                      Cập nhật
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Thêm chuồng
+                    </>
+                  )}
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
