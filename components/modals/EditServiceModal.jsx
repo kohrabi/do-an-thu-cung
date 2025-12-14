@@ -1,5 +1,30 @@
+// components/modals/EditServiceModal.jsx
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Edit, 
+  FileText, 
+  FolderOpen, 
+  DollarSign, 
+  Clock, 
+  X, 
+  Save,
+  Loader2,
+  Hash,
+  Hospital,
+  Syringe,
+  Droplets,
+  Scissors,
+  Heart,
+  Home
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import Input from "@/components/ui/Input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function EditServiceModal({ isOpen, onClose, onSuccess, service }) {
   const [formData, setFormData] = useState({
@@ -29,10 +54,10 @@ export default function EditServiceModal({ isOpen, onClose, onSuccess, service }
   }, [service, isOpen]);
 
   const categories = [
-    { value: "health", label: "Tắm & vệ sinh", icon: "🛁" },
-    { value: "grooming", label: "Cắt tỉa & làm đẹp", icon: "✂️" },
-    { value: "medical", label: "Y tế & khám bệnh", icon: "💊" },
-    { value: "boarding", label: "Lưu trú & chăm sóc", icon: "🏠" }
+    { value: "health", label: "Tắm & vệ sinh", icon: Droplets },
+    { value: "grooming", label: "Cắt tỉa & làm đẹp", icon: Scissors },
+    { value: "medical", label: "Y tế & khám bệnh", icon: Hospital },
+    { value: "boarding", label: "Lưu trú & chăm sóc", icon: Home }
   ];
 
   const handleChange = (e) => {
@@ -69,263 +94,144 @@ export default function EditServiceModal({ isOpen, onClose, onSuccess, service }
   if (!isOpen || !service) return null;
 
   return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.5)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px'
-      }}
-      onClick={onClose}
-    >
-      <div 
-        style={{
-          background: 'white',
-          borderRadius: '16px',
-          width: '100%',
-          maxWidth: '600px',
-          maxHeight: '90vh',
-          overflow: 'auto',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div style={{
-          padding: '20px',
-          borderBottom: '1px solid #E5E7EB',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          background: 'linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)'
-        }}>
-          <h2 style={{ 
-            margin: 0, 
-            fontSize: '24px', 
-            fontWeight: 700, 
-            color: '#1F2937',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
-          }}>
-            <span>✏️</span>
-            <span>Chỉnh sửa dịch vụ</span>
-          </h2>
-          <button 
-            type="button"
-            onClick={onClose}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: 'none',
-              background: '#F3F4F6',
-              fontSize: '20px',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} style={{ padding: '20px' }}>
-          {/* Service ID */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
-              🆔 Mã dịch vụ
-            </label>
-            <input
-              type="text"
-              value={formData.id}
-              disabled
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '2px solid #E5E7EB',
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                background: '#F9FAFB',
-                color: '#6B7280'
-              }}
-            />
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <Edit className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Chỉnh sửa dịch vụ</DialogTitle>
           </div>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Service ID */}
+          <Input
+            label="Mã dịch vụ"
+            name="id"
+            type="text"
+            value={formData.id}
+            disabled
+            icon={Hash}
+          />
 
           {/* Name */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
-              🏷️ Tên dịch vụ <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="VD: Tắm spa cao cấp"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.name ? '#EF4444' : '#E5E7EB'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-            />
-            {errors.name && <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>{errors.name}</p>}
-          </div>
+          <Input
+            label="Tên dịch vụ"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="VD: Tắm spa cao cấp"
+            error={errors.name}
+            icon={FileText}
+            required
+          />
 
           {/* Category */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
-              📁 Danh mục <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <select
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FolderOpen className="h-4 w-4 text-muted-foreground" />
+              Danh mục
+              <span className="text-destructive">*</span>
+            </Label>
+            <Select
               name="category"
               value={formData.category}
               onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.category ? '#EF4444' : '#E5E7EB'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
+              className={cn(errors.category && "border-destructive")}
             >
               <option value="">-- Chọn danh mục --</option>
-              {categories.map(cat => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.icon} {cat.label}
-                </option>
-              ))}
-            </select>
-            {errors.category && <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>{errors.category}</p>}
+              {categories.map(cat => {
+                const IconComponent = cat.icon;
+                return (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                );
+              })}
+            </Select>
+            {errors.category && (
+              <p className="text-sm text-destructive">{errors.category}</p>
+            )}
           </div>
 
-          {/* Price */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
-              💰 Giá (VNĐ) <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <input
-              type="number"
+          {/* Price & Duration */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Giá (VNĐ)"
               name="price"
+              type="number"
               value={formData.price}
               onChange={handleChange}
               placeholder="150000"
               min="0"
               step="1000"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.price ? '#EF4444' : '#E5E7EB'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
+              error={errors.price}
+              icon={DollarSign}
+              required
             />
-            {errors.price && <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>{errors.price}</p>}
-          </div>
 
-          {/* Duration */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
-              ⏱️ Thời gian (phút) <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <input
-              type="number"
+            <Input
+              label="Thời gian (phút)"
               name="duration"
+              type="number"
               value={formData.duration}
               onChange={handleChange}
               placeholder="60"
               min="1"
               step="5"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.duration ? '#EF4444' : '#E5E7EB'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
+              error={errors.duration}
+              icon={Clock}
+              required
             />
-            {errors.duration && <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>{errors.duration}</p>}
           </div>
 
           {/* Description */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#374151' }}>
-              📝 Mô tả
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              Mô tả
+            </Label>
+            <Textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Mô tả dịch vụ..."
-              rows="4"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '2px solid #E5E7EB',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontFamily: 'inherit',
-                boxSizing: 'border-box',
-                outline: 'none',
-                resize: 'vertical'
-              }}
+              rows={4}
             />
           </div>
 
           {/* Buttons */}
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-            <button
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              style={{
-                padding: '12px 24px',
-                border: '2px solid #E5E7EB',
-                borderRadius: '8px',
-                background: 'white',
-                fontSize: '15px',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
             >
+              <X className="h-4 w-4" />
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              style={{
-                padding: '12px 24px',
-                border: 'none',
-                borderRadius: '8px',
-                background: loading ? '#D1D5DB' : 'linear-gradient(135deg, #9333EA 0%, #A855F7 100%)',
-                color: 'white',
-                fontSize: '15px',
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
             >
-              {loading ? '⏳ Đang lưu...' : '💾 Lưu'}
-            </button>
-          </div>
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang lưu...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" />
+                  Lưu
+                </>
+              )}
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
