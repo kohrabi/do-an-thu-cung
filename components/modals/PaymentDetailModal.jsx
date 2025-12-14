@@ -21,7 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import Button from "@/components/ui/Button";
 import { cn } from "@/lib/utils.js";
 
-export default function PaymentInvoiceDetailModal({ isOpen, onClose, invoice }) {
+export default function PaymentDetailModal({ isOpen, onClose, invoice }) {
   const [loading, setLoading] = useState(false);
 
   if (!isOpen || !invoice) return null;
