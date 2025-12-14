@@ -4,8 +4,8 @@ import { useState } from "react";
 import { KeyRound, Mail, CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
 import { validateResetPassword } from "@/lib/utils/validation";
 import { AccountController } from "@/lib/controllers/AccountController";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 /**

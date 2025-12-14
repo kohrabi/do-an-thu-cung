@@ -1,13 +1,21 @@
 "use client";
 import { useState, useEffect } from "react";
-import { 
-  DollarSign, Calendar, Users, BarChart3, Download, 
-  FileSpreadsheet, FileText, TrendingUp, Trophy, Star 
+import {
+  DollarSign,
+  Calendar,
+  Users,
+  BarChart3,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  TrendingUp,
+  Trophy,
+  Star,
 } from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import StatsCard from "@/components/dashboard/StatsCard";
 import RevenueChart from "@/components/charts/RevenueChart";
 import { cn } from "@/lib/utils";
@@ -20,7 +28,7 @@ export default function ManagerReportsPage() {
     totalRevenue: 0,
     totalAppointments: 0,
     totalCustomers: 0,
-    avgRevenuePerCustomer: 0
+    avgRevenuePerCustomer: 0,
   });
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
@@ -41,7 +49,7 @@ export default function ManagerReportsPage() {
       { month: 9, year: 2025, revenue: 33800000 },
       { month: 10, year: 2025, revenue: 45600000 },
       { month: 11, year: 2025, revenue: 38400000 },
-      { month: 12, year: 2025, revenue: 42100000 }
+      { month: 12, year: 2025, revenue: 42100000 },
     ];
 
     setRevenueData(mockData);
@@ -51,7 +59,7 @@ export default function ManagerReportsPage() {
       totalRevenue,
       totalAppointments: 342,
       totalCustomers: 89,
-      avgRevenuePerCustomer: totalRevenue / 89
+      avgRevenuePerCustomer: totalRevenue / 89,
     });
   };
 
@@ -69,9 +77,9 @@ export default function ManagerReportsPage() {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(amount);
   };
 
@@ -187,19 +195,54 @@ export default function ManagerReportsPage() {
           <CardContent>
             <div className="space-y-3">
               {[
-                { rank: 1, icon: "🏥", name: "Khám sức khỏe", count: 89, revenue: 17800000 },
-                { rank: 2, icon: "🛁", name: "Tắm spa", count: 76, revenue: 11400000 },
-                { rank: 3, icon: "✂️", name: "Cắt tỉa lông", count: 64, revenue: 11520000 },
-                { rank: 4, icon: "💉", name: "Tiêm phòng", count: 52, revenue: 6240000 },
-                { rank: 5, icon: "🏠", name: "Lưu trú", count: 45, revenue: 4500000 }
+                {
+                  rank: 1,
+                  icon: "🏥",
+                  name: "Khám sức khỏe",
+                  count: 89,
+                  revenue: 17800000,
+                },
+                {
+                  rank: 2,
+                  icon: "🛁",
+                  name: "Tắm spa",
+                  count: 76,
+                  revenue: 11400000,
+                },
+                {
+                  rank: 3,
+                  icon: "✂️",
+                  name: "Cắt tỉa lông",
+                  count: 64,
+                  revenue: 11520000,
+                },
+                {
+                  rank: 4,
+                  icon: "💉",
+                  name: "Tiêm phòng",
+                  count: 52,
+                  revenue: 6240000,
+                },
+                {
+                  rank: 5,
+                  icon: "🏠",
+                  name: "Lưu trú",
+                  count: 45,
+                  revenue: 4500000,
+                },
               ].map((service) => (
-                <div key={service.rank} className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                <div
+                  key={service.rank}
+                  className="flex items-center gap-3 p-3 bg-muted rounded-lg"
+                >
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">
                     {service.rank}
                   </div>
                   <div className="text-2xl">{service.icon}</div>
                   <div className="flex-1">
-                    <p className="font-semibold text-foreground">{service.name}</p>
+                    <p className="font-semibold text-foreground">
+                      {service.name}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {service.count} lượt • {formatCurrency(service.revenue)}
                     </p>
@@ -224,9 +267,12 @@ export default function ManagerReportsPage() {
                 { rank: 2, name: "Trần Thị B", pets: 2, spent: 4200000 },
                 { rank: 3, name: "Lê Văn C", pets: 2, spent: 3800000 },
                 { rank: 4, name: "Phạm Thị D", pets: 1, spent: 3200000 },
-                { rank: 5, name: "Hoàng Văn E", pets: 4, spent: 2900000 }
+                { rank: 5, name: "Hoàng Văn E", pets: 4, spent: 2900000 },
               ].map((customer) => (
-                <div key={customer.rank} className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                <div
+                  key={customer.rank}
+                  className="flex items-center gap-3 p-3 bg-muted rounded-lg"
+                >
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">
                     {customer.rank}
                   </div>
@@ -234,9 +280,12 @@ export default function ManagerReportsPage() {
                     <Users className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-foreground">{customer.name}</p>
+                    <p className="font-semibold text-foreground">
+                      {customer.name}
+                    </p>
                     <p className="text-xs text-muted-foreground">
-                      {customer.pets} thú cưng • {formatCurrency(customer.spent)}
+                      {customer.pets} thú cưng •{" "}
+                      {formatCurrency(customer.spent)}
                     </p>
                   </div>
                 </div>
@@ -248,14 +297,16 @@ export default function ManagerReportsPage() {
 
       {/* Toast Notification */}
       {toast.show && (
-        <div className={cn(
-          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
-          toast.type === "success"
-            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-            : toast.type === "info"
-            ? "bg-blue-100 text-blue-800 border border-blue-200"
-            : "bg-red-100 text-red-800 border border-red-200"
-        )}>
+        <div
+          className={cn(
+            "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+            toast.type === "success"
+              ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+              : toast.type === "info"
+              ? "bg-blue-100 text-blue-800 border border-blue-200"
+              : "bg-red-100 text-red-800 border border-red-200"
+          )}
+        >
           <div className="flex items-center gap-2">
             {toast.type === "success" ? (
               <CheckCircle2 className="h-5 w-5" />

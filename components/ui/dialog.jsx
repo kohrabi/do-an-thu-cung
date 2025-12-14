@@ -1,10 +1,37 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils.js";
 
 const Dialog = ({ open, onOpenChange, children }) => {
+  const [mounted, setMounted] = React.useState(false);
+  const portalContainerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    setMounted(true);
+    
+    // Tạo container cho portal nếu chưa có
+    if (!portalContainerRef.current) {
+      const container = document.createElement('div');
+      container.id = 'dialog-portal-container';
+      container.style.position = 'fixed';
+      container.style.inset = '0';
+      container.style.zIndex = '50';
+      document.body.appendChild(container);
+      portalContainerRef.current = container;
+    }
+
+    return () => {
+      // Cleanup: chỉ xóa container khi component unmount hoàn toàn
+      if (portalContainerRef.current && portalContainerRef.current.parentNode) {
+        portalContainerRef.current.parentNode.removeChild(portalContainerRef.current);
+        portalContainerRef.current = null;
+      }
+    };
+  }, []);
+
   React.useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -16,19 +43,26 @@ const Dialog = ({ open, onOpenChange, children }) => {
     };
   }, [open]);
 
-  if (!open) return null;
+  if (!open || !mounted || !portalContainerRef.current) return null;
 
-  return (
+  const dialogContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={() => onOpenChange?.(false)}
+      role="dialog"
+      aria-modal="true"
     >
-      <div className="fixed inset-0 bg-black/50" />
-      <div onClick={(e) => e.stopPropagation()}>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+      <div 
+        onClick={(e) => e.stopPropagation()} 
+        className="relative z-50 flex items-center justify-center w-full max-w-lg mx-auto"
+      >
         {children}
       </div>
     </div>
   );
+
+  return createPortal(dialogContent, portalContainerRef.current);
 };
 
 const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => {
@@ -38,6 +72,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
       className={cn(
         "relative z-50 grid w-full max-w-lg gap-4 bg-card p-6 shadow-lg rounded-lg border border-border",
         "animate-in fade-in-0 zoom-in-95 slide-in-from-left-1/2 slide-in-from-top-[48%] duration-200",
+        "max-h-[90vh] overflow-y-auto",
         className
       )}
       {...props}

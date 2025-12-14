@@ -18,11 +18,11 @@ import {
   XCircle
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import Input from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 const CAGE_TYPES = [
@@ -272,3 +272,4 @@ export default function CageFormModal({ isOpen, onClose, onSuccess, cage = null 
     </Dialog>
   );
 }
+

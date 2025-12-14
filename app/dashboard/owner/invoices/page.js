@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/dashboard/StatsCard";
 import InvoiceDetailModal from "@/components/modals/InvoiceDetailModal";

@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import { Search, Edit, Trash2, User, Stethoscope, Wrench, Briefcase, CheckCircle2, XCircle } from "lucide-react";
-import Input from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";

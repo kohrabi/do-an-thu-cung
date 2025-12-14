@@ -16,7 +16,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 export default function CareNoteModal({ isOpen, onClose, onSuccess, task }) {
@@ -203,3 +203,4 @@ export default function CareNoteModal({ isOpen, onClose, onSuccess, task }) {
     </Dialog>
   );
 }
+

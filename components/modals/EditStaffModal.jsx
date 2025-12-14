@@ -14,10 +14,10 @@ import {
   GraduationCap
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import Input from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 export default function EditStaffModal({ isOpen, onClose, onSuccess, staff }) {
@@ -215,3 +215,4 @@ export default function EditStaffModal({ isOpen, onClose, onSuccess, staff }) {
     </Dialog>
   );
 }
+

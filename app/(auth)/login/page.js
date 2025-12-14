@@ -8,8 +8,8 @@ import { getMockAccounts } from "@/lib/api/auth";
 import { RoleLabels } from "@/lib/utils/constants";
 import { Mail, LockKeyhole, PawPrint, ChevronDown, ChevronUp, User } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function LoginPage() {

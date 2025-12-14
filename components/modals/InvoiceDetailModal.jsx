@@ -17,7 +17,7 @@ import {
   XCircle
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 export default function InvoiceDetailModal({ isOpen, onClose, invoice }) {
@@ -251,3 +251,4 @@ export default function InvoiceDetailModal({ isOpen, onClose, invoice }) {
     </Dialog>
   );
 }
+

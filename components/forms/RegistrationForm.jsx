@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { PawPrint, User, Mail, Phone, Lock, CheckCircle2, XCircle } from "lucide-react";
 import { validateRegister } from "@/lib/utils/validation";
 import { AccountController } from "@/lib/controllers/AccountController";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 /**

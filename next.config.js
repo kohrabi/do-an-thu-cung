@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost'], // nếu bạn có hình tạm
+    domains: ['localhost'],
   },
 };
 

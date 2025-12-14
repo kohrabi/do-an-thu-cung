@@ -22,7 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 export default function EditAppointmentModal({ isOpen, onClose, onSuccess, appointment }) {
@@ -300,3 +300,4 @@ export default function EditAppointmentModal({ isOpen, onClose, onSuccess, appoi
     </Dialog>
   );
 }
+

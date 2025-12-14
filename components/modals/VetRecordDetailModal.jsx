@@ -18,7 +18,7 @@ import {
   Hash
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils.js";
 
@@ -187,3 +187,4 @@ export default function VetRecordDetailModal({ isOpen, onClose, record }) {
     </Dialog>
   );
 }
+

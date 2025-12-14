@@ -1,5 +1,4 @@
-
-* styles/dashboard.css */
+/* styles/dashboard.css */
 
 /* ============================================
    DASHBOARD LAYOUT
@@ -7870,7 +7869,7 @@
   }
 
   .task-right-section {
-    grid-column: 1 / -1;
+    grid-column: 1 / span 999;
     justify-content: flex-start;
     margin-top: 0.5rem;
     min-width: auto;

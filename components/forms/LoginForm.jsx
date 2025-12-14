@@ -7,8 +7,8 @@ import { validateLogin } from "@/lib/utils/validation";
 import { AccountController } from "@/lib/controllers/AccountController";
 import { getMockAccounts } from "@/lib/api/auth";
 import { RoleLabels } from "@/lib/utils/constants";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 /**

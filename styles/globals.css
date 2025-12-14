@@ -2,7 +2,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Import component styles */
+@import './components.css';
+@import './additional-components.css';
+@import './extended-components.css';
+@import './dashboard.css';
+@import './premium-manager.css';
 
 @layer base {
   :root {
@@ -53,10 +59,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -67,7 +74,8 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   background: #f9fafb;
   color: #1f2937;
   line-height: 1.6;
@@ -93,6 +101,7 @@ body {
   z-index: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   opacity: 0.05;
+  pointer-events: none;
 }
 
 .auth-bg-shape {
@@ -181,8 +190,13 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .form-title {
@@ -317,9 +331,9 @@ body {
 }
 
 .btn-outline:hover:not(:disabled) {
-    transform: translateY(-2px);
+  transform: translateY(-2px);
   background: rgba(102, 126, 234, 0.05);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 /* ============================================
@@ -406,8 +420,13 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 /* ============================================
@@ -418,7 +437,7 @@ body {
   margin: 0 auto;
 }
 
-.space-y-4 > * + * {
+.space-y-4 > *:not(:first-child) {
   margin-top: 1rem;
 }
 

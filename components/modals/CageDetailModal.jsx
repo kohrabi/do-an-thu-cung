@@ -15,7 +15,7 @@ import {
   Calendar
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 export default function CageDetailModal({ isOpen, onClose, cage }) {
@@ -189,3 +189,4 @@ export default function CageDetailModal({ isOpen, onClose, cage }) {
     </Dialog>
   );
 }
+

@@ -15,11 +15,11 @@ import {
   Loader2
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import Input from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 export default function AddPetModal({ isOpen, onClose, onSuccess }) {
@@ -321,3 +321,4 @@ export default function AddPetModal({ isOpen, onClose, onSuccess }) {
     </Dialog>
   );
 }
+

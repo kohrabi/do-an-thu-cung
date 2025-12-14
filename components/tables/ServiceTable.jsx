@@ -1,24 +1,35 @@
 "use client";
 import { useState } from "react";
-import { Search, Sparkles, DollarSign, Clock, Edit, Pause, Play, CheckCircle2, XCircle } from "lucide-react";
+import {
+  Search,
+  Sparkles,
+  DollarSign,
+  Clock,
+  Edit,
+  Pause,
+  Play,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export default function ServiceTable({ services, onEdit, onDelete }) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredServices = services.filter(service =>
-    service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    service.category.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredServices = services.filter(
+    (service) =>
+      service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(price);
   };
 
@@ -41,12 +52,15 @@ export default function ServiceTable({ services, onEdit, onDelete }) {
       {filteredServices.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredServices.map((service) => (
-            <Card key={service.id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={service.id}
+              className="hover:shadow-md transition-shadow"
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
                     {service.icon ? (
-                      typeof service.icon === 'string' ? (
+                      typeof service.icon === "string" ? (
                         <span className="text-2xl">{service.icon}</span>
                       ) : (
                         <service.icon className="h-6 w-6 text-primary" />

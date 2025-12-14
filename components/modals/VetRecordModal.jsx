@@ -21,8 +21,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils.js";
 
 export default function VetRecordModal({ isOpen, onClose, onSuccess, appointment }) {
@@ -288,3 +288,4 @@ export default function VetRecordModal({ isOpen, onClose, onSuccess, appointment
     </Dialog>
   );
 }
+
