@@ -1,5 +1,23 @@
 "use client";
 import { useState } from "react";
+import { 
+  FileText, 
+  X, 
+  Save, 
+  Loader2, 
+  PawPrint, 
+  Hospital, 
+  Clock, 
+  User,
+  ClipboardList,
+  CheckCircle2,
+  Heart
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils.js";
 
 export default function CareNoteModal({ isOpen, onClose, onSuccess, task }) {
   const [noteBefore, setNoteBefore] = useState("");
@@ -8,19 +26,6 @@ export default function CareNoteModal({ isOpen, onClose, onSuccess, task }) {
   const [errors, setErrors] = useState({});
 
   if (!isOpen || !task) return null;
-
-  // ===== DEBUG LOG - QUAN TRỌNG =====
-  console.log('========================================');
-  console.log('🔍 MODAL RECEIVED TASK:', task);
-  console.log('📛 Pet Name:', task.petName);
-  console.log('🐾 Pet Type:', task.petType);
-  console.log('👤 Owner Name:', task.ownerName);
-  console.log('🛁 Service:', task.service);
-  console.log('🕐 Time:', task.time);
-  console.log('📦 ALL KEYS:', Object.keys(task));
-  console.log('📦 FULL OBJECT:', JSON.stringify(task, null, 2));
-  console.log('========================================');
-  // ===================================
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,201 +62,73 @@ export default function CareNoteModal({ isOpen, onClose, onSuccess, task }) {
   const petType = task.petType || task.type || task.breed || task.pet?.type || 'LOẠI KHÔNG CÓ';
   const ownerName = task.ownerName || task.owner || task.customer || task.customerName || 'CHỦ KHÔNG CÓ';
 
-  console.log('🎨 DISPLAY VALUES:');
-  console.log('   Pet Name:', petName);
-  console.log('   Pet Type:', petType);
-  console.log('   Owner Name:', ownerName);
-
   return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.5)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px'
-      }}
-      onClick={onClose}
-    >
-      <div 
-        style={{
-          background: 'white',
-          borderRadius: '16px',
-          width: '100%',
-          maxWidth: '800px',
-          maxHeight: '90vh',
-          overflow: 'auto'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div style={{
-          padding: '20px',
-          borderBottom: '1px solid #eee',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700 }}>
-            📝 Ghi chú chăm sóc
-          </h2>
-          <button 
-            onClick={onClose}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: 'none',
-              background: '#f3f4f6',
-              fontSize: '20px',
-              cursor: 'pointer'
-            }}
-          >
-            ✕
-          </button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <FileText className="h-5 w-5 text-primary" />
+            </div>
+            <DialogTitle>Ghi chú chăm sóc</DialogTitle>
+          </div>
+        </DialogHeader>
 
         {/* Pet Info Card */}
-        <div style={{
-          padding: '20px',
-          background: 'linear-gradient(135deg, #FFF5F7 0%, #FFE4E9 100%)',
-          margin: '20px',
-          borderRadius: '12px',
-          border: '2px solid #FFD4DC'
-        }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '20px', 
-            marginBottom: '20px',
-            flexWrap: 'wrap'
-          }}>
-            <div style={{
-              width: '80px',
-              height: '80px',
-              background: 'white',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '50px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              flexShrink: 0
-            }}>
+        <div className="p-5 bg-pink-50 rounded-lg border-2 border-pink-200">
+          <div className="flex items-center gap-5 mb-5 flex-wrap">
+            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-5xl shadow-md shrink-0">
               {task.petIcon || task.icon || '🐾'}
             </div>
-            <div style={{ flex: 1, minWidth: '200px' }}>
-              <h3 style={{ 
-                margin: '0 0 8px 0', 
-                fontSize: '24px', 
-                fontWeight: 700,
-                color: '#1F2937'
-              }}>
+            <div className="flex-1 min-w-[200px]">
+              <h3 className="text-2xl font-bold text-foreground mb-2">
                 {petName}
               </h3>
-              <p style={{ 
-                margin: 0, 
-                color: '#6B7280', 
-                fontSize: '16px' 
-              }}>
+              <p className="text-base text-muted-foreground">
                 {petType}
               </p>
             </div>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '15px',
-            background: 'white',
-            padding: '15px',
-            borderRadius: '10px'
-          }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-lg">
             <div>
-              <p style={{ 
-                margin: '0 0 5px 0', 
-                fontSize: '11px', 
-                color: '#9CA3AF', 
-                textTransform: 'uppercase', 
-                fontWeight: 600,
-                letterSpacing: '0.05em'
-              }}>
-                DỊCH VỤ
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                Dịch vụ
               </p>
-              <p style={{ 
-                margin: 0, 
-                fontSize: '15px', 
-                fontWeight: 600,
-                color: '#1F2937'
-              }}>
+              <p className="text-sm font-semibold text-foreground">
                 {task.serviceIcon || '🛁'} {task.service || task.serviceName || 'Không có'}
               </p>
             </div>
             <div>
-              <p style={{ 
-                margin: '0 0 5px 0', 
-                fontSize: '11px', 
-                color: '#9CA3AF', 
-                textTransform: 'uppercase', 
-                fontWeight: 600,
-                letterSpacing: '0.05em'
-              }}>
-                GIỜ
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                Giờ
               </p>
-              <p style={{ 
-                margin: 0, 
-                fontSize: '15px', 
-                fontWeight: 600,
-                color: '#1F2937'
-              }}>
-                🕐 {task.time || task.startTime || 'Không có'}
+              <p className="text-sm font-semibold text-foreground flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {task.time || task.startTime || 'Không có'}
               </p>
             </div>
             <div>
-              <p style={{ 
-                margin: '0 0 5px 0', 
-                fontSize: '11px', 
-                color: '#9CA3AF', 
-                textTransform: 'uppercase', 
-                fontWeight: 600,
-                letterSpacing: '0.05em'
-              }}>
-                CHỦ NUÔI
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                Chủ nuôi
               </p>
-              <p style={{ 
-                margin: 0, 
-                fontSize: '15px', 
-                fontWeight: 600,
-                color: '#1F2937',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-              }}>
-                👤 {ownerName}
+              <p className="text-sm font-semibold text-foreground flex items-center gap-1 truncate">
+                <User className="h-4 w-4" />
+                {ownerName}
               </p>
             </div>
           </div>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ padding: '20px' }}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontWeight: 600,
-              fontSize: '14px',
-              color: '#374151'
-            }}>
-              📋 Ghi chú trước dịch vụ <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <textarea
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <ClipboardList className="h-4 w-4 text-muted-foreground" />
+              Ghi chú trước dịch vụ
+              <span className="text-destructive">*</span>
+            </Label>
+            <Textarea
               value={noteBefore}
               onChange={(e) => {
                 setNoteBefore(e.target.value);
@@ -260,36 +137,21 @@ export default function CareNoteModal({ isOpen, onClose, onSuccess, task }) {
                 }
               }}
               placeholder="Tình trạng ban đầu của thú cưng..."
-              rows="4"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.noteBefore ? '#EF4444' : '#e5e7eb'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontFamily: 'inherit',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
+              rows={4}
+              className={cn(errors.noteBefore && "border-destructive")}
             />
             {errors.noteBefore && (
-              <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>
-                {errors.noteBefore}
-              </p>
+              <p className="text-sm text-destructive">{errors.noteBefore}</p>
             )}
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontWeight: 600,
-              fontSize: '14px',
-              color: '#374151'
-            }}>
-              ✅ Ghi chú sau dịch vụ <span style={{ color: '#EF4444' }}>*</span>
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+              Ghi chú sau dịch vụ
+              <span className="text-destructive">*</span>
+            </Label>
+            <Textarea
               value={noteAfter}
               onChange={(e) => {
                 setNoteAfter(e.target.value);
@@ -298,87 +160,46 @@ export default function CareNoteModal({ isOpen, onClose, onSuccess, task }) {
                 }
               }}
               placeholder="Quá trình thực hiện..."
-              rows="4"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: `2px solid ${errors.noteAfter ? '#EF4444' : '#e5e7eb'}`,
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontFamily: 'inherit',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
+              rows={4}
+              className={cn(errors.noteAfter && "border-destructive")}
             />
             {errors.noteAfter && (
-              <p style={{ color: '#EF4444', fontSize: '13px', margin: '5px 0 0 0' }}>
-                {errors.noteAfter}
-              </p>
+              <p className="text-sm text-destructive">{errors.noteAfter}</p>
             )}
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontWeight: 600,
-              fontSize: '14px',
-              color: '#374151'
-            }}>
-              ❤️ Quan sát sức khỏe
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Heart className="h-4 w-4 text-muted-foreground" />
+              Quan sát sức khỏe
+            </Label>
+            <Textarea
               value={health}
               onChange={(e) => setHealth(e.target.value)}
               placeholder="Nhiệt độ, nhịp thở..."
-              rows="4"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '2px solid #e5e7eb',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontFamily: 'inherit',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
+              rows={4}
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-            <button
+          {/* Footer */}
+          <DialogFooter>
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              style={{
-                padding: '12px 24px',
-                border: '2px solid #e5e7eb',
-                borderRadius: '8px',
-                background: 'white',
-                fontSize: '15px',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
             >
+              <X className="h-4 w-4" />
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              style={{
-                padding: '12px 24px',
-                border: 'none',
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #FF6B9D 0%, #FF8FB3 100%)',
-                color: 'white',
-                fontSize: '15px',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
             >
-              💾 Lưu ghi chú
-            </button>
-          </div>
+              <Save className="h-4 w-4" />
+              Lưu ghi chú
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
