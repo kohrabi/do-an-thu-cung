@@ -1,14 +1,18 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { validateLogin } from "@/lib/utils/validation";
 import { AccountController } from "@/lib/controllers/AccountController";
 import { getMockAccounts } from "@/lib/api/auth";
 import { RoleLabels } from "@/lib/utils/constants";
+import { Mail, LockKeyhole, PawPrint, ChevronDown, ChevronUp, User } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
-export default function LoginForm() {
+export default function LoginPage() {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
@@ -55,108 +59,137 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="form-container">
-      {/* HEADER - KHÔNG CÓ ICON */}
-      <div className="form-header">
-        <h2 className="form-title">Đăng nhập</h2>
-        <p className="form-subtitle">Chào mừng quay trở lại PAW LOVERS</p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label="Email"
-          name="email"
-          type="email"
-          value={form.email}
-          onChange={handleChange}
-          error={errors.email}
-          placeholder="email@example.com"
-          required
-        />
-
-        <Input
-          label="Mật khẩu"
-          name="password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-          error={errors.password}
-          placeholder="••••••••"
-          required
-        />
-
-        <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              className="w-4 h-4 rounded border-gray-300"
-            />
-            <span className="text-gray-600">Ghi nhớ đăng nhập</span>
-          </label>
-          <a
-            href="/reset-password"
-            className="text-blue-600 hover:underline font-medium"
-          >
-            Quên mật khẩu?
-          </a>
-        </div>
-
-        <Button type="submit" loading={loading} className="w-full">
-          Đăng nhập
-        </Button>
-
-        {message.text && (
-          <div
-            className={`message ${
-              message.type === "success" ? "message-success" : "message-error"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
-
-        {/* Demo accounts */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <button
-            type="button"
-            onClick={() => setShowAccounts(!showAccounts)}
-            className="w-full text-sm text-gray-600 hover:text-gray-900 font-medium"
-          >
-            {showAccounts ? "🔼 Ẩn tài khoản demo" : "🔽 Xem tài khoản demo"}
-          </button>
-
-          {showAccounts && (
-            <div className="mt-4 space-y-2">
-              <p className="text-xs text-gray-500 mb-3">Click để điền nhanh:</p>
-              {getMockAccounts().map((account, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => handleQuickLogin(account)}
-                  className="w-full text-left px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors"
-                >
-                  <div className="font-medium text-gray-900">
-                    {RoleLabels[account.role]}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-0.5">
-                    {account.email}
-                  </div>
-                </button>
-              ))}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
+              <PawPrint className="h-8 w-8 text-primary" />
             </div>
-          )}
-        </div>
+          </div>
+          <CardTitle className="text-2xl font-bold">Đăng nhập</CardTitle>
+          <CardDescription>
+            Chào mừng quay trở lại PAW LOVERS
+          </CardDescription>
+        </CardHeader>
 
-        <p className="text-center text-sm text-gray-600 mt-4">
-          Chưa có tài khoản?{" "}
-          <a
-            href="/register"
-            className="text-blue-600 hover:underline font-medium"
-          >
-            Đăng ký ngay
-          </a>
-        </p>
-      </form>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              label="Email"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              error={errors.email}
+              placeholder="email@example.com"
+              icon={Mail}
+              required
+            />
+
+            <Input
+              label="Mật khẩu"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              error={errors.password}
+              placeholder="••••••••"
+              icon={LockKeyhole}
+              required
+            />
+
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded border-input text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                />
+                <span className="text-muted-foreground">Ghi nhớ đăng nhập</span>
+              </label>
+              <Link
+                href="/reset-password"
+                className="text-primary hover:underline font-medium"
+              >
+                Quên mật khẩu?
+              </Link>
+            </div>
+
+            <Button type="submit" loading={loading} className="w-full">
+              Đăng nhập
+            </Button>
+
+            {message.text && (
+              <div
+                className={cn(
+                  "p-3 rounded-md text-sm font-medium text-center",
+                  message.type === "success"
+                    ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                    : "bg-red-100 text-red-800 border border-red-200"
+                )}
+              >
+                {message.text}
+              </div>
+            )}
+
+            {/* Demo accounts */}
+            <div className="mt-6 pt-6 border-t border-border">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setShowAccounts(!showAccounts)}
+                className="w-full text-sm"
+              >
+                {showAccounts ? (
+                  <>
+                    <ChevronUp className="h-4 w-4 mr-2" />
+                    Ẩn tài khoản demo
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4 mr-2" />
+                    Xem tài khoản demo
+                  </>
+                )}
+              </Button>
+
+              {showAccounts && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-xs text-muted-foreground mb-3 text-center">
+                    Click để điền nhanh:
+                  </p>
+                  {getMockAccounts().map((account, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleQuickLogin(account)}
+                      className="w-full text-left px-3 py-2 bg-muted hover:bg-muted/80 rounded-lg text-sm transition-colors border border-border"
+                    >
+                      <div className="flex items-center gap-2 font-medium text-foreground">
+                        <User className="h-4 w-4" />
+                        {RoleLabels[account.role]}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-0.5 ml-6">
+                        {account.email}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <p className="text-center text-sm text-muted-foreground mt-4">
+              Chưa có tài khoản?{" "}
+              <Link
+                href="/register"
+                className="text-primary hover:underline font-medium"
+              >
+                Đăng ký ngay
+              </Link>
+            </p>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

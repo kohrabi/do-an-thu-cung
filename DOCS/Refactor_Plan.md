@@ -400,9 +400,9 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 7.1: Refactor RevenueChart
 
-- [ ] Kiểm tra library đang sử dụng (Recharts, Chart.js, v.v.)
-- [ ] Thay thế CSS classes bằng Tailwind
-- [ ] Đảm bảo responsive design với Tailwind
+- [x] Kiểm tra library đang sử dụng (Custom chart, không dùng library) ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
+- [x] Đảm bảo responsive design với Tailwind ✅
 
 ### Phase 8: Page Components (Priority: MEDIUM)
 
@@ -455,12 +455,12 @@ npx shadcn-ui@latest add dialog form label select textarea card table badge avat
 
 #### Task 9.1: Refactor Auth Pages
 
-- [ ] `app/(auth)/login/page.js`
-- [ ] `app/(auth)/register/page.js`
-- [ ] `app/(auth)/reset-password/page.js`
-- [ ] Sử dụng shadcn/ui Card cho form container
-- [ ] Thay thế CSS classes bằng Tailwind
-- [ ] Thay thế emoji icons bằng Lucide icons
+- [x] `app/(auth)/login/page.js` ✅
+- [x] `app/(auth)/register/page.js` ✅ (đã sử dụng RegistrationForm đã refactor)
+- [x] `app/(auth)/reset-password/page.js` ✅ (đã sử dụng ResetPasswordForm đã refactor)
+- [x] Sử dụng shadcn/ui Card cho form container ✅
+- [x] Thay thế CSS classes bằng Tailwind ✅
+- [x] Thay thế emoji icons bằng Lucide icons ✅
 
 ### Phase 10: Cleanup (Priority: HIGH)
 
