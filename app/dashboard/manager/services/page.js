@@ -1,10 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { 
+  Sparkles, Plus, Search, Edit, Pause, Play, CheckCircle2, 
+  XCircle, DollarSign, Clock, ClipboardList 
+} from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/badge";
+import StatsCard from "@/components/dashboard/StatsCard";
 import AddServiceModal from "@/components/modals/AddServiceModal";
-import EditServiceModal from "@/components/modals/EditServiceModal.jsx";
+import EditServiceModal from "@/components/modals/EditServiceModal";
+import { cn } from "@/lib/utils";
 
 export default function ManagerServicesPage() {
   const searchParams = useSearchParams();
@@ -122,7 +131,7 @@ export default function ManagerServicesPage() {
       isActive: true
     };
     setServices([...services, service]);
-    showToast("🎉 Đã thêm dịch vụ thành công!");
+    showToast("Đã thêm dịch vụ thành công!", "success");
   };
 
   const handleEditService = (updatedData) => {
@@ -142,7 +151,7 @@ export default function ManagerServicesPage() {
           }
         : service
     ));
-    showToast("💾 Đã cập nhật dịch vụ thành công!");
+    showToast("Đã cập nhật dịch vụ thành công!", "success");
   };
 
   const handleOpenEdit = (service) => {
@@ -155,7 +164,7 @@ export default function ManagerServicesPage() {
     setServices(services.map(s =>
       s.id === serviceId ? { ...s, isActive: !s.isActive } : s
     ));
-    showToast(`✅ Đã ${service.isActive ? 'tạm ngưng' : 'kích hoạt'} dịch vụ`);
+    showToast(`Đã ${service.isActive ? 'tạm ngưng' : 'kích hoạt'} dịch vụ`, "success");
   };
 
   const filteredServices = services.filter(service =>
@@ -176,163 +185,192 @@ export default function ManagerServicesPage() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="p-6 space-y-6">
       <DashboardHeader
         title="Quản lý dịch vụ"
         subtitle="Thêm, chỉnh sửa và quản lý các dịch vụ của trung tâm"
       />
 
       {/* Stats */}
-      <div className="section-separated">
-        <div className="stats-grid-custom">
-          <div className="stat-card-modern stat-primary">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✨</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Tổng dịch vụ</p>
-              <h3 className="stat-number">{stats.total}</h3>
-            </div>
-          </div>
-
-          <div className="stat-card-modern stat-success">
-            <div className="stat-icon-wrapper">
-              <span className="stat-icon">✅</span>
-            </div>
-            <div className="stat-content">
-              <p className="stat-label">Đang hoạt động</p>
-              <h3 className="stat-number">{stats.active}</h3>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <StatsCard
+          icon={Sparkles}
+          title="Tổng dịch vụ"
+          value={stats.total}
+          color="primary"
+        />
+        <StatsCard
+          icon={CheckCircle2}
+          title="Đang hoạt động"
+          value={stats.active}
+          color="success"
+        />
       </div>
 
-      {/* Add Button */}
-      <div className="section-separated">
-        <div className="action-button-section">
-          <Button 
-            onClick={() => setIsAddModalOpen(true)}
-            className="btn-add-large"
-          >
-            <span className="btn-icon">➕</span>
-            <span>Thêm dịch vụ mới</span>
-          </Button>
-        </div>
-      </div>
+      {/* Add Button & Search */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <Button
+          onClick={() => setIsAddModalOpen(true)}
+          className="w-full sm:w-auto"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Thêm dịch vụ mới
+        </Button>
 
-      {/* Search */}
-      <div className="section-separated">
-        <div className="search-section-right">
-          <div className="search-box-modern">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Tìm kiếm dịch vụ..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-modern"
-            />
-          </div>
+        <div className="w-full sm:w-64">
+          <Input
+            type="text"
+            placeholder="Tìm kiếm dịch vụ..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            icon={Search}
+          />
         </div>
       </div>
 
       {/* Services List */}
-      <div className="section-separated">
-        <div className="section-header-modern">
-          <h2 className="section-title-large">
-            <span className="title-icon">📋</span>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-primary" />
             Danh sách dịch vụ
           </h2>
-          <span className="section-count">{filteredServices.length} dịch vụ</span>
+          <Badge variant="outline" className="text-sm">
+            {filteredServices.length} dịch vụ
+          </Badge>
         </div>
 
-        <div className="services-grid-beautiful">
-          {filteredServices.map((service) => (
-            <div key={service.id} className="service-card-beautiful">
-              <div className="service-card-header">
-                <div className="service-icon-large">{service.categoryIcon}</div>
-                <span className={`service-status-badge ${service.isActive ? 'badge-active' : 'badge-inactive'}`}>
-                  {service.isActive ? '✓ Hoạt động' : '⏸️ Tạm ngưng'}
-                </span>
-              </div>
-
-              <div className="service-card-body">
-                <h3 className="service-name-beautiful">{service.name}</h3>
-                <p className="service-category-beautiful">
-                  {service.categoryIcon} {service.categoryLabel}
-                </p>
-                <p className="service-description-beautiful">{service.description}</p>
-
-                <div className="service-details-row">
-                  <div className="service-detail-item">
-                    <span className="detail-icon">💰</span>
-                    <span className="detail-text">{formatCurrency(service.price)}</span>
+        {filteredServices.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredServices.map((service) => (
+              <Card key={service.id} className="hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="text-4xl">{service.categoryIcon}</div>
+                    <Badge variant={service.isActive ? "success" : "destructive"}>
+                      {service.isActive ? (
+                        <>
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          Hoạt động
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-3 w-3 mr-1" />
+                          Tạm ngưng
+                        </>
+                      )}
+                    </Badge>
                   </div>
-                  <div className="service-detail-item">
-                    <span className="detail-icon">⏱️</span>
-                    <span className="detail-text">
-                      {service.duration >= 60 
-                        ? `${Math.floor(service.duration / 60)} giờ` 
-                        : `${service.duration} phút`}
-                    </span>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <CardTitle className="text-lg mb-1">{service.name}</CardTitle>
+                    <Badge variant="outline" className="text-xs">
+                      {service.categoryIcon} {service.categoryLabel}
+                    </Badge>
                   </div>
-                </div>
-              </div>
 
-              <div className="service-card-footer">
-                <button
-                  onClick={() => handleOpenEdit(service)}
-                  className="btn-service-action btn-edit-service"
-                >
-                  <span>✏️</span>
-                  <span>Chỉnh sửa</span>
-                </button>
-                <button
-                  onClick={() => handleToggleService(service.id)}
-                  className={`btn-service-action ${service.isActive ? 'btn-pause-service' : 'btn-activate-service'}`}
-                >
-                  <span>{service.isActive ? '⏸️' : '▶️'}</span>
-                  <span>{service.isActive ? 'Tạm ngưng' : 'Kích hoạt'}</span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+                  <p className="text-sm text-muted-foreground">
+                    {service.description}
+                  </p>
 
-        {filteredServices.length === 0 && (
-          <div className="empty-state-modern">
-            <div className="empty-icon">🔍</div>
-            <p className="empty-text">Không tìm thấy dịch vụ nào</p>
+                  <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                    <div className="flex items-center gap-2 text-sm">
+                      <DollarSign className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Giá:</span>
+                      <span className="font-semibold text-foreground">
+                        {formatCurrency(service.price)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Thời gian:</span>
+                      <span className="font-semibold text-foreground">
+                        {service.duration >= 60 
+                          ? `${Math.floor(service.duration / 60)} giờ` 
+                          : `${service.duration} phút`}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      onClick={() => handleOpenEdit(service)}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Chỉnh sửa
+                    </Button>
+                    <Button
+                      onClick={() => handleToggleService(service.id)}
+                      variant={service.isActive ? "secondary" : "default"}
+                      size="sm"
+                      className="flex-1"
+                    >
+                      {service.isActive ? (
+                        <>
+                          <Pause className="h-4 w-4 mr-2" />
+                          Tạm ngưng
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-4 w-4 mr-2" />
+                          Kích hoạt
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+        ) : (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <Search className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground font-medium">
+                Không tìm thấy dịch vụ nào
+              </p>
+            </CardContent>
+          </Card>
         )}
       </div>
 
-      {/* Add Modal */}
-      {isAddModalOpen && (
-        <AddServiceModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onSuccess={handleAddService}
-        />
-      )}
+      {/* Modals */}
+      <AddServiceModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={handleAddService}
+      />
 
-      {/* Edit Modal */}
-      {isEditModalOpen && editingService && (
-        <EditServiceModal
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setEditingService(null);
-          }}
-          onSuccess={handleEditService}
-          service={editingService}
-        />
-      )}
+      <EditServiceModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingService(null);
+        }}
+        onSuccess={handleEditService}
+        service={editingService}
+      />
 
-      {/* Toast */}
+      {/* Toast Notification */}
       {toast.show && (
-        <div className={`toast toast-${toast.type}`}>
-          {toast.message}
+        <div className={cn(
+          "fixed bottom-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4",
+          toast.type === "success"
+            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+            : "bg-red-100 text-red-800 border border-red-200"
+        )}>
+          <div className="flex items-center gap-2">
+            {toast.type === "success" ? (
+              <CheckCircle2 className="h-5 w-5" />
+            ) : (
+              <XCircle className="h-5 w-5" />
+            )}
+            <p className="font-medium">{toast.message}</p>
+          </div>
         </div>
       )}
     </div>
