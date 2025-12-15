@@ -9,19 +9,12 @@ export const metadata = {
 
 export default function AuthLayout({ children }) {
   return (
-    <div className="auth-layout">
-      {/* Background decoration */}
-      <div className="auth-background">
-        <div className="auth-bg-shape shape-1"></div>
-        <div className="auth-bg-shape shape-2"></div>
-        <div className="auth-bg-shape shape-3"></div>
-      </div>
-
+    <div className="h-screen w-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 overflow-auto">
       {/* Header */}
-      <header className="auth-header">
+      <header className="flex-shrink-0">
         <div className="container mx-auto px-4 py-4">
           <Link href="/" className="flex items-center gap-3">
-            <div className="logo-icon">🐾</div>
+            <div className="text-2xl">🐾</div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">PAW LOVERS</h1>
               <p className="text-xs text-gray-500">Pet Care Management System</p>
@@ -31,8 +24,10 @@ export default function AuthLayout({ children }) {
       </header>
 
       {/* Main content */}
-      <main className="auth-main">
-        {children}
+      <main className="flex-1 flex items-center justify-center">
+        <div className="w-full max-w-md px-4">
+          {children}
+        </div>
       </main>
 
       {/* Footer */}

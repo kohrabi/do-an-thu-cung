@@ -73,9 +73,9 @@ export default function RegistrationForm() {
   };
 
   return (
-    <div className="w-full max-w-[440px] bg-card p-10 rounded-2xl shadow-lg border border-border">
-      {/* Header */}
-      <div className="text-center mb-8">
+    <div className="w-full bg-white/90 backdrop-blur-sm shadow-2xl border p-10 rounded-2xl">
+          {/* Header */}
+          <div className="text-center mb-8">
         <div className="flex justify-center mb-4">
           <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
             <PawPrint className="h-8 w-8 text-primary animate-bounce" />

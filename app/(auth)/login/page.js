@@ -59,9 +59,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 overflow-auto">
-      <div className="w-full max-w-md px-4">
-        <Card className="w-full bg-white/90 backdrop-blur-sm shadow-2xl border">
+    <Card className="w-full bg-white/90 backdrop-blur-sm shadow-2xl border">
         <CardHeader className="text-center space-y-4">
           <div className="flex justify-center">
             <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
@@ -191,7 +189,5 @@ export default function LoginPage() {
           </form>
         </CardContent>
       </Card>
-      </div>
-    </div>
   );
 }
