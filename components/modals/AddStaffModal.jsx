@@ -241,7 +241,7 @@ export default function AddStaffModal({ isOpen, onClose, onSuccess }) {
               onClick={handleClose}
             >
               <X className="h-4 w-4" />
-              Hủy
+               Hủy
             </Button>
             <Button
               type="submit"
