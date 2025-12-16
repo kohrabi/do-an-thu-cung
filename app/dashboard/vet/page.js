@@ -201,9 +201,9 @@ export default function VeterinarianDashboard() {
             const PetIcon = appointment.petIcon === '🐕' ? PawPrint : appointment.petIcon === '🐈' ? Cat : PawPrint;
             return (
               <Card key={appointment.id} className="flex items-center gap-4 p-4">
-                <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-primary/10">
-                  <Clock className="h-6 w-6 text-primary" />
-                  <span className="ml-1 font-semibold">{appointment.time}</span>
+                <div className="flex flex-col items-center justify-center w-20 h-20 rounded-lg bg-primary/10 flex-shrink-0 overflow-hidden">
+                  <Clock className="h-5 w-5 text-primary mb-1" />
+                  <span className="text-sm font-semibold text-primary truncate w-full text-center px-1">{appointment.time}</span>
                 </div>
 
                 <div className="flex items-center gap-3 flex-1">
