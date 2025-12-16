@@ -58,36 +58,44 @@ export default function VetScheduleDetailModal({ isOpen, onClose, appointment })
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                <Cake className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase">Tuổi</p>
-                  <p className="text-sm font-bold text-foreground">{appointment.petAge}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                  <Cake className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Tuổi</p>
+                  <p className="text-base font-bold text-foreground">{appointment.petAge}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                <Scale className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase">Cân nặng</p>
-                  <p className="text-sm font-bold text-foreground">{appointment.petWeight}</p>
+              <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                  <Scale className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Cân nặng</p>
+                  <p className="text-base font-bold text-foreground">{appointment.petWeight}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                <User className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase">Chủ nuôi</p>
-                  <p className="text-sm font-bold text-foreground truncate">{appointment.ownerName}</p>
+              <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                  <User className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Chủ nuôi</p>
+                  <p className="text-base font-bold text-foreground break-words">{appointment.ownerName}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                <Phone className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase">Điện thoại</p>
-                  <p className="text-sm font-bold text-foreground">{appointment.ownerPhone}</p>
+              <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                  <Phone className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Điện thoại</p>
+                  <p className="text-base font-bold text-foreground">{appointment.ownerPhone}</p>
                 </div>
               </div>
             </div>
