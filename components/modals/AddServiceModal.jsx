@@ -232,9 +232,9 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }) {
               variant="outline"
               onClick={handleClose}
             >
-              <X className="h-4 w-4" />
-              Hủy
-            </Button>
+                <X className="h-4 w-4" />
+                  Hủy
+              </Button>
             <Button
               type="submit"
               disabled={loading}
