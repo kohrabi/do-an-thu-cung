@@ -66,29 +66,35 @@ export default function VetPatientDetailModal({ isOpen, onClose, patient }) {
             {/* Basic Info */}
             <div className="mb-5">
               <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
+                <BarChart3 className="h-4 w-4 flex-shrink-0" />
                 Thông tin cơ bản
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <Scale className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground uppercase">Cân nặng</p>
-                    <p className="text-sm font-bold text-foreground">{patient.weight}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                    <Scale className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Cân nặng</p>
+                    <p className="text-base font-bold text-foreground">{patient.weight}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <Palette className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground uppercase">Màu lông</p>
-                    <p className="text-sm font-bold text-foreground">{patient.color}</p>
+                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                    <Palette className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Màu lông</p>
+                    <p className="text-base font-bold text-foreground">{patient.color}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <Cake className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground uppercase">Ngày sinh</p>
-                    <p className="text-sm font-bold text-foreground">{patient.dateOfBirth}</p>
+                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg md:col-span-2">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                    <Cake className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Ngày sinh</p>
+                    <p className="text-base font-bold text-foreground">{patient.dateOfBirth}</p>
                   </div>
                 </div>
               </div>
@@ -97,41 +103,54 @@ export default function VetPatientDetailModal({ isOpen, onClose, patient }) {
             {/* Owner Info */}
             <div className="mb-5">
               <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
-                <User className="h-4 w-4" />
+                <User className="h-4 w-4 flex-shrink-0" />
                 Thông tin chủ nuôi
               </h3>
-              <div className="p-4 bg-muted rounded-lg space-y-2">
-                <p className="text-sm flex items-center gap-2">
-                  <span className="text-muted-foreground">Họ tên:</span>
-                  <span className="font-semibold text-foreground">{patient.ownerName}</span>
-                </p>
-                <p className="text-sm flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Điện thoại:</span>
-                  <span className="font-semibold text-foreground">{patient.ownerPhone}</span>
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                    <User className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Họ tên</p>
+                    <p className="text-base font-bold text-foreground break-words">{patient.ownerName}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                    <Phone className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Điện thoại</p>
+                    <p className="text-base font-bold text-foreground">{patient.ownerPhone}</p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Visit Stats */}
             <div className="mb-5">
               <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
+                <TrendingUp className="h-4 w-4 flex-shrink-0" />
                 Thống kê khám
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <Calendar className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground uppercase">Lần khám gần nhất</p>
-                    <p className="text-sm font-bold text-foreground">{patient.lastVisit}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                    <Calendar className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Lần khám gần nhất</p>
+                    <p className="text-base font-bold text-foreground">{patient.lastVisit}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <Hash className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground uppercase">Tổng số lần khám</p>
-                    <p className="text-sm font-bold text-foreground">{patient.totalVisits} lần</p>
+                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-background flex-shrink-0">
+                    <Hash className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Tổng số lần khám</p>
+                    <p className="text-base font-bold text-foreground">{patient.totalVisits} lần</p>
                   </div>
                 </div>
               </div>
